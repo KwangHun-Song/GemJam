@@ -1,9 +1,13 @@
+using System.Linq;
+using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace GemMatch {
-    public class View : MonoBehaviour, IGemMatchListener {
+    public class View : MonoBehaviour, IControllerEvent {
         [SerializeField] private Transform tileViewRoot;
         [SerializeField] private Transform memoryViewRoot;
+        [SerializeField] private TMP_Text gameStatusText;
 
         private TileView[] tileViews;
         private TileView[] TileViews => tileViews ??= tileViewRoot.GetComponents<TileView>();
@@ -12,27 +16,45 @@ namespace GemMatch {
         private MemoryView[] MemoryViews => memoryViews ??= memoryViewRoot.GetComponents<MemoryView>();
         
         public void OnStartGame(Tile[] tiles, Mission[] missions) {
-            throw new System.NotImplementedException();
+            for (int i = 0; i < tileViews.Length; i++) {
+                TileViews[i].Initialize(tiles[i]);
+            }
+
+            foreach (var memoryView in MemoryViews) {
+                memoryView.Initialize();
+            }
+
+            gameStatusText.text = "";
         }
 
         public void OnClearGame(Mission[] missions) {
-            throw new System.NotImplementedException();
+            gameStatusText.text = "Completed!";
         }
 
         public void OnFailGame(Mission[] missions) {
-            throw new System.NotImplementedException();
+            gameStatusText.text = "failed!";
         }
 
-        public void OnReplayGame(Mission[] missions) {
-            throw new System.NotImplementedException();
+        public void OnReplayGame(Mission[] missions) { }
+
+        public void OnAddMemory(Entity entity) {
+            MemoryViews
+                .First(v => v.IsEmpty())
+                .AddEntityAsync(CreateEntityView(entity)).Forget();
         }
 
-        public void OnAddMemory(ColorIndex color, int memoryIndex) {
-            throw new System.NotImplementedException();
+        public void OnRemoveMemory(Entity entity) {
+            MemoryViews
+                .Single(v => v.EntityView.Entity == entity)
+                .RemoveEntityAsync().Forget();
         }
 
-        public void OnRemoveMemory(ColorIndex color) {
-            throw new System.NotImplementedException();
+        private EntityView CreateEntityView(Entity entity) {
+            var prefab = Resources.Load<EntityView>(entity.Index.ToString());
+            var entityView = Instantiate(prefab);
+            entityView.Initialize(entity);
+
+            return entityView;
         }
     }
 }
