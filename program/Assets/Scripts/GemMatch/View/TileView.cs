@@ -55,5 +55,9 @@ namespace GemMatch {
 
             return entityView;
         }
+
+        public void Register(ITouchableListener listener) {
+            touchable.Register(this, listener);
+        }
     }
 }
