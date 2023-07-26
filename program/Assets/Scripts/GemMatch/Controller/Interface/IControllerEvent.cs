@@ -1,11 +1,11 @@
 namespace GemMatch {
-    public interface IGemMatchListener {
+    public interface IControllerEvent {
         void OnStartGame(Tile[] tiles, Mission[] missions);
         void OnClearGame(Mission[] missions);
         void OnFailGame(Mission[] missions);
         void OnReplayGame(Mission[] missions);
-
-        void OnAddMemory(ColorIndex color, int memoryIndex);
-        void OnRemoveMemory(ColorIndex color);
+        
+        void OnAddMemory(Entity entity);
+        void OnRemoveMemory(Entity entity);
     }
 }
