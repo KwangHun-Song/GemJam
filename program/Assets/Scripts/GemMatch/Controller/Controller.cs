@@ -22,14 +22,14 @@ namespace GemMatch {
             CurrentLevel = level;
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
-            Tiles = level.tiles.Select(t => new Tile()).ToArray();
+            Tiles = level.tiles.Select(t => t.Clone()).ToArray();
             foreach (var tile in Tiles) tile.Initialize(this);
 
             // 게임 시작
             gameCompletionSource = new UniTaskCompletionSource<GameResult>();
 
             // 이벤트 전달
-            foreach (var listener in listeners) listener.OnStartGame(Tiles, Missions);
+            foreach (var listener in listeners) listener.OnStartGame(this);
         }
 
         public async UniTask<GameResult> WaitUntilGameEnd() {
@@ -60,7 +60,7 @@ namespace GemMatch {
             }
             
             // 실패조건 검사
-            if (Memory.Count >= MaxMemoryCount) {
+            if (IsFailed()) {
                 FailGame();
             }
         }
@@ -99,6 +99,50 @@ namespace GemMatch {
             return !Missions.Where((mission, index) => CurrentLevel.missions[index].count > mission.count).Any();
         }
 
+        private bool IsFailed() {
+            return Memory.Count >= MaxMemoryCount;
+        }
+
+        private bool CanTouch(Tile tile) {
+            if (tile.Piece == null || tile.Piece.CanAddMemory == false) return false;
+            if (tile.Entities.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch)) return false;
+
+            return HasPathToTop(tile);
+        }
+
+        private bool HasPathToTop(Tile startTile) {
+            // 방문한 타일들을 추적하기 위한 집합
+            var visitedTiles = new HashSet<Tile>();
+    
+            // DFS를 시작
+            return FindPathToTopDfs(startTile, visitedTiles);
+        }
+
+        private static bool FindPathToTopDfs(Tile tile, HashSet<Tile> visitedTiles) {
+            // 이미 방문한 타일이라면 바로 반환, 이 타일을 방문한 것으로 표시
+            if (visitedTiles.Contains(tile)) return false;
+            visitedTiles.Add(tile);
+
+            // 타일이 위쪽 가장자리에 도달했다면 true 반환
+            if (tile.Up == null) return true;
+
+            // 이 타일이 점유되어 있다면 경로가 없는 것으로 간주
+            if (tile.CanPassThrough() == false) return false;
+
+            // 인접한 타일들을 검사
+            foreach (var adjacentTile in tile.AdjacentTiles) {
+                if (adjacentTile == null) continue;
+                    
+                // 이웃 타일로의 경로가 있는지 DFS
+                if (FindPathToTopDfs(adjacentTile, visitedTiles)) {
+                    return true;
+                }
+            }
+
+            // 모든 가능성을 다 찾아봤지만 경로가 없다면 false 반환
+            return false;
+        }
+
         private void Touch(Tile tile) {
             tile.RemoveLayer(Layer.Piece);
             foreach (var adjacentTile in tile.AdjacentTiles.Where(t => t != null)) {
@@ -110,22 +154,14 @@ namespace GemMatch {
             for (int i = Memory.Count - 1; i >= 0; i--) {
                 if (Memory[i] is NormalPiece piece && piece.Color == color) {
                     Memory.Remove(piece);
-                    foreach (var listener in listeners) listener.OnRemoveMemory(piece);
+                    foreach (var listener in listeners) listener.OnRemoveMemory(this, piece);
                 }
             }
         }
 
         private void AddToMemory(Entity piece) {
             Memory.Add(piece);
-            foreach (var listener in listeners) listener.OnAddMemory(piece);
-        }
-
-        private static bool CanTouch(Tile tile) {
-            if (tile.Piece == null || tile.Piece.CanAddMemory == false) return false;
-            if (tile.AdjacentTiles.All(t => t != null && t.CanPassThrough() == false)) return false;
-            if (tile.Entities.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch)) return false;
-
-            return true;
+            foreach (var listener in listeners) listener.OnAddMemory(this, piece);
         }
 
         private static IEnumerable<ColorIndex> GetThreeColors(List<Entity> colorIndices) {

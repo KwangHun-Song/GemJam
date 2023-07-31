@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace GemMatch {
     public class MemoryView : MonoBehaviour {
+        [SerializeField] private Transform cellRoot;
+
+        public Transform CellRoot => cellRoot;
+        
         public EntityView EntityView { get; private set; }
         
         public void Initialize() {
