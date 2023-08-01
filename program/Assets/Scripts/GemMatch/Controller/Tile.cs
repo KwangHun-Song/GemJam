@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GemMatch {
+    [Serializable]
     public class Tile {
-        private int index;
-        public bool IsVisible { get; private set; }
+        public int index;
+
+        private bool isVisible;
+        public bool IsVisible => isVisible;
 
         private List<Entity> entities;
         private SortedSet<Entity> sortedEntities;
@@ -25,15 +29,18 @@ namespace GemMatch {
 
         public Entity Piece => Entities.SingleOrDefault(e => e.Layer == Layer.Piece);
 
-        public Tile Clone(Tile tile) {
-            return new Tile {
-                index = tile.Index,
-                IsVisible = tile.IsVisible,
-                entities = tile.entities
-                    .Select(e => e.Clone())
-                    .OrderBy(e => e.Layer)
-                    .ToList(),
-            };
+        public Tile(int index, bool isVisible, IEnumerable<Entity> entities) {
+            this.index = index;
+            this.isVisible = isVisible;
+            this.entities = entities.ToList();
+        }
+        
+        public Tile Clone() {
+            return new Tile (
+                index = Index,
+                isVisible = IsVisible,
+                entities = Entities.Select(e => e.Clone()).ToList()
+            );
         }
 
         public void Initialize(Controller controller) {
