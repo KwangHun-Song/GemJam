@@ -28,6 +28,12 @@ namespace GemMatch {
                 TileViews[i].Initialize(this, tiles[i]);
             }
 
+            foreach (var tileView in TileViews) {
+                foreach (var entityView in tileView.EntityViews) {
+                    entityView.OnCreate().Forget();
+                }
+            }
+
             foreach (var memoryView in MemoryViews) {
                 memoryView.Initialize();
             }
@@ -78,7 +84,7 @@ namespace GemMatch {
         }
 
         public void OnClickEntity(Entity entity) {
-            var tile = Controller.Tiles.Single(t => t.Entities.Contains(entity));
+            var tile = Controller.Tiles.Single(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
             Controller.Input(tile.Index);
 
             if (tile.Entities.Contains(entity) == false) {
