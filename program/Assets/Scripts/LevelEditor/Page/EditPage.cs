@@ -7,33 +7,37 @@ namespace GemMatch.LevelEditor {
         [SerializeField] private EditTool editTool;
         [SerializeField] private EditInspector editInspector;
         [SerializeField] private EditGameView editGameView;
-        private IEditGameController editGameController;
+        private IEditGameController controller;
 
-        private void Start() {
+        private void OnEnable() {
+            // Activate 할 때마다 초기화
             StartCoroutine(CoInitialize());
         }
 
         private IEnumerator CoInitialize() {
-            // todo: edit view component 초기화
-            editGameController = new EditGameController(editGameView);
-            editTool.Initialize();
-            editGameView.Initialize();
-            editInspector.Initialize(editGameController);
+            var ctrl = new EditGameController(editGameView);
+            controller = ctrl;
+            editTool.Initialize(ctrl);
+            editGameView.Initialize(ctrl);
+            editInspector.Initialize(ctrl);
             yield return null;
-            LoadInspector();
+            controller.LoadInspector();
             Draw();
         }
 
-        private void LoadInspector() {
-
+        private void Update() {
+            if (Input.GetKeyUp(KeyCode.A)) {
+                controller.Input(KeyCode.A);
+                PlayTestGame();
+            }
         }
 
         private void Draw() {
-            throw new NotImplementedException();
+            editGameView.Draw();
         }
 
-        public void PlayTestGame() {
-            editGameController.Play();
+        private void PlayTestGame() {
+            // todo: 바로 PlayScene을 연다
         }
     }
 }

@@ -3,11 +3,8 @@ using UnityEditor;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
-    public class EditInspector : MonoBehaviour {
-        private IEditGameController _editGameController = null;
-
-        public event Action<IEditGameController> OnLoadLevel;
-
+    public class EditInspector : MonoBehaviour, IEditGameControllerEventListener {
+        public event Action<string> OnFinishLoadLevel;
 #region Public Property
         public int LevelIndex {
             get => PlayerPrefs.GetInt("LAST_INDEX", 1);
@@ -31,33 +28,41 @@ namespace GemMatch.LevelEditor {
         private void SetDirty() => EditorUtility.SetDirty(this.gameObject);
 
 
-        public void Initialize(IEditGameController gameController) {
-            _editGameController = gameController;
+        private IInspectorEventListener _contorller;
+        private int width;
+        private int height;
+
+        public void Initialize(IInspectorEventListener gameController) {
+            this._contorller = gameController;
             LoadLevel1();
         }
 
         private void LoadLevel1() {
-            if (_editGameController == null) return;
-
+            LevelIndex = 0;
+            width = 9;
+            height = 9;
             LoadLevel(1);
         }
 
         private void LoadLevel(int levelIndex) {
-            // todo: 레벨파일을 읽어 gameController 갱신
             var levelExporter = new LevelExporter(SavePath);
             var levelStream = levelExporter.Load(levelIndex);
-            _editGameController.Initialize(levelStream);
-            OnLevelLoad?.Invoke(_editGameController);
+            OnFinishLoadLevel?.Invoke(levelStream);
         }
 
+        public event Func<IEditGameController> OnSaveLevel;
         public void SaveLevel() {
             // todo: 현재 상태를 파일 형태로 저장
             var fileMaker = new LevelFileMaker(SavePath);
             string levelStream = "레벨 파일 stream";
             fileMaker.SetLevelIndex(LevelIndex);
-            fileMaker.SetTargetLevel(_editGameController);
+            fileMaker.SetTargetLevel(_contorller.GetLevelStatus());
             fileMaker.Save();
         }
 
+    }
+
+    public interface IEditGameControllerEventListener {
+        event Func<IEditGameController> OnSaveLevel;
     }
 }
