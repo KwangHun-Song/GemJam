@@ -29,7 +29,7 @@ namespace GemMatch {
         }
 
         public void Refresh() {
-            background.color = Tile.IsVisible ? Color.gray : Color.white;
+            background.color = Tile.IsOpened == false ? Color.gray : Color.white;
         }
 
         public async UniTask ApplyEntityViewAsync(EntityView entityView, bool immediately = false) {

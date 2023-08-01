@@ -3,22 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GemMatch {
-    [Serializable]
     public class Tile {
-        public int index;
+        public TileModel Model { get; }
+        public bool IsOpened => Model.isOpened;
 
-        private bool isVisible;
-        public bool IsVisible => isVisible;
-
-        private List<Entity> entities;
-        private SortedSet<Entity> sortedEntities;
-        public SortedSet<Entity> Entities => sortedEntities ??= new SortedSet<Entity>(entities);
+        public SortedSet<Entity> sortedEntities;
+        public SortedSet<Entity> Entities => sortedEntities ??= new SortedSet<Entity>(Model.entityModels.Select(Controller.GetEntity));
 
         public List<ITileEvent> listeners = new List<ITileEvent>();
 
-        public int Index => index;
-        public int X => index % Constants.Width;
-        public int Y => index / Constants.Width;
+        public int Index => Model.index;
+        public int X => Index % Constants.Width;
+        public int Y => Index / Constants.Width;
         
         public Tile Left { get; private set; }
         public Tile Right { get; private set; }
@@ -29,18 +25,12 @@ namespace GemMatch {
 
         public Entity Piece => Entities.SingleOrDefault(e => e.Layer == Layer.Piece);
 
-        public Tile(int index, bool isVisible, IEnumerable<Entity> entities) {
-            this.index = index;
-            this.isVisible = isVisible;
-            this.entities = entities.ToList();
+        public Tile(TileModel model) {
+            Model = model;
         }
         
         public Tile Clone() {
-            return new Tile (
-                index = Index,
-                isVisible = IsVisible,
-                entities = Entities.Select(e => e.Clone()).ToList()
-            );
+            return new Tile(Model.Clone());
         }
 
         public void Initialize(Controller controller) {
@@ -53,10 +43,10 @@ namespace GemMatch {
         }
 
         public bool CanPassThrough() {
-            if (IsVisible == false) return false;
+            if (IsOpened == false) return false;
             if (Entities.Any() == false) return true;
 
-            return Entities.All(e => e.CanPassThrough);
+            return Entities.All(e => e.CanPassThrough());
         }
 
         public bool AddEntity(Entity entity) {
@@ -79,8 +69,8 @@ namespace GemMatch {
 
         public void SplashHit() {
             foreach (var entity in Entities) {
-                if (entity.CanSplashHit) entity.SplashHit();
-                if (entity.PreventSplashHit) break;
+                if (entity.CanSplashHit()) entity.SplashHit();
+                if (entity.PreventSplashHit()) break;
             }
         }
     }

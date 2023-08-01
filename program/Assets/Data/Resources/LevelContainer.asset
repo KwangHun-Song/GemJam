@@ -15,91 +15,548 @@ MonoBehaviour:
   levels:
   - tiles:
     - index: 0
+      isOpened: 0
+      entityModels: []
     - index: 1
+      isOpened: 0
+      entityModels: []
     - index: 2
+      isOpened: 0
+      entityModels: []
     - index: 3
+      isOpened: 0
+      entityModels: []
     - index: 4
+      isOpened: 0
+      entityModels: []
     - index: 5
+      isOpened: 0
+      entityModels: []
     - index: 6
+      isOpened: 0
+      entityModels: []
     - index: 7
+      isOpened: 0
+      entityModels: []
     - index: 8
+      isOpened: 0
+      entityModels: []
     - index: 9
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 5
     - index: 10
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 4
     - index: 11
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 12
+      isOpened: 0
+      entityModels: []
     - index: 13
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 2
     - index: 14
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 5
     - index: 15
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 2
     - index: 16
+      isOpened: 0
+      entityModels: []
     - index: 17
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 18
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 19
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 3
     - index: 20
+      isOpened: 0
+      entityModels: []
     - index: 21
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 4
     - index: 22
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 3
     - index: 23
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 24
+      isOpened: 0
+      entityModels: []
     - index: 25
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 26
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 27
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 28
+      isOpened: 0
+      entityModels: []
     - index: 29
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 30
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 31
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 32
+      isOpened: 0
+      entityModels: []
     - index: 33
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 2
     - index: 34
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 35
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 2
     - index: 36
+      isOpened: 0
+      entityModels: []
     - index: 37
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 38
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 2
     - index: 39
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 40
+      isOpened: 0
+      entityModels: []
     - index: 41
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 42
+      isOpened: 0
+      entityModels: []
     - index: 43
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 44
+      isOpened: 0
+      entityModels: []
     - index: 45
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 46
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 47
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 48
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 4
     - index: 49
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 50
+      isOpened: 0
+      entityModels: []
     - index: 51
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 4
     - index: 52
+      isOpened: 0
+      entityModels: []
     - index: 53
+      isOpened: 0
+      entityModels: []
     - index: 54
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 55
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 56
+      isOpened: 0
+      entityModels: []
     - index: 57
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 58
+      isOpened: 0
+      entityModels: []
     - index: 59
+      isOpened: 0
+      entityModels: []
     - index: 60
+      isOpened: 0
+      entityModels: []
     - index: 61
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 62
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 63
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 4
     - index: 64
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 4
     - index: 65
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 3
     - index: 66
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 67
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 68
+      isOpened: 0
+      entityModels: []
     - index: 69
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 3
     - index: 70
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 5
     - index: 71
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 72
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 73
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 74
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 75
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 2
     - index: 76
+      isOpened: 0
+      entityModels: []
     - index: 77
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 3
     - index: 78
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
     - index: 79
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 3
     - index: 80
+      isOpened: 0
+      entityModels: []
     - index: 81
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 82
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 83
+      isOpened: 0
+      entityModels: []
     - index: 84
+      isOpened: 0
+      entityModels: []
     - index: 85
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 86
+      isOpened: 1
+      entityModels:
+      - index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
     - index: 87
+      isOpened: 0
+      entityModels: []
+    missions: []
     colorCount: 6

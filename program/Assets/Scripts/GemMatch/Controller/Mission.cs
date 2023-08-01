@@ -1,6 +1,9 @@
+using System;
+
 namespace GemMatch {
+    [Serializable]
     public class Mission {
-        public Entity entity;
+        public EntityModel entity;
         public int count;
     }
 }

@@ -3,7 +3,7 @@ using System;
 namespace GemMatch {
     public enum EntityIndex {
         None,
-        Normal,
+        NormalPiece,
     }
 
     public enum Layer {
@@ -11,20 +11,29 @@ namespace GemMatch {
         Piece,
     }
     
-    public abstract class Entity : IComparable<Entity> {
-        public abstract EntityIndex Index { get; }
-        public abstract Layer Layer { get; }
-        
-        public virtual int Durability { get; protected set; }
-        public virtual ColorIndex Color { get; protected set; } = ColorIndex.None;
-        
-        public virtual bool PreventTouch => false;
-        public virtual bool CanPassThrough => Layer != Layer.Piece;
-        public virtual bool CanAddMemory => Index == EntityIndex.Normal;
-        public virtual bool CanSplashHit => false;
-        public virtual bool PreventSplashHit => false;
+    public class Entity : IComparable<Entity> {
+        public EntityModel Model { get; }
+        public virtual EntityIndex Index => Model.index;
+        public virtual Layer Layer => Model.layer;
 
-        public abstract Entity Clone();
+        public virtual int Durability {
+            get => Model.durability;
+            set { }
+        }
+
+        public virtual ColorIndex Color {
+            get => Model.color;
+            set { }
+        }
+        
+        public virtual bool PreventTouch() => false;
+        public virtual bool CanPassThrough() => Layer != Layer.Piece;
+        public virtual bool CanAddMemory() => Index == EntityIndex.NormalPiece;
+        public virtual bool CanSplashHit() => false;
+        public virtual bool PreventSplashHit() => false;
+
+        public Entity(EntityModel model) { Model = model; }
+        public virtual Entity Clone() => new Entity(Model);
 
         public int CompareTo(Entity other) => Layer.CompareTo(other.Layer);
 
