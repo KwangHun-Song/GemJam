@@ -5,7 +5,7 @@ namespace GemMatch {
         void OnFailGame(Mission[] missions);
         void OnReplayGame(Mission[] missions);
         
-        void OnAddMemory(Controller controller, Entity entity);
+        void OnMoveToMemory(Controller controller, Tile tile, Entity entity);
         void OnRemoveMemory(Controller controller,Entity entity);
     }
 }

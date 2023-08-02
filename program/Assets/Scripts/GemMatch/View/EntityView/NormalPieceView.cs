@@ -8,8 +8,17 @@ namespace GemMatch {
         [SerializeField] private Sprite[] sprites;
         [SerializeField] private Image mainImage;
 
-        public async override UniTask OnCreate() {
+        public async override UniTask OnCreate(Controller controller) {
+            Redraw(controller);
+        }
+
+        public async override UniTask OnUpdate(Controller controller) {
+            Redraw(controller);
+        }
+
+        private void Redraw(Controller controller) {
             mainImage.sprite = sprites[(int)Entity.Color];
+            mainImage.color = controller.HasPathToTop(controller.GetTile(Entity)) ? Color.white : Color.gray;
         }
 
         public void OnClick() {
