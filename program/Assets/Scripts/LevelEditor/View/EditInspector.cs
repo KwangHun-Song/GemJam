@@ -28,11 +28,11 @@ namespace GemMatch.LevelEditor {
         private void SetDirty() => EditorUtility.SetDirty(this.gameObject);
 
 
-        private IInspectorEventListener _contorller;
+        private IEditInspectorEventListener _contorller;
         private int width;
         private int height;
 
-        public void Initialize(IInspectorEventListener gameController) {
+        public void Initialize(IEditInspectorEventListener gameController) {
             this._contorller = gameController;
             LoadLevel1();
         }

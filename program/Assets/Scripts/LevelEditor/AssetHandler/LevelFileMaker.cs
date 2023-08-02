@@ -18,7 +18,7 @@ namespace GemMatch.LevelEditor {
         }
 
         private string levelStream;
-        public void SetTargetLevel(LevelSchema editGameController) {
+        public void SetTargetLevel(Level[] editGameController) {
             // todo: contorller의 데이터를 serialize -> string으로 저장
         }
     }

@@ -10,7 +10,7 @@ namespace GemMatch.LevelEditor {
             if (t == null) {
                 throw new NullReferenceException("NEED EditorInspector");
             }
-            t.OnLoadLevel += OnLoadLevel;
+            // t.OnLoadLevel += OnLoadLevel;
         }
 
         private void OnDisable() {

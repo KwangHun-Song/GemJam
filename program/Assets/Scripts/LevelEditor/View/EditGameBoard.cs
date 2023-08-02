@@ -1,32 +1,30 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace GemMatch.LevelEditor {
+    [RequireComponent(typeof(GridLayout))]
     public class EditGameBoard : UIBehaviour {
-        [SerializeField] private CurrentGameObject currentTileView;
-        [SerializeField] private CurrentGameObject currentEntityView;
+        [SerializeField] private TileView prefabBase;
 
-        public void Repaint() {
-            currentTileView.Repaint();
-        }
+        private GridLayout gridBoard;
+        private int _height = 11;
+        private int _width = 9;
 
-        internal class CurrentGameObject : MonoBehaviour {
-            public RectTransform RectTransform;
-            public Transform Transform;
-            public GameObject GameObject;
-            public SpriteRenderer SpriteRenderer;
-
-            private void Awake() {
-                this.Transform = transform;
-                this.RectTransform = GetComponent<RectTransform>();
-                this.SpriteRenderer = GetComponent<SpriteRenderer>();
-                this.GameObject = gameObject;
+        public void Initialize(EditGameView editGameView, int height, int width) {
+            this._height = height;
+            this._width = width;
+            gridBoard = GetComponent<GridLayout>();
+            var tiles = new List<TileView>();
+            for (int i = 0; i < height * width; i++) {
+                var tile = Instantiate(prefabBase, gridBoard.transform);
+                var editView = tile.AddComponent<EditEntityView>();
+                editView.InjectView(editGameView);
+                tiles.Add(tile);
             }
 
-            public void Repaint() {
-                // todo: 데이터에 따라 랜더러 바꾸기
-
-            }
+            editGameView.SetTileView(tiles);
         }
     }
 }
