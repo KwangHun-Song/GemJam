@@ -1,16 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 
 namespace GemMatch {
     public enum GameResult { Clear, Fail }
-    public enum ColorIndex { None = 0, Red, Orange, Yellow, Green, Blue, Purple }
+    public enum ColorIndex { None = 0, Red, Orange, Yellow, Green, Blue, Purple, Random }
     
     public class Controller {
         private const int MaxMemoryCount = 7;
         
         private UniTaskCompletionSource<GameResult> gameCompletionSource;
-        private List<IControllerEvent> listeners = new List<IControllerEvent>();
+        public List<IControllerEvent> Listeners { get; } = new List<IControllerEvent>();
 
         public Level CurrentLevel { get; private set; }
         public Tile[] Tiles { get; private set; }
@@ -22,14 +23,14 @@ namespace GemMatch {
             CurrentLevel = level;
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
-            Tiles = level.tiles.Select(t => t.Clone()).ToArray();
+            Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             foreach (var tile in Tiles) tile.Initialize(this);
 
             // 게임 시작
             gameCompletionSource = new UniTaskCompletionSource<GameResult>();
 
             // 이벤트 전달
-            foreach (var listener in listeners) listener.OnStartGame(this);
+            foreach (var listener in Listeners) listener.OnStartGame(this);
         }
 
         public async UniTask<GameResult> WaitUntilGameEnd() {
@@ -69,21 +70,21 @@ namespace GemMatch {
             gameCompletionSource.TrySetResult(GameResult.Clear);
             
             // 이벤트 전달
-            foreach (var listener in listeners) listener.OnClearGame(Missions);
+            foreach (var listener in Listeners) listener.OnClearGame(Missions);
         }
 
         public void FailGame() {
             gameCompletionSource.TrySetResult(GameResult.Fail);
             
             // 이벤트 전달
-            foreach (var listener in listeners) listener.OnFailGame(Missions);
+            foreach (var listener in Listeners) listener.OnFailGame(Missions);
         }
 
         public void ReplayGame() {
             StartGame(CurrentLevel);
             
             // 이벤트 전달
-            foreach (var listener in listeners) listener.OnReplayGame(Missions);
+            foreach (var listener in Listeners) listener.OnReplayGame(Missions);
         }
 
         public Tile GetTile(int x, int y) {
@@ -95,6 +96,12 @@ namespace GemMatch {
             return Tiles[y * Constants.Width + x];
         }
 
+        public static Entity GetEntity(EntityModel entityModel) {
+            return entityModel.index switch {
+                EntityIndex.NormalPiece => new NormalPiece(entityModel),
+            };
+        }
+
         private bool IsCleared() {
             return !Missions.Where((mission, index) => CurrentLevel.missions[index].count > mission.count).Any();
         }
@@ -103,14 +110,14 @@ namespace GemMatch {
             return Memory.Count >= MaxMemoryCount;
         }
 
-        private bool CanTouch(Tile tile) {
-            if (tile.Piece == null || tile.Piece.CanAddMemory == false) return false;
-            if (tile.Entities.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch)) return false;
+        private static bool CanTouch(Tile tile) {
+            if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
+            if (tile.Entities.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
 
             return HasPathToTop(tile);
         }
 
-        private bool HasPathToTop(Tile startTile) {
+        private static bool HasPathToTop(Tile startTile) {
             // 방문한 타일들을 추적하기 위한 집합
             var visitedTiles = new HashSet<Tile>();
     
@@ -154,14 +161,14 @@ namespace GemMatch {
             for (int i = Memory.Count - 1; i >= 0; i--) {
                 if (Memory[i] is NormalPiece piece && piece.Color == color) {
                     Memory.Remove(piece);
-                    foreach (var listener in listeners) listener.OnRemoveMemory(this, piece);
+                    foreach (var listener in Listeners) listener.OnRemoveMemory(this, piece);
                 }
             }
         }
 
         private void AddToMemory(Entity piece) {
             Memory.Add(piece);
-            foreach (var listener in listeners) listener.OnAddMemory(this, piece);
+            foreach (var listener in Listeners) listener.OnAddMemory(this, piece);
         }
 
         private static IEnumerable<ColorIndex> GetThreeColors(List<Entity> colorIndices) {

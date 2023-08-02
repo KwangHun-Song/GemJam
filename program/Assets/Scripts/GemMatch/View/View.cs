@@ -10,11 +10,11 @@ namespace GemMatch {
         [SerializeField] private TMP_Text gameStatusText;
 
         private TileView[] tileViews;
-        public TileView[] TileViews => tileViews ??= tileViewRoot.GetComponents<TileView>();
+        public TileView[] TileViews => tileViews ??= tileViewRoot.GetComponentsInChildren<TileView>();
 
         private MemoryView[] memoryViews;
         public MemoryView[] MemoryViews {
-            get { return memoryViews ??= memoryViewRoot.GetComponents<MemoryView>(); }
+            get { return memoryViews ??= memoryViewRoot.GetComponentsInChildren<MemoryView>(); }
             private set => memoryViews = value;
         }
 
@@ -24,8 +24,14 @@ namespace GemMatch {
             Controller = controller;
             var tiles = controller.Tiles;
             
-            for (int i = 0; i < tileViews.Length; i++) {
+            for (int i = 0; i < TileViews.Length; i++) {
                 TileViews[i].Initialize(this, tiles[i]);
+            }
+
+            foreach (var tileView in TileViews) {
+                foreach (var entityView in tileView.EntityViews) {
+                    entityView.OnCreate().Forget();
+                }
             }
 
             foreach (var memoryView in MemoryViews) {
@@ -78,7 +84,7 @@ namespace GemMatch {
         }
 
         public void OnClickEntity(Entity entity) {
-            var tile = Controller.Tiles.Single(t => t.Entities.Contains(entity));
+            var tile = Controller.Tiles.Single(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
             Controller.Input(tile.Index);
 
             if (tile.Entities.Contains(entity) == false) {

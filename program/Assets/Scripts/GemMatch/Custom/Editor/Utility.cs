@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -26,13 +27,16 @@ namespace GemMatch.Custom.Editor {
             EditorUtility.SetDirty(LevelLoader.GetContainer());
             AssetDatabase.SaveAssets();
 
-            Tile GetTile(string str) {
+            TileModel GetTile(string str) {
                 var value = string.IsNullOrEmpty(str) ? 0 : int.Parse(str);
-                return new Tile(
-                    index:0,
-                    isVisible: value > -1,
-                    entities: value == -1 ? new [] { new NormalPiece() } : Array.Empty<Entity>()
-                );
+                return new TileModel {
+                    isOpened = value >= -1,
+                    entityModels = value >= 0 ? new List<EntityModel> { new EntityModel {
+                        index = EntityIndex.NormalPiece,
+                        layer = Layer.Piece,
+                        color = (ColorIndex)value,
+                    }} : new List<EntityModel>()
+                };
             }
         }
     }
