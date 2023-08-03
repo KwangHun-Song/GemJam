@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 
 namespace GemMatch {
     public enum GameResult { Clear, Fail }
@@ -15,8 +15,10 @@ namespace GemMatch {
 
         public Level CurrentLevel { get; private set; }
         public Tile[] Tiles { get; private set; }
-        public List<Entity> Memory { get; private set; }
         public Mission[] Missions { get; private set; }
+        
+        public List<Entity> Memory { get; private set; }
+        public HashSet<Tile> ActiveTiles { get; private set; } = new HashSet<Tile>();
 
         public void StartGame(Level level) {
             // 초기화
@@ -24,13 +26,15 @@ namespace GemMatch {
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
-            foreach (var tile in Tiles) tile.Initialize(this);
 
             // 게임 시작
             gameCompletionSource = new UniTaskCompletionSource<GameResult>();
 
             // 이벤트 전달
             foreach (var listener in Listeners) listener.OnStartGame(this);
+            
+            // Active 타일들을 한 번 계산해준다.
+            CalculateActiveTiles();
         }
 
         public async UniTask<GameResult> WaitUntilGameEnd() {
@@ -46,14 +50,6 @@ namespace GemMatch {
             
             // 타일 터치 처리
             Touch(tile);
-
-            // 메모리에 추가
-            MoveToMemory(tile);
-
-            // 같은 색깔이 세 개면 제거
-            foreach (var color in GetThreeColors(Memory)) {
-                RemoveFromMemory(color);
-            }
             
             // 클리어조건 검사
             if (IsCleared()) {
@@ -91,10 +87,12 @@ namespace GemMatch {
             if (x < 0) return null;
             if (x > Constants.Width - 1) return null;
             if (y < 0) return null;
-            if (y * Constants.Width + x > Tiles.Length - 1) return null;
+            if (y > GetTopY()) return null;
 
             return Tiles[y * Constants.Width + x];
         }
+
+        public int GetTopY() => Tiles.Max(t => t.Y); // 0 based. 최적화가 필요하면 캐싱하자.
 
         public Tile GetTile(Entity entity) => Tiles.SingleOrDefault(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
 
@@ -112,20 +110,29 @@ namespace GemMatch {
             return Memory.Count >= MaxMemoryCount;
         }
 
+        private void CalculateActiveTiles() {
+            var newActiveTiles = Tiles
+                .Where(t => !ActiveTiles.Contains(t) && CanTouch(t))
+                .ToArray();
+            
+            ActiveTiles.AddRange(newActiveTiles);
+            foreach (var listener in Listeners) listener.OnAddActiveTiles(newActiveTiles);
+        }
+
         private bool CanTouch(Tile tile) {
             if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
             if (tile.Entities.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
+            if (HasPathToTop(tile) == false) return false;
 
-            return HasPathToTop(tile);
+            return true;
         }
 
         public bool HasPathToTop(Tile startTile) {
             // 시작 타일이 가장 상단이면 바로 true 반환
-            if (GetTile(startTile.X, startTile.Y + 1) == null) return true;
+            if (startTile.Y == GetTopY()) return true;
             
-            // 방문한 타일들을 추적하기 위한 집합
-            var visitedTiles = new HashSet<Tile>();
-            visitedTiles.Add(startTile);  // 시작 타일을 방문한 것으로 표시
+            // 방문한 타일들을 추적하기 위한 집합, 시작 타일을 방문한 것으로 표시
+            var visitedTiles = new HashSet<Tile> { startTile };
 
             // 인접한 타일들을 검사
             foreach (var adjacentTile in GetAdjacentTiles(startTile)) {
@@ -140,12 +147,12 @@ namespace GemMatch {
         }
 
         private bool FindPathToTopDfs(Tile tile, HashSet<Tile> visitedTiles) {
-            // 이미 방문한 타일이라면 바로 반환, 이 타일을 방문한 것으로 표시
+            // 이미 방문한 타일이라면 바로 반환
             if (visitedTiles.Contains(tile)) return false;
-            visitedTiles.Add(tile);
+            visitedTiles.Add(tile); // 이 타일을 방문한 것으로 표시
 
             // 타일이 위쪽 가장자리에 도달했다면 true 반환
-            if (GetTile(tile.X, tile.Y + 1) == null) return true;
+            if (tile.Y == GetTopY()) return true;
 
             // 이 타일이 점유되어 있다면 경로가 없는 것으로 간주
             if (tile.CanPassThrough() == false) return false;
@@ -162,31 +169,25 @@ namespace GemMatch {
             return false;
         }
 
-        private IEnumerable<Tile> GetAdjacentTiles(Tile tile) {
-            if (tile.X > 0 && GetTile(tile.X - 1, tile.Y) != null) 
-                yield return GetTile(tile.X - 1, tile.Y);
-            if (tile.X < Constants.Width - 1 && GetTile(tile.X + 1, tile.Y) != null) 
-                yield return GetTile(tile.X + 1, tile.Y);
-            if (tile.Y > 0 && GetTile(tile.X, tile.Y - 1) != null) 
-                yield return GetTile(tile.X, tile.Y - 1);
-            if (tile.Y < Constants.Height - 1 && GetTile(tile.X, tile.Y + 1) != null) 
-                yield return GetTile(tile.X, tile.Y + 1);
-        }
-
         private void Touch(Tile tile) {
-            foreach (var adjacentTile in GetAdjacentTiles(tile)) {
-                adjacentTile.SplashHit();
-            }
+            var piece = tile.Piece;
+
+            // 먼저 타일을 Hit 처리
+            Hit(tile);
+            
+            // 메모리로 이동시킨다.
+            MoveToMemory(tile);
+            
+            // 메모리에서 같은 색깔 세 개가 있을 경우 파괴한다.
+            TryRemoveFromMemory(piece);
         }
 
-        private void RemoveFromMemory(ColorIndex color) {
-            for (int i = Memory.Count - 1; i >= 0; i--) {
-                if (Memory[i] is NormalPiece piece && piece.Color == color) {
-                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model));
-                    if (mission != null) mission.count++;
-                    Memory.Remove(piece);
-                    foreach (var listener in Listeners) listener.OnRemoveMemory(this, piece);
-                }
+        private void Hit(Tile tile) {
+            tile.Hit();
+            
+            // 주변 타일에 SplashHit
+            foreach (var adjacentTile in GetAdjacentTiles(tile)) {
+                adjacentTile.Hit();
             }
         }
 
@@ -194,15 +195,44 @@ namespace GemMatch {
             var piece = tile.Piece;
             Memory.Add(piece);
             tile.RemoveLayer(Layer.Piece);
-            foreach (var listener in Listeners) listener.OnMoveToMemory(this, tile, piece);
+            foreach (var listener in Listeners) listener.OnMoveToMemory(tile, piece);
+            
+            CalculateActiveTiles();
         }
 
-        private static IEnumerable<ColorIndex> GetThreeColors(List<Entity> colorIndices) {
-            return colorIndices.Where(e => e is NormalPiece)
-                .GroupBy(e => e.Color)
-                .Where(g => g.Count() >= 3)
-                .Select(g => g.Key)
+        private bool TryRemoveFromMemory(Entity piece) {
+            var color = piece.Color;
+            var targetEntitiesInMemory = Memory
+                .Where(e => e is NormalPiece np && np.Color == color)
                 .ToArray();
+            
+            // 같은 색깔이 세 개여야 제거할 수 있다.
+            if (targetEntitiesInMemory.Count() < 3) {
+                return false;
+            }
+
+            // 메모리에서 엔티티를 제거
+            foreach (var e in targetEntitiesInMemory.Take(3)) {
+                Memory.Remove(e);
+                foreach (var listener in Listeners) listener.OnRemoveMemory(e);
+            }
+            
+            // 미션 증가
+            var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model));
+            if (mission != null) mission.count += 3;
+
+            return true;
+        }
+
+        private IEnumerable<Tile> GetAdjacentTiles(Tile tile) {
+            if (tile.X > 0 && GetTile(tile.X - 1, tile.Y) != null) 
+                yield return GetTile(tile.X - 1, tile.Y);
+            if (tile.X < Constants.Width - 1 && GetTile(tile.X + 1, tile.Y) != null) 
+                yield return GetTile(tile.X + 1, tile.Y);
+            if (tile.Y > 0 && GetTile(tile.X, tile.Y - 1) != null) 
+                yield return GetTile(tile.X, tile.Y - 1);
+            if (tile.Y < GetTopY() && GetTile(tile.X, tile.Y + 1) != null) 
+                yield return GetTile(tile.X, tile.Y + 1);
         }
     }
 }

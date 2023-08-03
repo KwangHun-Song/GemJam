@@ -11,9 +11,7 @@ namespace GemMatch {
             Entity = entity;
         }
 
-        public virtual async UniTask OnCreate(Controller controller) { }
-        
-        public virtual async UniTask OnUpdate(Controller controller) { }
+        public virtual async UniTask OnCreate() { }
 
         public virtual async UniTask DestroyAsync() {
             DestroyImmediate(gameObject);

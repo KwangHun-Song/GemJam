@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using TMPro;
@@ -30,7 +31,7 @@ namespace GemMatch {
 
             foreach (var tileView in TileViews) {
                 foreach (var entityView in tileView.EntityViews) {
-                    entityView.OnCreate(Controller).Forget();
+                    entityView.OnCreate().Forget();
                 }
             }
 
@@ -51,30 +52,30 @@ namespace GemMatch {
 
         public void OnReplayGame(Mission[] missions) { }
 
-        public void OnMoveToMemory(Controller controller, Tile tile, Entity entity) {
+        public void OnMoveToMemory(Tile tile, Entity entity) {
             AddMemoryAsync().Forget();
 
             async UniTask AddMemoryAsync() {
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
+                
+                // 엔티티뷰의 부모를 타일에서 메모리로 바꾼다.
                 entityView.transform.SetParent(memoryView.CellRoot);
                 entityView.transform.localPosition = Vector3.zero;
 
+                // 타일뷰 소속에서 해당 엔티티뷰를 제거한다.
                 tileView.EntityViews.Remove(entityView);
+                
+                // 메모리뷰 소속에서는 엔티티뷰를 추가한다.
                 await memoryView.AddEntityAsync(entityView);
                 
-                foreach (var tv in TileViews) {
-                    foreach (var ev in tv.EntityViews) {
-                        ev.OnUpdate(Controller).Forget();
-                    }
-                }
-                
+                // 메모리를 정렬한다.
                 await SortMemoryAsync();
             }
         }
 
-        public void OnRemoveMemory(Controller controller, Entity entity) {
+        public void OnRemoveMemory(Entity entity) {
             RemoveMemoryAsync().Forget();
 
             async UniTask RemoveMemoryAsync() {
@@ -82,6 +83,14 @@ namespace GemMatch {
                     .Single(v => v.EntityView != null && ReferenceEquals(v.EntityView.Entity, entity))
                     .RemoveEntityAsync();
                 await SortMemoryAsync();
+            }
+        }
+
+        public void OnAddActiveTiles(IEnumerable<Tile> tiles) {
+            foreach (var entityView in TileViews.Where(tv => tiles.Contains(tv.Tile))
+                         .SelectMany(tv => tv.EntityViews)
+                         .Where(ev => ev is IReceiveActivation)) {
+                ((IReceiveActivation)entityView).OnActive();
             }
         }
 
@@ -98,8 +107,7 @@ namespace GemMatch {
         }
 
         public void OnClickEntity(Entity entity) {
-            var tile = Controller.Tiles.Single(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
-            Controller.Input(tile.Index);
+            Controller.Input(Controller.GetTile(entity).Index);
         }
 
         internal EntityView CreateEntityView(Entity entity, Transform parent) {
