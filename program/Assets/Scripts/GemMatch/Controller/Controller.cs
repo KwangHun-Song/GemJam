@@ -48,7 +48,7 @@ namespace GemMatch {
             Touch(tile);
 
             // 메모리에 추가
-            AddToMemory(tile.Piece);
+            MoveToMemory(tile);
 
             // 같은 색깔이 세 개면 제거
             foreach (var color in GetThreeColors(Memory)) {
@@ -96,6 +96,8 @@ namespace GemMatch {
             return Tiles[y * Constants.Width + x];
         }
 
+        public Tile GetTile(Entity entity) => Tiles.SingleOrDefault(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
+
         public static Entity GetEntity(EntityModel entityModel) {
             return entityModel.index switch {
                 EntityIndex.NormalPiece => new NormalPiece(entityModel),
@@ -110,36 +112,46 @@ namespace GemMatch {
             return Memory.Count >= MaxMemoryCount;
         }
 
-        private static bool CanTouch(Tile tile) {
+        private bool CanTouch(Tile tile) {
             if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
             if (tile.Entities.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
 
             return HasPathToTop(tile);
         }
 
-        private static bool HasPathToTop(Tile startTile) {
+        public bool HasPathToTop(Tile startTile) {
+            // 시작 타일이 가장 상단이면 바로 true 반환
+            if (GetTile(startTile.X, startTile.Y + 1) == null) return true;
+            
             // 방문한 타일들을 추적하기 위한 집합
             var visitedTiles = new HashSet<Tile>();
+            visitedTiles.Add(startTile);  // 시작 타일을 방문한 것으로 표시
+
+            // 인접한 타일들을 검사
+            foreach (var adjacentTile in GetAdjacentTiles(startTile)) {
+                // 이웃 타일로의 경로가 있는지 DFS
+                if (FindPathToTopDfs(adjacentTile, visitedTiles)) {
+                    return true;
+                }
+            }
     
-            // DFS를 시작
-            return FindPathToTopDfs(startTile, visitedTiles);
+            // 모든 가능성을 다 찾아봤지만 경로가 없다면 false 반환
+            return false;
         }
 
-        private static bool FindPathToTopDfs(Tile tile, HashSet<Tile> visitedTiles) {
+        private bool FindPathToTopDfs(Tile tile, HashSet<Tile> visitedTiles) {
             // 이미 방문한 타일이라면 바로 반환, 이 타일을 방문한 것으로 표시
             if (visitedTiles.Contains(tile)) return false;
             visitedTiles.Add(tile);
 
             // 타일이 위쪽 가장자리에 도달했다면 true 반환
-            if (tile.Up == null) return true;
+            if (GetTile(tile.X, tile.Y + 1) == null) return true;
 
             // 이 타일이 점유되어 있다면 경로가 없는 것으로 간주
             if (tile.CanPassThrough() == false) return false;
 
             // 인접한 타일들을 검사
-            foreach (var adjacentTile in tile.AdjacentTiles) {
-                if (adjacentTile == null) continue;
-                    
+            foreach (var adjacentTile in GetAdjacentTiles(tile)) {
                 // 이웃 타일로의 경로가 있는지 DFS
                 if (FindPathToTopDfs(adjacentTile, visitedTiles)) {
                     return true;
@@ -150,9 +162,19 @@ namespace GemMatch {
             return false;
         }
 
+        private IEnumerable<Tile> GetAdjacentTiles(Tile tile) {
+            if (tile.X > 0 && GetTile(tile.X - 1, tile.Y) != null) 
+                yield return GetTile(tile.X - 1, tile.Y);
+            if (tile.X < Constants.Width - 1 && GetTile(tile.X + 1, tile.Y) != null) 
+                yield return GetTile(tile.X + 1, tile.Y);
+            if (tile.Y > 0 && GetTile(tile.X, tile.Y - 1) != null) 
+                yield return GetTile(tile.X, tile.Y - 1);
+            if (tile.Y < Constants.Height - 1 && GetTile(tile.X, tile.Y + 1) != null) 
+                yield return GetTile(tile.X, tile.Y + 1);
+        }
+
         private void Touch(Tile tile) {
-            tile.RemoveLayer(Layer.Piece);
-            foreach (var adjacentTile in tile.AdjacentTiles.Where(t => t != null)) {
+            foreach (var adjacentTile in GetAdjacentTiles(tile)) {
                 adjacentTile.SplashHit();
             }
         }
@@ -160,15 +182,19 @@ namespace GemMatch {
         private void RemoveFromMemory(ColorIndex color) {
             for (int i = Memory.Count - 1; i >= 0; i--) {
                 if (Memory[i] is NormalPiece piece && piece.Color == color) {
+                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model));
+                    if (mission != null) mission.count++;
                     Memory.Remove(piece);
                     foreach (var listener in Listeners) listener.OnRemoveMemory(this, piece);
                 }
             }
         }
 
-        private void AddToMemory(Entity piece) {
+        private void MoveToMemory(Tile tile) {
+            var piece = tile.Piece;
             Memory.Add(piece);
-            foreach (var listener in Listeners) listener.OnAddMemory(this, piece);
+            tile.RemoveLayer(Layer.Piece);
+            foreach (var listener in Listeners) listener.OnMoveToMemory(this, tile, piece);
         }
 
         private static IEnumerable<ColorIndex> GetThreeColors(List<Entity> colorIndices) {

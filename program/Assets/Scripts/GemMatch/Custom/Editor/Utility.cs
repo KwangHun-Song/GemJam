@@ -20,7 +20,15 @@ namespace GemMatch.Custom.Editor {
 
             var level = new Level {
                 tiles = rows,
-                colorCount = 6
+                colorCount = 6,
+                missions = rows
+                    .SelectMany(t => t.entityModels)
+                    .Where(em => em.color >= 0)
+                    .GroupBy(em => em.color)
+                    .Select(g => new Mission {
+                        entity = new EntityModel { index = EntityIndex.NormalPiece, layer = Layer.Piece, color = g.Key },
+                        count = g.Count()
+                }).ToArray()
             };
 
             LevelLoader.GetContainer().levels = new[] { level };

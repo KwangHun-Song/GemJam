@@ -15,13 +15,6 @@ namespace GemMatch {
         public int Index => Model.index;
         public int X => Index % Constants.Width;
         public int Y => Index / Constants.Width;
-        
-        public Tile Left { get; private set; }
-        public Tile Right { get; private set; }
-        public Tile Up { get; private set; }
-        public Tile Down { get; private set; }
-        
-        public IEnumerable<Tile> AdjacentTiles => new[] { Left, Right, Up, Down };
 
         public Entity Piece => Entities.SingleOrDefault(e => e.Layer == Layer.Piece);
 
@@ -34,11 +27,6 @@ namespace GemMatch {
         }
 
         public void Initialize(Controller controller) {
-            Left = controller.GetTile(X - 1, Y);
-            Right = controller.GetTile(X + 1, Y);
-            Up = controller.GetTile(X, Y + 1);
-            Down = controller.GetTile(X, Y - 1);
-
             foreach (var listener in listeners) listener.OnInitialize(this);
         }
 
@@ -58,7 +46,7 @@ namespace GemMatch {
         }
 
         public bool RemoveLayer(Layer layer) {
-            if (Entities.Any(e => e.Layer == layer)) return false;
+            if (Entities.Any(e => e.Layer == layer) == false) return false;
 
             var entity = Entities.Single(e => e.Layer == layer);
             Entities.Remove(entity);

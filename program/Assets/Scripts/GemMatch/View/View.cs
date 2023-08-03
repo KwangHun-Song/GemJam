@@ -31,7 +31,7 @@ namespace GemMatch {
 
             foreach (var tileView in TileViews) {
                 foreach (var entityView in tileView.EntityViews) {
-                    entityView.OnCreate().Forget();
+                    entityView.OnCreate(Controller).Forget();
                 }
             }
 
@@ -55,12 +55,25 @@ namespace GemMatch {
 
         public void OnReplayGame(Mission[] missions) { }
 
-        public void OnAddMemory(Controller controller, Entity entity) {
+        public void OnMoveToMemory(Controller controller, Tile tile, Entity entity) {
             AddMemoryAsync().Forget();
 
             async UniTask AddMemoryAsync() {
+                var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
+                var entityView = tileView.EntityViews.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
-                await memoryView.AddEntityAsync(CreateEntityView(entity, memoryView.CellRoot));
+                entityView.transform.SetParent(memoryView.CellRoot);
+                entityView.transform.localPosition = Vector3.zero;
+
+                tileView.EntityViews.Remove(entityView);
+                await memoryView.AddEntityAsync(entityView);
+                
+                foreach (var tv in TileViews) {
+                    foreach (var ev in tv.EntityViews) {
+                        ev.OnUpdate(Controller).Forget();
+                    }
+                }
+                
                 await SortMemoryAsync();
             }
         }
@@ -70,7 +83,7 @@ namespace GemMatch {
 
             async UniTask RemoveMemoryAsync() {
                 await MemoryViews
-                    .Single(v => v.EntityView.Entity == entity)
+                    .Single(v => v.EntityView != null && ReferenceEquals(v.EntityView.Entity, entity))
                     .RemoveEntityAsync();
                 await SortMemoryAsync();
             }
@@ -78,24 +91,19 @@ namespace GemMatch {
 
         public async UniTask SortMemoryAsync() {
             var sorted = MemoryViews
-                .OrderBy(v => v.EntityView != null)
-                .ThenBy(v => v.EntityView.Entity.Color);
+                .OrderBy(mv => mv.EntityView == null ? 1 : 0)
+                .ThenBy(mv => mv.EntityView?.Entity.Color ?? 0)
+                .ToArray();
             MemoryViews = sorted.ToArray();
 
             for (int i = MemoryViews.Length - 1; i >= 0; i--) {
-                MemoryViews[i].transform.SetAsLastSibling();
+                MemoryViews[i].transform.SetAsFirstSibling();
             }
         }
 
         public void OnClickEntity(Entity entity) {
             var tile = Controller.Tiles.Single(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
             Controller.Input(tile.Index);
-
-            if (tile.Entities.Contains(entity) == false) {
-                var tileView = TileViews.Single(tv => tv.Tile == tile);
-                var entityView = tileView.RemoveEntityView(entity.Layer);
-                entityView.DestroyAsync().Forget();
-            }
         }
 
         internal EntityView CreateEntityView(Entity entity, Transform parent) {
@@ -103,6 +111,7 @@ namespace GemMatch {
             var view = Instantiate(prefab, parent, true);
             view.transform.localPosition = Vector3.zero;
             view.transform.localScale = Vector3.one;
+            view.Initialize(null, entity);
 
             return view;
         }
