@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace GemMatch {
     public class MemoryView : MonoBehaviour {
@@ -12,8 +11,6 @@ namespace GemMatch {
         public EntityView EntityView { get; private set; }
         
         public void Initialize() {
-            touchable = new Touchable(this.GetComponent<Button>());
-            collidable = new Collidable(this.GetComponent<Collider2D>());
             if (IsEmpty() == false) RemoveEntityAsync(true).Forget();
         }
 
@@ -31,16 +28,5 @@ namespace GemMatch {
 
             EntityView = null;
         }
-
-
-        void ITouchable.Register(ITouchableListener listener) {
-            touchable.Register(this, listener);
-        }
-
-
-        void IColliderable.Register(ICollidableListener listener) {
-            collidable.Register(this, listener);
-        }
-
     }
 }

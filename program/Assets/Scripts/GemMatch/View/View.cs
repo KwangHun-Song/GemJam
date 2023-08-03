@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
 namespace GemMatch {
-    public class View : MonoBehaviour, IControllerEvent, ICollidableListener, ITouchableListener{
+    public class View : MonoBehaviour, IControllerEvent {
         [SerializeField] private Transform tileViewRoot;
         [SerializeField] private Transform memoryViewRoot;
         [SerializeField] private TMP_Text gameStatusText;
@@ -37,7 +36,6 @@ namespace GemMatch {
 
             foreach (var memoryView in MemoryViews) {
                 memoryView.Initialize();
-                AddListener(memoryView);
             }
 
             gameStatusText.text = "";
@@ -45,12 +43,10 @@ namespace GemMatch {
 
         public void OnClearGame(Mission[] missions) {
             gameStatusText.text = "Completed!";
-            ClearListeners();
         }
 
         public void OnFailGame(Mission[] missions) {
             gameStatusText.text = "failed!";
-            ClearListeners();
         }
 
         public void OnReplayGame(Mission[] missions) { }
@@ -114,27 +110,6 @@ namespace GemMatch {
             view.Initialize(null, entity);
 
             return view;
-        }
-
-        private void AddListener(object subject) {
-            if (subject is IColliderable l1) {
-                l1.Register(this);
-            }
-
-            if (subject is ITouchable l2) {
-                l2.Register(this);
-            }
-        }
-
-        private readonly List<IColliderable> collidedSubjects = new List<IColliderable>();
-        private readonly List<ITouchable> touchedSubjects = new List<ITouchable>();
-
-        public void NotifyOnCollide(IColliderable subject) {
-            collidedSubjects.Add(subject);
-        }
-
-        public void NotifyOnTouch(ITouchable subject) {
-            touchedSubjects.Add(subject);
         }
     }
 }
