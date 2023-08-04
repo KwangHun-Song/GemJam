@@ -6,5 +6,6 @@ namespace GemMatch {
         public TileModel[] tiles;
         public Mission[] missions;
         public int colorCount;
+        public ColorIndex[] colorCandidates;
     }
 }
