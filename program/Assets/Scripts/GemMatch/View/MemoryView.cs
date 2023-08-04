@@ -1,5 +1,5 @@
+using System;
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
 
 namespace GemMatch {
@@ -19,6 +19,10 @@ namespace GemMatch {
         }
 
         public async UniTask AddEntityAsync(EntityView entityView, bool immediately = false) {
+            if (EntityView != null) {
+                DestroyImmediate(EntityView);
+            }
+            
             EntityView = entityView;
         }
 

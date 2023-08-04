@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,10 +25,6 @@ namespace GemMatch {
             return new Tile(Model.Clone());
         }
 
-        public void Initialize(Controller controller) {
-            foreach (var listener in listeners) listener.OnInitialize(this);
-        }
-
         public bool CanPassThrough() {
             if (IsOpened == false) return false;
             if (Entities.Any() == false) return true;
@@ -55,10 +50,10 @@ namespace GemMatch {
             return true;
         }
 
-        public void SplashHit() {
+        public IEnumerable<HitResultInfo> Hit() {
             foreach (var entity in Entities) {
-                if (entity.CanSplashHit()) entity.SplashHit();
-                if (entity.PreventSplashHit()) break;
+                if (entity.CanSplashHit()) yield return entity.Hit();
+                if (entity.PreventHit()) break;
             }
         }
     }

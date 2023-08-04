@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 
@@ -11,6 +12,10 @@ namespace GemMatch {
             tween.OnComplete(() => { source.TrySetResult(true); });
 
             return source.Task;
+        }
+
+        public static T PickRandom<T>(this IList<T> collection) {
+            return collection[UnityEngine.Random.Range(0, collection.Count)];
         }
     }
 }
