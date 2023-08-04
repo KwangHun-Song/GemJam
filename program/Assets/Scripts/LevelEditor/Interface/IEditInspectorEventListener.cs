@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+
 namespace GemMatch.LevelEditor {
     public interface IEditInspectorEventListener {
-        event System.Action<IEditInspectorEventListener> OnTouch;
-        Level[] GetLevelStatus();
+        void MakeLevel1();
+        void LoadLevel(Level getLevel);
+        void SetColorCandidates(List<ColorIndex> colorCandidates);
     }
 }

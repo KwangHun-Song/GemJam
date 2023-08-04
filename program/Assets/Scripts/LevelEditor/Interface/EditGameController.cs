@@ -1,34 +1,24 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
     public class EditGameController : Controller, IEditGameController {
-#region Events
-        public event Action<IEditViewEventListener> onTouchForView;
-        event Action<IEditViewEventListener> IEditViewEventListener.OnTouch {
-            add => onTouchForView += value;
-            remove => onTouchForView -= value;
-        }
-
-        public event Action<IEditInspectorEventListener> onTouchForInspector;
-        event Action<IEditInspectorEventListener> IEditInspectorEventListener.OnTouch {
-            add => onTouchForInspector += value;
-            remove => onTouchForInspector -= value;
-        }
-
-        public event Action<IEditToolEventListener> onTouchForTool;
-        event Action<IEditToolEventListener> IEditToolEventListener.OnTouch {
-            add => onTouchForTool += value;
-            remove => onTouchForTool -= value;
-        }
-#endregion
         private readonly IEditLinkFromCtrlToView _view;
         private readonly IEditLinkFromCtrlToTool _tool;
+        private readonly EditInspector _inspector;
 
         // Memory와 Missions을 사용하지 않는다
         // CurrentLevel,Tiles만 사용
-        public EditGameController(IEditLinkFromCtrlToView editGameView) {
+        public EditGameController(IEditLinkFromCtrlToView editGameView, IEditLinkFromCtrlToTool tool, EditInspector inspector) {
             this._view = editGameView;
+            this._tool = tool;
+            this._inspector = inspector;
+            inspector.OnSaveLevel += lvs => {
+                lvs.Add(CurrentLevel);
+                return lvs;
+            };
         }
 
         public void Initialize(string levelStream) {
@@ -41,9 +31,8 @@ namespace GemMatch.LevelEditor {
         }
 
         public event Func<int, Level> OnLoadInspector;
-        public void LoadInspector() {
-            var currentLevel = OnLoadInspector?.Invoke(1);
-            StartGame(currentLevel);
+        public void LoadInspector(EditInspector editInspector) {
+            editInspector.LoadLevel(1);
         }
 
         // EditPage로부터 받는 Input
@@ -52,12 +41,19 @@ namespace GemMatch.LevelEditor {
                 case KeyCode.A:
                     break;
                 case KeyCode.UpArrow:
+                    if (Height > 4) Height--;
+                    break;
                 case KeyCode.DownArrow:
+                    if (Height < 11) Height++;
+                    break;
                 case KeyCode.LeftArrow:
+                    if (Width > 4) Width--;
+                    break;
                 case KeyCode.RightArrow:
-                    _view.ResizeBoard(keyCode);
+                    if (Width < 9) Width++;
                     break;
             }
+            _view.ResizeBoard(Height, Width);
         }
 
         // EditView로부터 받는 Input
@@ -70,18 +66,48 @@ namespace GemMatch.LevelEditor {
 
         public void ChangeTile(Tile tile) {
             CurrentLevel.tiles[tile.Index] = tile.Model.Clone();
+            StartGame(CurrentLevel);
         }
 
-        public event Action<Level> OnStartEdit;
-        public void StartEdit() {
-            var emptyLevel = new Level();
-            OnStartEdit?.Invoke(emptyLevel);
+        public void MakeLevel1() {
+            EditTiles = new List<Tile>();
+            EditEntities = new List<Entity>();
+            Width = 9;
+            Height = 11;
+            for (var i = 0; i < Width * Height; ++i) {
+                var x = i % Width;
+                var y = i / Width;
+                var tileModel = new TileModel() { index = i, isOpened = false, entityModels = EditEntityModels };
+                EditTileModels.Add(tileModel);
+                var tile = new Tile(tileModel);
+                EditTiles.Add(tile);
+            }
+            _view.UpdateBoard(EditTiles);
         }
 
-        public Level[] GetLevelStatus() {
-            // todo: 레벨을 만들기위한 상태추출하기
-            return new Level[1]; //
+        public void InstantiateLevel(Level level) {
+            EditTileModels.Clear();
+            foreach (TileModel model in level.tiles) {
+                EditTileModels.Add(model.Clone());
+            }
+            EditTiles = new List<Tile>();
+            EditEntities = new List<Entity>();
         }
 
+        public void LoadLevel(Level level) {
+            StartGame(level);
+            _view.UpdateBoard(base.Tiles.ToList());
+        }
+
+        public void SetColorCandidates(List<ColorIndex> colorCandidates) {
+            CurrentLevel.colorCandidates = colorCandidates.ToArray();
+        }
+
+        public List<Tile> EditTiles { get; private set; } = new List<Tile>();
+        public List<Entity> EditEntities { get; private set; } = new List<Entity>();
+        public List<EntityModel> EditEntityModels { get; private set; } = new List<EntityModel>();
+        public List<TileModel> EditTileModels { get; private set; } = new List<TileModel>();
+        public int Width { get; private set; }
+        public int Height { get; private set; }
     }
 }
