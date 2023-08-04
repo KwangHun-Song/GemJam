@@ -13,7 +13,7 @@ namespace GemMatch {
         private UniTaskCompletionSource<GameResult> gameCompletionSource;
         public List<IControllerEvent> Listeners { get; } = new List<IControllerEvent>();
 
-        public Level CurrentLevel { get; private set; }
+        public Level CurrentLevel { get; protected set; }
         public Tile[] Tiles { get; private set; }
         public List<Entity> Memory { get; private set; }
         public Mission[] Missions { get; private set; }
