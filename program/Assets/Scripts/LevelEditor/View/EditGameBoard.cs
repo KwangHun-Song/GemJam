@@ -2,29 +2,38 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace GemMatch.LevelEditor {
-    [RequireComponent(typeof(GridLayout))]
+    [RequireComponent(typeof(GridLayoutGroup))]
     public class EditGameBoard : UIBehaviour {
         [SerializeField] private TileView prefabBase;
 
-        private GridLayout gridBoard;
-        private int _height = 11;
-        private int _width = 9;
+        private const int Height = 11;
+        private const int Width = 8;
 
-        public void Initialize(EditGameView editGameView, int height, int width) {
-            this._height = height;
-            this._width = width;
-            gridBoard = GetComponent<GridLayout>();
-            var tiles = new List<TileView>();
-            for (int i = 0; i < height * width; i++) {
+        private GridLayoutGroup gridBoard;
+        private readonly List<EditTileView> editViews = new List<EditTileView>();
+
+        private void OnEnable() {
+            gridBoard = GetComponent<GridLayoutGroup>();
+        }
+
+        public void Initialize(EditGameView editGameView) {
+            editViews.Clear();
+            for (int i = 0; i < Height * Width; i++) {
                 var tile = Instantiate(prefabBase, gridBoard.transform);
-                var editView = tile.AddComponent<EditEntityView>();
+                tile.name = $"Tile({i % Width},{i / Width})";
+                var editView = tile.AddComponent<EditTileView>();
                 editView.InjectView(editGameView);
-                tiles.Add(tile);
+                editViews.Add(editView);
             }
 
-            editGameView.SetTileView(tiles);
+            editGameView.SetTileView(editViews);
+        }
+
+        public void Resize(int height, int width) {
+            // todo : tile model을 좌우, 위아래 번갈아가면서 isOpen을 닫는 알고리즘
         }
     }
 }
