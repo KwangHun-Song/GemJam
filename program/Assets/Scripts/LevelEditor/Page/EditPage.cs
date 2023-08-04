@@ -15,14 +15,13 @@ namespace GemMatch.LevelEditor {
         }
 
         private IEnumerator CoInitialize() {
-            var ctrl = new Controller();
-            var editCtrl = new EditGameController(editGameView);
+            var editCtrl = new EditGameController(editGameView, editTool, editInspector);
             controller = editCtrl;
             editGameView.Initialize(editCtrl as IEditViewEventListener, editTool, editInspector);
             editTool.Initialize(editCtrl, editGameView);
             editInspector.Initialize(editCtrl);
             yield return null;
-            controller.LoadInspector();
+            controller.LoadInspector(editInspector);
         }
 
         public bool IsLoaded { get; set; }
