@@ -14,14 +14,13 @@ namespace GemMatch {
         public int X => Index % Constants.Width;
         public int Y => Index / Constants.Width;
         
-        private SortedDictionary<Layer, Entity> entityDict;
-        public IReadOnlyDictionary<Layer, Entity> Entities => Model.entityDict;
+        public IReadOnlyDictionary<Layer, Entity> Entities => Model.EntityDict;
 
         /// <summary>
         /// 가장 많이 사용하는 레이어인 피스 엔티티를 얻을 수 있는 숏컷
         /// </summary>
-        public Entity Piece => Entities[Layer.Piece];
-        
+        public Entity Piece => Entities.ContainsKey(Layer.Piece) == false ? null : Entities[Layer.Piece];
+
         public Tile(TileModel model) => Model = model.Clone();
 
         public Tile Clone() {
@@ -49,6 +48,7 @@ namespace GemMatch {
             return isSuccess;
         }
         
+        // TODO : 컨트롤러로 옮기자.
         public IEnumerable<HitResultInfo> Hit() {
             foreach (var entity in Entities.Values) {
                 if (entity.CanSplashHit()) yield return entity.Hit();

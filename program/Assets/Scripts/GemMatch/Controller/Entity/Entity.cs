@@ -18,12 +18,12 @@ namespace GemMatch {
 
         public virtual int Durability {
             get => Model.durability;
-            set { }
+            set => Model.durability = value;
         }
 
         public virtual ColorIndex Color {
             get => Model.color;
-            set { }
+            set => Model.color = value;
         }
 
         public virtual bool PreventTouch() => false;

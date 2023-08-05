@@ -10,7 +10,10 @@ namespace GemMatch {
         public List<EntityModel> entityModels;
         
         private List<Entity> entities;
-        public SortedDictionary<Layer, Entity> entityDict;
+        private List<Entity> Entities => entities ??= entityModels.Select(Utility.GetEntity).ToList();
+
+        private SortedDictionary<Layer, Entity> entityDict;
+        public IReadOnlyDictionary<Layer, Entity> EntityDict => entityDict ??= GetEntityDictionary(Entities);
 
         public int Index => index;
         public bool IsOpened => isOpened;
@@ -18,27 +21,27 @@ namespace GemMatch {
         public int Y => Index / Constants.Width;
 
         public void AddEntity(Entity entity) {
-            entities.Add(entity);
-            entityDict = GetEntityDictionary(entities);
+            Entities.Add(entity);
+            entityDict = GetEntityDictionary(Entities);
         }
 
         public bool RemoveEntity(Entity entity) {
-            var isSuccess = entities.Remove(entity);
-            entityDict = GetEntityDictionary(entities);
+            var isSuccess = Entities.Remove(entity);
+            entityDict = GetEntityDictionary(Entities);
             return isSuccess;
         }
 
-        public void UpdateEntityDict() => entityDict = GetEntityDictionary(entities);
+        public void UpdateEntityDict() => entityDict = GetEntityDictionary(Entities);
 
         private SortedDictionary<Layer, Entity> GetEntityDictionary(IEnumerable<Entity> entities) {
             return new SortedDictionary<Layer, Entity>(entities.ToDictionary(e => e.Layer));
         }
 
         public TileModel Clone() {
-            return new TileModel() {
+            return new TileModel {
                 index = index,
                 isOpened = isOpened,
-                entities = entities.Select(e => e.Clone()).ToList()
+                entityModels = entityModels?.Select(em => em.Clone()).ToList() ?? new List<EntityModel>()
             };
         }
     }

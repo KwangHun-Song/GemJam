@@ -19,7 +19,7 @@ namespace GemMatch {
             Redraw();
 
             foreach (var entityView in EntityViews) {
-                DestroyImmediate(entityView);
+                DestroyImmediate(entityView.gameObject);
             }
             
             EntityViews.Clear();
