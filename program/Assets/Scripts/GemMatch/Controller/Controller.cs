@@ -198,10 +198,12 @@ namespace GemMatch {
                 var color = t.Piece?.Color ?? ColorIndex.None;
                 return color == ColorIndex.Random;
             }).Select(t => t.Index).ToArray();
-            
+
+            var clickedOrder = 1;
             foreach (var tileIndex in solverResult.tileIndices) {
                 if (randomColorTilesIndices.Contains(tileIndex)) {
                     Tiles[tileIndex].Piece.Color = colorsQueue.Dequeue();
+                    Tiles[tileIndex].ClickedOrder = clickedOrder++;
                 }
             }
         }

@@ -8,6 +8,12 @@ namespace GemMatch {
         /// 타일을 클론할 때 이 모델만 클론하면 된다.
         /// </summary>
         public TileModel Model { get; }
+
+        #region 임시로 만든 치트기능입니다! 곧 삭제할 예정
+
+        public int ClickedOrder { get; set; } = -1;
+
+        #endregion
         
         public int Index => Model.index;
         public bool IsOpened => Model.IsOpened;
