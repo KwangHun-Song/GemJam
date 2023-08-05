@@ -14,9 +14,9 @@ namespace GemMatch {
         public List<IControllerEvent> Listeners { get; } = new List<IControllerEvent>();
 
         public Level CurrentLevel { get; protected set; }
-        public Tile[] Tiles { get; private set; }
-        public List<Entity> Memory { get; private set; }
-        public Mission[] Missions { get; private set; }
+        public Tile[] Tiles { get; protected set; }
+        public List<Entity> Memory { get; protected set; }
+        public Mission[] Missions { get; protected set; }
 
         public void StartGame(Level level) {
             // 초기화
