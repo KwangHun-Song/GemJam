@@ -19,40 +19,44 @@ namespace GemMatch.LevelEditor {
     }
 
     public interface IEditViewEventListener {
-        Tile[] Tiles { get; }
         void Input(int index);
         void ChangeTile(Tile tile);
     }
-    
-    public class EditGameController : Controller, IEditGameController {
-        private readonly IEditLinkFromCtrlToView _view;
-        private readonly IEditLinkFromCtrlToTool _tool;
-        private readonly EditInspector _inspector;
+
+    public class EditController : Controller, IEditGameController {
+
+        private readonly IEditCtrlEventToView _view;
+        private readonly IEditCtrlEventToTool _tool;
 
         // Memory와 Missions을 사용하지 않는다
         // CurrentLevel,Tiles만 사용
-        public EditGameController(IEditLinkFromCtrlToView editGameView, IEditLinkFromCtrlToTool tool, EditInspector inspector) {
+        public EditController(IEditCtrlEventToView editGameView, IEditCtrlEventToTool tool, EditInspector inspector) {
             this._view = editGameView;
             this._tool = tool;
-            this._inspector = inspector;
-            inspector.OnSaveLevel += lvs => {
-                lvs.Add(CurrentLevel);
-                return lvs;
-            };
+            // inspector.OnSaveLevel += lvs => {
+                // lvs.Add(CurrentLevel);
+                // return lvs;
+            // };
         }
 
-        public void Initialize(string levelStream) {
-            // todo: 레벨 스트림을 그대로 읽어야 할 경우
-            ConvertLevel(levelStream);
-        }
-
-        private void ConvertLevel(string levelStream) {
-            throw new NotImplementedException();
+        public void EditGame(Level level) {
+            base.StartGame(level);
+            _view.OnEditGame(this);
+            _tool.OnEditGame(this);
         }
 
         public event Func<int, Level> OnLoadInspector;
         public void LoadInspector(EditInspector editInspector) {
             editInspector.LoadLevel(1);
+        }
+
+        public override void Input(int tileIndex) {
+            Touch(Tiles[tileIndex]);
+        }
+
+        private void Touch(Tile tile) {
+            tile = _tool.GetCurrentTile();
+            _view.UpdateBoard(tile);
         }
 
         // EditPage로부터 받는 Input
@@ -74,14 +78,6 @@ namespace GemMatch.LevelEditor {
                     break;
             }
             _view.ResizeBoard(Height, Width);
-        }
-
-        // EditView로부터 받는 Input
-        public new void Input(int tileIndex) {
-            Tiles[tileIndex] = _tool.GetCurrentTile();
-            CurrentLevel.tiles[1] = _tool.GetCurrentTile().Model;
-            StartGame(CurrentLevel);
-            // todo : tile을 level 또는 SC에 적는다
         }
 
         public void ChangeTile(Tile tile) {

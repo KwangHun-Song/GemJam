@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.UI;
 
 namespace GemMatch.LevelEditor {
     /// <summary>
@@ -8,13 +10,14 @@ namespace GemMatch.LevelEditor {
     [RequireComponent(typeof(EntityView))]
     public class EditEntityView : MonoBehaviour {
         private EntityView _entityView;
-        private EditGameView _view;
+        private EditView _view;
 
         private void OnEnable() {
             this._entityView = this.GetComponent<EntityView>();
+            this._entityView.GetComponent<Button>().onClick.AddListener(OnClick);
         }
 
-        public void InjectView(EditGameView view) {
+        public void InjectView(EditView view) {
             this._view = view;
         }
 
@@ -23,7 +26,8 @@ namespace GemMatch.LevelEditor {
         }
 
         public void OnClick() {
-            _view.OnClickEntity(_entityView.Entity);
+            Assert.IsNotNull(_view);
+            _view.OnClickEditEntity(_entityView.Entity);
         }
     }
 }

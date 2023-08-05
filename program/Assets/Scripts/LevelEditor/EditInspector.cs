@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
-    public class EditInspector : MonoBehaviour, IEditGameControllerEventListener {
+    public class EditInspector : MonoBehaviour {
 #region Public Property
         public int LevelIndex {
             get => PlayerPrefs.GetInt("LAST_INDEX", 1);
@@ -26,7 +26,6 @@ namespace GemMatch.LevelEditor {
         }
 
         private IEditInspectorEventListener _contorller;
-        public IEditInspectorEventListener Controller => this._contorller;
 #endregion
 
         public void SetDirty() => EditorUtility.SetDirty(this.gameObject);
@@ -75,9 +74,5 @@ namespace GemMatch.LevelEditor {
         public void SetColorCandidates(List<ColorIndex> colorCandidates) {
             _contorller.SetColorCandidates(colorCandidates);
         }
-    }
-
-    public interface IEditGameControllerEventListener {
-        event Func<List<Level>, List<Level>> OnSaveLevel;
     }
 }

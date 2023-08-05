@@ -13,23 +13,23 @@ namespace GemMatch.LevelEditor {
         private const int Width = 8;
 
         private GridLayoutGroup gridBoard;
-        private readonly List<EditTileView> editViews = new List<EditTileView>();
+        private readonly List<EditTileView> tilesOnBoard = new List<EditTileView>();
 
         private void OnEnable() {
             gridBoard = GetComponent<GridLayoutGroup>();
         }
 
-        public void Initialize(EditGameView editGameView) {
-            editViews.Clear();
+        public void Initialize(EditView editView) {
+            tilesOnBoard.Clear();
             for (int i = 0; i < Height * Width; i++) {
                 var tile = Instantiate(prefabBase, gridBoard.transform);
                 tile.name = $"Tile({i % Width},{i / Width})";
-                var editView = tile.AddComponent<EditTileView>();
-                editView.InjectView(editGameView);
-                editViews.Add(editView);
+                // var editGameView = tile.AddComponent<EditTileView>();
+                // editView.InjectView(editGameView);
+                // tilesOnBoard.Add(editView);
             }
 
-            editGameView.SetTileView(editViews);
+            editView.SetTileView(tilesOnBoard);
         }
 
         public void Resize(int height, int width) {

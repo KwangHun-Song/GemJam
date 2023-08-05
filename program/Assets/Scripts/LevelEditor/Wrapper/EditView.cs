@@ -2,15 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
 namespace GemMatch.LevelEditor {
-    public interface IEditLinkFromCtrlToView {
+    public interface IEditCtrlEventToView {
         void ResizeBoard(int height, int width);
         void UpdateBoard(List<Tile> tiles);
+        void UpdateBoard(Tile tile);
     }
 
-    public class EditGameView : UIBehaviour, IEditLinkFromCtrlToView { // view 상속해야할까? 일까?
+    public class EditView : View, IEditCtrlEventToView { // view 상속해야할까? 일까?
         [SerializeField] private EditGameBoard board;
 
         private IEditViewEventListener _controller;
@@ -30,6 +32,11 @@ namespace GemMatch.LevelEditor {
             TileViews = tiles.ToArray();
         }
 
+
+        public void OnClickEditEntity(Entity entityViewEntity) {
+            _controller.ChangeTile();
+        }
+
         public void OnClickEntity(Entity entity) {
             var tile = _controller.Tiles.Single(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
             _controller.Input(tile.Index);
@@ -41,14 +48,20 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        public void ResizeBoard(int height, int width) {
+        void IEditCtrlEventToView.ResizeBoard(int height, int width) {
             board.Resize(height, width);
         }
 
-        public void UpdateBoard(List<Tile> tiles) {
+        void IEditCtrlEventToView.UpdateBoard(List<Tile> tiles) {
             for (int i = 0; i < tiles.Count; i++) {
                 TileViews[i].Initialize(this, tiles[i]);
             }
+        }
+
+        public void UpdateBoard(Tile tile) {
+            var targetTile = TileViews.FirstOrDefault(t => t.Tile.Index == tile.Index);
+            Assert.IsNotNull(targetTile);
+            targetTile.Initialize(this, tile);
         }
 
         public void OnClickTile(TileView tileView) {

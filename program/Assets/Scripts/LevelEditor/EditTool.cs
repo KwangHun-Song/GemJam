@@ -3,7 +3,11 @@ using System.Linq;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
-    public class EditTool : MonoBehaviour, IEditLinkFromCtrlToTool {
+    public interface IEditCtrlEventToTool {
+        Tile GetCurrentTile();
+    }
+
+    public class EditTool : MonoBehaviour, IEditCtrlEventToTool {
         [SerializeField] private GameObject selectedPrefab;
         [SerializeField] private RectTransform tilePanel;
         [SerializeField] private RectTransform normalEntityPanel;
@@ -18,7 +22,7 @@ namespace GemMatch.LevelEditor {
         private List<EntityView> entities;
         private List<TileView> tiles;
 
-        public void Initialize(IEditToolEventListener editGameController, EditGameView gameView) {
+        public void Initialize(IEditToolEventListener editGameController, EditView view) {
             this._controller = editGameController;
 
             var ent = normalEntityPanel.GetComponentsInChildren<EntityView>()
@@ -27,7 +31,7 @@ namespace GemMatch.LevelEditor {
             tiles = new List<TileView>(tilePanel.GetComponentsInChildren<TileView>());
             foreach (var tileView in tiles) {
                 var editTileView = tileView.GetComponent<EditTileView>();
-                editTileView.InjectView(gameView);
+                editTileView.InjectView(view);
             }
         }
 
@@ -35,9 +39,5 @@ namespace GemMatch.LevelEditor {
         public Tile GetCurrentTile() {
             return currentEntityView.TileView.Tile;
         }
-    }
-
-    public interface IEditLinkFromCtrlToTool {
-        Tile GetCurrentTile();
     }
 }
