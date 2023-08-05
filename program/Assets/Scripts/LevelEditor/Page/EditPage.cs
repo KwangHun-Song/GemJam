@@ -1,13 +1,14 @@
-using System;
 using System.Collections;
+using Pages;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
     public class EditPage : MonoBehaviour {
         [SerializeField] private EditTool editTool;
         [SerializeField] private EditInspector editInspector;
-        [SerializeField] private EditGameView editGameView;
-        private EditGameController controller;
+        [SerializeField] private EditView editView;
+
+        private EditController controller;
 
         private void OnEnable() {
             // Activate 할 때마다 초기화
@@ -15,36 +16,37 @@ namespace GemMatch.LevelEditor {
         }
 
         private IEnumerator CoInitialize() {
-            var editCtrl = new EditGameController(editGameView, editTool, editInspector);
+            var editCtrl = new EditController(editView, editTool, editInspector);
             controller = editCtrl;
-            editGameView.Initialize(editCtrl as IEditViewEventListener, editTool, editInspector);
-            editTool.Initialize(editCtrl, editGameView);
+            editView.Initialize(editCtrl, editTool, editInspector);
+            editTool.Initialize(editCtrl, editView);
             editInspector.Initialize(editCtrl);
             yield return null;
             controller.LoadInspector(editInspector);
         }
 
         public bool IsLoaded { get; set; }
+
         private void Update() {
             if (IsLoaded == false) return;
-            InputMouse();
             InputKeyboard();
-        }
-
-        private void InputMouse() {
-            if (Input.GetMouseButtonUp(0)) {
-                controller.Input(KeyCode.Mouse0);
-            } else if (Input.GetMouseButtonUp(1)) {
-                controller.Input(KeyCode.Mouse1);
-            } else if (Input.GetMouseButtonUp(3)) {
-                controller.Input(KeyCode.Mouse2);
-            }
         }
 
         private void InputKeyboard() {
             if (Input.GetKeyUp(KeyCode.A)) {
-                controller.Input(KeyCode.A);
                 PlayTestGame();
+            }
+
+            KeyCode[] usableKeys = new[] {
+                KeyCode.UpArrow,
+                KeyCode.DownArrow,
+                KeyCode.LeftArrow,
+                KeyCode.RightArrow,
+            };
+            foreach (var key in usableKeys) {
+                if (Input.GetKeyUp(key)) {
+                    controller.Input(key);
+                }
             }
         }
 

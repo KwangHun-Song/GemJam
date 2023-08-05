@@ -5,8 +5,7 @@ using UnityEngine;
 
 namespace GemMatch.LevelEditor {
     public interface IEditGameController : IEditViewEventListener, IEditToolEventListener, IEditInspectorEventListener{
-        void Initialize(string levelStream); // level stream으로 데이터를 채운다
-        void Input(int tileIndex);
+        void Input(KeyCode keyCode);
     }
 
     public interface IEditInspectorEventListener {
@@ -62,8 +61,6 @@ namespace GemMatch.LevelEditor {
         // EditPage로부터 받는 Input
         public void Input(KeyCode keyCode) {
             switch (keyCode) {
-                case KeyCode.A:
-                    break;
                 case KeyCode.UpArrow:
                     if (Height > 4) Height--;
                     break;
@@ -77,7 +74,35 @@ namespace GemMatch.LevelEditor {
                     if (Width < 9) Width++;
                     break;
             }
-            _view.ResizeBoard(Height, Width);
+            ResizeBoard(Height, Width);
+        }
+
+        private void ResizeBoard(int height, int width) {
+            var nCol = PickTargetIndex(height, Height);
+            var nRow = PickTargetIndex(width, Width);
+
+            var closeTarget = CurrentLevel.tiles
+                .Where(tileModel => nRow.Contains(tileModel.X) && nCol.Contains(tileModel.Y));
+
+            foreach (var tileModel in CurrentLevel.tiles) {
+                if (nRow.Contains(tileModel.X) && nCol.Contains(tileModel.Y)) {
+                    tileModel.isOpened = false;
+                }
+            }
+            EditGame(CurrentLevel);
+
+            // Inner Method
+            IEnumerable<int> PickTargetIndex(int range, int max) {
+                // 양쪽 끝 인텍스부터 선택하는 알고리즘
+                var result = new LinkedList<int>(Enumerable.Range(0, max + 1));
+                int cnt = max - range;
+                while (cnt > 0) {
+                    if (cnt % 2 == 0) result.RemoveFirst();
+                    else result.RemoveLast();
+                    cnt--;
+                }
+                return Enumerable.Range(0,max+1).Except(result);
+            }
         }
 
         public void ChangeTile(Tile tile) {

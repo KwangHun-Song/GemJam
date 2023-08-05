@@ -3,17 +3,15 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.EventSystems;
 
 namespace GemMatch.LevelEditor {
     public interface IEditCtrlEventToView {
-        void ResizeBoard(int height, int width);
         void UpdateBoard(List<Tile> tiles);
         void UpdateBoard(Tile tile);
     }
 
     public class EditView : View, IEditCtrlEventToView { // view 상속해야할까? 일까?
-        [SerializeField] private EditGameBoard board;
+        [SerializeField] private EditTileBoard board;
 
         private IEditViewEventListener _controller;
         private EditInspector _inspector;
@@ -28,8 +26,8 @@ namespace GemMatch.LevelEditor {
             board.Initialize(this);
         }
 
-        public void SetTileView(List<EditTileView> tiles) {
-            TileViews = tiles.ToArray();
+        public void SetTileView(EditTileView[] tiles) {
+            TileViews = tiles;
         }
 
 
@@ -48,10 +46,6 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        void IEditCtrlEventToView.ResizeBoard(int height, int width) {
-            board.Resize(height, width);
-        }
-
         void IEditCtrlEventToView.UpdateBoard(List<Tile> tiles) {
             for (int i = 0; i < tiles.Count; i++) {
                 TileViews[i].Initialize(this, tiles[i]);
@@ -68,5 +62,4 @@ namespace GemMatch.LevelEditor {
             _controller.ChangeTile(tileView.Tile.Clone());
         }
     }
-
 }
