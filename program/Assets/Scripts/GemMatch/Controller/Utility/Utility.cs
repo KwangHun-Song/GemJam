@@ -17,5 +17,11 @@ namespace GemMatch {
         public static T PickRandom<T>(this IList<T> collection) {
             return collection[UnityEngine.Random.Range(0, collection.Count)];
         }
+
+        public static Entity GetEntity(EntityModel entityModel) {
+            return entityModel.index switch {
+                EntityIndex.NormalPiece => new NormalPiece(entityModel),
+            };
+        }
     }
 }

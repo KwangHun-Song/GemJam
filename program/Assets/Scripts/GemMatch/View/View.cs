@@ -107,7 +107,7 @@ namespace GemMatch {
         }
 
         public void OnClickEntity(Entity entity) {
-            Controller.Input(Controller.GetTile(entity).Index);
+            Controller.Input(Controller.GetTile(entity).Model.Index);
         }
 
         internal EntityView CreateEntityView(Entity entity, Transform parent) {

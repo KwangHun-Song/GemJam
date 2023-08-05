@@ -3,24 +3,27 @@ using System.Linq;
 
 namespace GemMatch {
     public class Tile {
+        /// <summary>
+        /// 타일은 다른 프로퍼티를 가지지 않고 모델 하나만 가진다. 이곳에 타일의 모든 데이터가 저장된다.
+        /// 타일을 클론할 때 이 모델만 클론하면 된다.
+        /// </summary>
         public TileModel Model { get; }
-        public bool IsOpened => Model.isOpened;
-
-        public SortedSet<Entity> sortedEntities;
-        public SortedSet<Entity> Entities => sortedEntities ??= new SortedSet<Entity>(Model.entityModels.Select(Controller.GetEntity));
-
-        public List<ITileEvent> listeners = new List<ITileEvent>();
-
+        
         public int Index => Model.index;
+        public bool IsOpened => Model.IsOpened;
         public int X => Index % Constants.Width;
         public int Y => Index / Constants.Width;
-
-        public Entity Piece => Entities.SingleOrDefault(e => e.Layer == Layer.Piece);
-
-        public Tile(TileModel model) {
-            Model = model;
-        }
         
+        private SortedDictionary<Layer, Entity> entityDict;
+        public IReadOnlyDictionary<Layer, Entity> Entities => Model.entityDict;
+
+        /// <summary>
+        /// 가장 많이 사용하는 레이어인 피스 엔티티를 얻을 수 있는 숏컷
+        /// </summary>
+        public Entity Piece => Entities[Layer.Piece];
+        
+        public Tile(TileModel model) => Model = model.Clone();
+
         public Tile Clone() {
             return new Tile(Model.Clone());
         }
@@ -29,29 +32,25 @@ namespace GemMatch {
             if (IsOpened == false) return false;
             if (Entities.Any() == false) return true;
 
-            return Entities.All(e => e.CanPassThrough());
+            return Entities.Values.All(e => e.CanPassThrough());
         }
-
+        
         public bool AddEntity(Entity entity) {
-            if (Entities.Any(e => e.Layer == entity.Layer)) return false;
+            if (Entities.ContainsKey(entity.Layer)) return false;
+            Model.AddEntity(entity);
 
-            Entities.Add(entity);
-            foreach (var listener in listeners) listener.OnAddEntity(entity);
             return true;
         }
 
         public bool RemoveLayer(Layer layer) {
-            if (Entities.Any(e => e.Layer == layer) == false) return false;
-
-            var entity = Entities.Single(e => e.Layer == layer);
-            Entities.Remove(entity);
-            foreach (var listener in listeners) listener.OnRemoveLayer(layer);
-
-            return true;
+            if (Entities.ContainsKey(layer) == false) return false;
+            var isSuccess = Model.RemoveEntity(Entities[layer]);
+            
+            return isSuccess;
         }
-
+        
         public IEnumerable<HitResultInfo> Hit() {
-            foreach (var entity in Entities) {
+            foreach (var entity in Entities.Values) {
                 if (entity.CanSplashHit()) yield return entity.Hit();
                 if (entity.PreventHit()) break;
             }

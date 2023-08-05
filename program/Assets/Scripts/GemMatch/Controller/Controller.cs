@@ -22,6 +22,8 @@ namespace GemMatch {
         public List<Entity> Memory { get; private set; }
         public HashSet<Tile> ActiveTiles { get; private set; } = new HashSet<Tile>();
 
+        public PathFinder PathFinder { get; private set; }
+
         public void StartGame(Level level) {
             // 초기화
             CurrentLevel = level;
@@ -29,6 +31,7 @@ namespace GemMatch {
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             CalculateRandomColors();
+            PathFinder = new PathFinder(Tiles);
 
             // 게임 시작
             gameCompletionSource = new UniTaskCompletionSource<GameResult>();
@@ -86,24 +89,9 @@ namespace GemMatch {
             foreach (var listener in Listeners) listener.OnReplayGame(Missions);
         }
 
-        public Tile GetTile(int x, int y) {
-            if (x < 0) return null;
-            if (x > Constants.Width - 1) return null;
-            if (y < 0) return null;
-            if (y > GetTopY()) return null;
-
-            return Tiles[y * Constants.Width + x];
-        }
-
         public int GetTopY() => Tiles.Max(t => t.Y); // 0 based. 최적화가 필요하면 캐싱하자.
 
         public Tile GetTile(Entity entity) => Tiles.SingleOrDefault(t => t.Entities.Any(e => ReferenceEquals(e, entity)));
-
-        public static Entity GetEntity(EntityModel entityModel) {
-            return entityModel.index switch {
-                EntityIndex.NormalPiece => new NormalPiece(entityModel),
-            };
-        }
 
         private bool IsCleared() {
             return !Missions.Where((mission, index) => CurrentLevel.missions[index].count > mission.count).Any();
@@ -187,52 +175,10 @@ namespace GemMatch {
 
         private bool CanTouch(Tile tile) {
             if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
-            if (tile.Entities.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
-            if (HasPathToTop(tile) == false) return false;
+            if (tile.Entities.Values.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
+            if (PathFinder.HasPathToTop(tile) == false) return false;
 
             return true;
-        }
-
-        public bool HasPathToTop(Tile startTile) {
-            // 시작 타일이 가장 상단이면 바로 true 반환
-            if (startTile.Y == GetTopY()) return true;
-            
-            // 방문한 타일들을 추적하기 위한 집합, 시작 타일을 방문한 것으로 표시
-            var visitedTiles = new HashSet<Tile> { startTile };
-
-            // 인접한 타일들을 검사
-            foreach (var adjacentTile in GetAdjacentTiles(startTile)) {
-                // 이웃 타일로의 경로가 있는지 DFS
-                if (FindPathToTopDfs(adjacentTile, visitedTiles)) {
-                    return true;
-                }
-            }
-    
-            // 모든 가능성을 다 찾아봤지만 경로가 없다면 false 반환
-            return false;
-        }
-
-        private bool FindPathToTopDfs(Tile tile, HashSet<Tile> visitedTiles) {
-            // 이미 방문한 타일이라면 바로 반환
-            if (visitedTiles.Contains(tile)) return false;
-            visitedTiles.Add(tile); // 이 타일을 방문한 것으로 표시
-
-            // 타일이 위쪽 가장자리에 도달했다면 true 반환
-            if (tile.Y == GetTopY()) return true;
-
-            // 이 타일이 점유되어 있다면 경로가 없는 것으로 간주
-            if (tile.CanPassThrough() == false) return false;
-
-            // 인접한 타일들을 검사
-            foreach (var adjacentTile in GetAdjacentTiles(tile)) {
-                // 이웃 타일로의 경로가 있는지 DFS
-                if (FindPathToTopDfs(adjacentTile, visitedTiles)) {
-                    return true;
-                }
-            }
-
-            // 모든 가능성을 다 찾아봤지만 경로가 없다면 false 반환
-            return false;
         }
 
         private void Touch(Tile tile) {
@@ -252,7 +198,7 @@ namespace GemMatch {
             tile.Hit();
             
             // 주변 타일에 SplashHit
-            foreach (var adjacentTile in GetAdjacentTiles(tile)) {
+            foreach (var adjacentTile in TileUtility.GetAdjacentTiles(tile, Tiles)) {
                 adjacentTile.Hit();
             }
         }
@@ -288,17 +234,6 @@ namespace GemMatch {
             if (mission != null) mission.count += 3;
 
             return true;
-        }
-
-        private IEnumerable<Tile> GetAdjacentTiles(Tile tile) {
-            if (tile.X > 0 && GetTile(tile.X - 1, tile.Y) != null) 
-                yield return GetTile(tile.X - 1, tile.Y);
-            if (tile.X < Constants.Width - 1 && GetTile(tile.X + 1, tile.Y) != null) 
-                yield return GetTile(tile.X + 1, tile.Y);
-            if (tile.Y > 0 && GetTile(tile.X, tile.Y - 1) != null) 
-                yield return GetTile(tile.X, tile.Y - 1);
-            if (tile.Y < GetTopY() && GetTile(tile.X, tile.Y + 1) != null) 
-                yield return GetTile(tile.X, tile.Y + 1);
         }
     }
 }

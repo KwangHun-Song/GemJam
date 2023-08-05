@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +24,7 @@ namespace GemMatch {
             
             EntityViews.Clear();
             
-            foreach (var entity in Tile.Entities) {
+            foreach (var entity in Tile.Entities.Values) {
                 var entityView = View.CreateEntityView(entity, entitiesRoot);
                 entityView.Initialize(this, entity);
                 EntityViews.Add(entityView);
@@ -35,7 +32,7 @@ namespace GemMatch {
         }
 
         public void Redraw() {
-            background.color = Tile.IsOpened == false ? Color.gray : Color.white;
+            background.color = Tile.Model.IsOpened == false ? Color.gray : Color.white;
         }
     }
 }
