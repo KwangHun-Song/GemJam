@@ -15,14 +15,14 @@ namespace GemMatch {
         }
 
         public static IEnumerable<Tile> GetAdjacentTiles(Tile tile, Tile[] tiles) {
+            if (tile.Y < GetTopY(tiles) && GetTile(tile.X, tile.Y + 1, tiles) != null) 
+                yield return GetTile(tile.X, tile.Y + 1, tiles);
             if (tile.X > 0 && GetTile(tile.X - 1, tile.Y, tiles) != null) 
                 yield return GetTile(tile.X - 1, tile.Y, tiles);
             if (tile.X < Constants.Width - 1 && GetTile(tile.X + 1, tile.Y, tiles) != null) 
                 yield return GetTile(tile.X + 1, tile.Y, tiles);
             if (tile.Y > 0 && GetTile(tile.X, tile.Y - 1, tiles) != null) 
                 yield return GetTile(tile.X, tile.Y - 1, tiles);
-            if (tile.Y < GetTopY(tiles) && GetTile(tile.X, tile.Y + 1, tiles) != null) 
-                yield return GetTile(tile.X, tile.Y + 1, tiles);
         }
     }
 }

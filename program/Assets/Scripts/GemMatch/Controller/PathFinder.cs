@@ -33,11 +33,11 @@ namespace GemMatch {
             if (visitedTiles.Contains(tile)) return false;
             visitedTiles.Add(tile); // 이 타일을 방문한 것으로 표시
 
-            // 타일이 위쪽 가장자리에 도달했다면 true 반환
-            if (tile.Y == TileUtility.GetTopY(Tiles)) return true;
-
             // 이 타일이 점유되어 있다면 경로가 없는 것으로 간주
             if (tile.CanPassThrough() == false) return false;
+
+            // 타일이 위쪽 가장자리에 도달했다면 true 반환
+            if (tile.Y == TileUtility.GetTopY(Tiles)) return true;
 
             // 인접한 타일들을 검사
             foreach (var adjacentTile in TileUtility.GetAdjacentTiles(tile, Tiles)) {

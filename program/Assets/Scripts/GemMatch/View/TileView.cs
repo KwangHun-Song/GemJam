@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,9 +43,24 @@ namespace GemMatch {
         #region 임시로 만든 치트기능입니다! 곧 삭제할 예정
 
         [SerializeField] private TMP_Text clickedOrderText;
+        [SerializeField] private GameObject highlightOrder;
+        
         private void Update() {
-            if (Tile?.ClickedOrder > -1)
+            if (Tile == null) return;
+            
+            if (Tile.ClickedOrder > -1)
                 clickedOrderText.text = $"{Tile.ClickedOrder}";
+
+            if (View.TileViews.Where(tv => tv.Tile.Piece != null && tv.Tile.ClickedOrder >= 1).Min(tv => tv.Tile.ClickedOrder) == Tile.ClickedOrder) {
+                foreach (var view in View.TileViews) {
+                    view.HighlightOrder(false);
+                }
+                HighlightOrder(true);
+            }
+        }
+
+        public void HighlightOrder(bool on) {
+            highlightOrder.SetActive(on);
         }
 
         #endregion
