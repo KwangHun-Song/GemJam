@@ -5,6 +5,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace GemMatch.LevelEditor {
+    public interface IEditLinkFromCtrlToView {
+        void ResizeBoard(int height, int width);
+        void UpdateBoard(List<Tile> tiles);
+    }
+
     public class EditGameView : UIBehaviour, IEditLinkFromCtrlToView { // view 상속해야할까? 일까?
         [SerializeField] private EditGameBoard board;
 
@@ -51,8 +56,4 @@ namespace GemMatch.LevelEditor {
         }
     }
 
-    public interface IEditLinkFromCtrlToView {
-        void ResizeBoard(int height, int width);
-        void UpdateBoard(List<Tile> tiles);
-    }
 }

@@ -4,6 +4,26 @@ using System.Linq;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
+    public interface IEditGameController : IEditViewEventListener, IEditToolEventListener, IEditInspectorEventListener{
+        void Initialize(string levelStream); // level stream으로 데이터를 채운다
+        void Input(int tileIndex);
+    }
+
+    public interface IEditInspectorEventListener {
+        void MakeLevel1();
+        void LoadLevel(Level getLevel);
+        void SetColorCandidates(List<ColorIndex> colorCandidates);
+    }
+
+    public interface IEditToolEventListener {
+    }
+
+    public interface IEditViewEventListener {
+        Tile[] Tiles { get; }
+        void Input(int index);
+        void ChangeTile(Tile tile);
+    }
+    
     public class EditGameController : Controller, IEditGameController {
         private readonly IEditLinkFromCtrlToView _view;
         private readonly IEditLinkFromCtrlToTool _tool;
