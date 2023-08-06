@@ -18,7 +18,7 @@ namespace GemMatch.LevelEditor {
         private IEnumerator CoInitialize() {
             var editCtrl = new EditController(editView, editTool, editInspector);
             controller = editCtrl;
-            editView.Initialize(editCtrl, editTool, editInspector);
+            editView.Initialize(editCtrl);
             editTool.Initialize(editCtrl, editView);
             editInspector.Initialize(editCtrl);
             yield return null;
@@ -51,7 +51,8 @@ namespace GemMatch.LevelEditor {
         }
 
         private void PlayTestGame() {
-            // todo: 바로 PlayScene을 연다
+            var playPage = Resources.Load<PlayPage>("PlayPage");
+            Instantiate(playPage, null);
         }
     }
 }

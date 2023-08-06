@@ -22,22 +22,24 @@ namespace GemMatch.LevelEditor {
 
         private void OnEnable() {
             this._tileView = this.GetComponent<TileView>();
+            this.Tile = _tileView.Tile;
+            this.TileModel = _tileView.Tile.Model;
         }
 
         public void InjectView(EditView view) {
             this._view = view;
         }
 
-        public void Initialize(EditView view, Tile tile) {
+        public void UpdateEditTile(EditView view, Tile tile) {
             this._view = view;
             _tileView.Initialize(view, tile);
             this.Tile = this._tileView.Tile;
             this.TileModel = this._tileView.Tile.Model;
         }
 
+        // engine은 EntityView만 인터렉션하지만 에디터는 여기서 모두 한다
         public void OnClick() {
-            // todo : 모델 타일 클릭 했을때 처리
-            _view.OnClickTileOnToolbox(_tileView);
+            _view.OnClickTileOnBoard(_tileView);
         }
 
         public EntityView RemoveEntityView(Layer layer) {

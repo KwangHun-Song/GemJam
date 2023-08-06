@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,6 +17,7 @@ namespace GemMatch.LevelEditor {
         private const int Width = 8;
 
         private GridLayoutGroup gridBoard;
+        private EditView _view;
         private readonly List<EditTileView> tilesOnBoard = new List<EditTileView>();
 
         private void OnEnable() {
@@ -23,6 +25,7 @@ namespace GemMatch.LevelEditor {
         }
 
         public void Initialize(EditView editView) {
+            this._view = editView;
             tilesOnBoard.Clear();
             for (int i = 0; i < Height * Width; i++) {
                 var tile = Instantiate(prefabBase, gridBoard.transform);
@@ -33,6 +36,11 @@ namespace GemMatch.LevelEditor {
             }
 
             editView.SetTileView(tilesOnBoard.ToArray());
+        }
+
+        public void UpdateTileView(Tile tile) {
+            var targetView = tilesOnBoard.Single(t => t.TileModel.index == tile.Index);
+            targetView.UpdateEditTile(_view, tile);
         }
     }
 }

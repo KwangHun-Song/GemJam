@@ -15,16 +15,6 @@ namespace GemMatch.LevelEditor {
             // t.OnLoadLevel += OnLoadLevel;
         }
 
-        private void OnDisable() {
-            isLevelLoaded = false;
-        }
-
-        private bool isLevelLoaded = false;
-        private void OnLoadLevel(IEditGameController controller) {
-            // todo : EditInspector가 controller갱신 시 notify
-            isLevelLoaded = true;
-        }
-
 #region Fields
         private readonly List<ColorIndex> colorCandidates = new List<ColorIndex>() { ColorIndex.None };
 
@@ -37,42 +27,44 @@ namespace GemMatch.LevelEditor {
             if (setting == null) return;
 
             setting.SavePath = EditorGUILayout.TextField("Save Path", setting.SavePath);
-
             var levelIndex = EditorGUILayout.IntField("Level Index", setting.LevelIndex);
+            // Load
             if (GUILayout.Button("Load")) {
                 setting.LoadLevel(levelIndex);
             }
-
+            // New
             if (GUILayout.Button("New")) {
                 GUIUtility.keyboardControl = 0;
-                setting.StartLevel1();
+                setting.NewLevel();
             }
-
+            // Reset
             if (GUILayout.Button("Reset")) {
                 setting.ResetLevel();
             }
-
-            if (GUILayout.Button("Add Usable Color")) {
+            EditorGUILayout.Separator();
+            // Set ColorCandidate
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Add Usable Colors")) {
                 colorCandidates.Add(ColorIndex.None);
             }
-
+            if (GUILayout.Button("Accept Colors")) {
+                setting.SetColorCandidates(colorCandidates);
+            }
+            EditorGUILayout.EndHorizontal();
             { // 색상 후보 정하기
                     var viewWidth = EditorGUIUtility.currentViewWidth;
-                    EditorGUILayout.BeginHorizontal();
                     for (int i = 0; i < colorCandidates.Count; i++) {
+                        EditorGUILayout.BeginHorizontal();
                         EditorGUILayout.LabelField($"{i+1}번째", GUILayout.Width(viewWidth * 0.2F));
                         colorCandidates[i] = (ColorIndex)EditorGUILayout.EnumPopup(colorCandidates[i], ButtonSmallStyle);
                         if (GUILayout.Button("Remove", ButtonSmallStyle)) {
                             colorCandidates.RemoveAt(i);
                         }
+                        EditorGUILayout.EndHorizontal();
                     }
-                    EditorGUILayout.EndHorizontal();
             }
-
-            if (GUILayout.Button("Accept Color Candidates")) {
-                setting.SetColorCandidates(colorCandidates);
-            }
-
+            EditorGUILayout.Separator();
+            // Save
             if (GUILayout.Button("Save")) {
                 setting.SaveLevel();
             }

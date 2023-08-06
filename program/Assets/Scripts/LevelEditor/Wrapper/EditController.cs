@@ -4,44 +4,44 @@ using System.Linq;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
-    public interface IEditGameController : IEditViewEventListener, IEditToolEventListener, IEditInspectorEventListener{
-        void Input(KeyCode keyCode);
-    }
-
     public interface IEditInspectorEventListener {
         void MakeLevel1();
         void LoadLevel(Level getLevel);
         void SetColorCandidates(List<ColorIndex> colorCandidates);
+        Level CurrentLevel { get; }
     }
 
     public interface IEditToolEventListener {
     }
 
     public interface IEditViewEventListener {
+        Tile[] Tiles { get; }
         void Input(int index);
-        void ChangeTile(Tile tile);
+        Tile ChangeTile(Tile tile);
     }
 
-    public class EditController : Controller, IEditGameController {
+    public class EditController : Controller, IEditViewEventListener, IEditToolEventListener, IEditInspectorEventListener {
 
-        private readonly IEditCtrlEventToView _view;
-        private readonly IEditCtrlEventToTool _tool;
+        private readonly IEditCtrlForView _view;
+        private readonly IEditCtrlForTool _tool;
+        private readonly IEditCtrlForInspector _inspector;
 
         // Memory와 Missions을 사용하지 않는다
         // CurrentLevel,Tiles만 사용
-        public EditController(IEditCtrlEventToView editGameView, IEditCtrlEventToTool tool, EditInspector inspector) {
+        public EditController(IEditCtrlForView editGameView, IEditCtrlForTool tool, IEditCtrlForInspector inspector) {
             this._view = editGameView;
             this._tool = tool;
+            this._inspector = inspector;
             // inspector.OnSaveLevel += lvs => {
-                // lvs.Add(CurrentLevel);
-                // return lvs;
+            // lvs.Add(CurrentLevel);
+            // return lvs;
             // };
         }
 
         public void EditGame(Level level) {
             base.StartGame(level);
-            _view.OnEditGame(this);
-            _tool.OnEditGame(this);
+            // _view.OnEditGame(this); //todo: 필요할지 생각
+            // _tool.OnEditGame(this);
         }
 
         public event Func<int, Level> OnLoadInspector;
@@ -54,32 +54,41 @@ namespace GemMatch.LevelEditor {
         }
 
         private void Touch(Tile tile) {
-            tile = _tool.GetCurrentTile();
-            _view.UpdateBoard(tile);
+            var indexCache = tile.Index;
+            var newTiles = Tiles.ToList();
+            newTiles.Remove(tile);
+            Tiles = newTiles.ToArray();
+            var selectedTile = _tool.GetCurrentTile();
+            var newModel = new TileModel() {
+                entityModels = selectedTile.Model.entityModels,
+                isOpened = selectedTile.Model.isOpened,
+                index = indexCache,
+            };
+            _view.UpdateBoard(new Tile(newModel));
         }
 
         // EditPage로부터 받는 Input
         public void Input(KeyCode keyCode) {
             switch (keyCode) {
                 case KeyCode.UpArrow:
-                    if (Height > 4) Height--;
+                    if (BoardHeightOpened > 4) BoardHeightOpened--;
                     break;
                 case KeyCode.DownArrow:
-                    if (Height < 11) Height++;
+                    if (BoardHeightOpened < 11) BoardHeightOpened++;
                     break;
                 case KeyCode.LeftArrow:
-                    if (Width > 4) Width--;
+                    if (BoardWidthOpened > 4) BoardWidthOpened--;
                     break;
                 case KeyCode.RightArrow:
-                    if (Width < 9) Width++;
+                    if (BoardWidthOpened < 9) BoardWidthOpened++;
                     break;
             }
-            ResizeBoard(Height, Width);
+            ResizeBoard(BoardHeightOpened, BoardWidthOpened);
         }
 
         private void ResizeBoard(int height, int width) {
-            var nCol = PickTargetIndex(height, Height);
-            var nRow = PickTargetIndex(width, Width);
+            var nCol = PickTargetIndex(height, BoardHeightOpened);
+            var nRow = PickTargetIndex(width, BoardWidthOpened);
 
             var closeTarget = CurrentLevel.tiles
                 .Where(tileModel => nRow.Contains(tileModel.X) && nCol.Contains(tileModel.Y));
@@ -105,38 +114,34 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        public void ChangeTile(Tile tile) {
-            CurrentLevel.tiles[tile.Index] = tile.Model.Clone();
-            StartGame(CurrentLevel);
+        public Tile ChangeTile(Tile tile) {
+            CurrentLevel.tiles[tile.Index] =_tool.GetCurrentTile().Model.Clone();
+            return _tool.GetCurrentTile();
         }
 
         public void MakeLevel1() {
-            EditTiles = new List<Tile>();
-            EditEntities = new List<Entity>();
-            Width = 9;
-            Height = 11;
-            for (var i = 0; i < Width * Height; ++i) {
-                var x = i % Width;
-                var y = i / Width;
-                var tileModel = new TileModel() { index = i, isOpened = false, entityModels = EditEntityModels };
-                EditTileModels.Add(tileModel);
+            var newTiles = new List<Tile>();
+            for (var i = 0; i < Constants.Width * Constants.Height; ++i) {
+                var x = i % Constants.Width;
+                var y = i / Constants.Width;
+                var tileModel = new TileModel() { index = i, isOpened = true, entityModels = new List<EntityModel>() };
                 var tile = new Tile(tileModel);
-                EditTiles.Add(tile);
+                newTiles.Add(tile);
             }
-            _view.UpdateBoard(EditTiles);
-        }
 
-        public void InstantiateLevel(Level level) {
-            EditTileModels.Clear();
-            foreach (TileModel model in level.tiles) {
-                EditTileModels.Add(model.Clone());
-            }
-            EditTiles = new List<Tile>();
-            EditEntities = new List<Entity>();
+            var newLevel = new Level() {
+                colorCandidates = new[] { ColorIndex.None },
+                colorCount = 1,
+                missions = new[] { new Mission() },
+                tiles = newTiles.Select(t => t.Model).ToArray()
+            };
+            LoadLevel(newLevel);
         }
 
         public void LoadLevel(Level level) {
-            StartGame(level);
+            BoardWidthOpened = Constants.Width;
+            BoardHeightOpened = Constants.Height;
+            StartGame(level); // 초기화 함수 재사용, base.Tiles 갱신
             _view.UpdateBoard(base.Tiles.ToList());
         }
 
@@ -144,11 +149,7 @@ namespace GemMatch.LevelEditor {
             CurrentLevel.colorCandidates = colorCandidates.ToArray();
         }
 
-        public List<Tile> EditTiles { get; private set; } = new List<Tile>();
-        public List<Entity> EditEntities { get; private set; } = new List<Entity>();
-        public List<EntityModel> EditEntityModels { get; private set; } = new List<EntityModel>();
-        public List<TileModel> EditTileModels { get; private set; } = new List<TileModel>();
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public int BoardWidthOpened { get; private set; } = 8;
+        public int BoardHeightOpened { get; private set; } = 11;
     }
 }

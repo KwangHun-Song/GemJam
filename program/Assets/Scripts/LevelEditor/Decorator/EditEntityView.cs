@@ -8,9 +8,10 @@ namespace GemMatch.LevelEditor {
     /// EditTool에 있어 모델이 된다. EntityView의 wrapper class
     /// </summary>
     [RequireComponent(typeof(EntityView))]
-    public class EditEntityView : MonoBehaviour {
+    public class EditEntityView : MonoBehaviour { //todo: 안쓰면 지우기
         private EntityView _entityView;
         private EditView _view;
+        public Entity Entity { get; private set; }
 
         private void OnEnable() {
             this._entityView = this.GetComponent<EntityView>();
@@ -27,7 +28,7 @@ namespace GemMatch.LevelEditor {
 
         public void OnClick() {
             Assert.IsNotNull(_view);
-            _view.OnClickEditEntity(_entityView.Entity);
+            // _view.OnClickEditEntity(_entityView.Entity);
         }
     }
 }
