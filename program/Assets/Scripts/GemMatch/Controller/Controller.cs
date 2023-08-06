@@ -85,7 +85,7 @@ namespace GemMatch {
             return Memory.Count >= MaxMemoryCount;
         }
 
-        protected bool CanTouch(Tile tile) {
+        public bool CanTouch(Tile tile) {
             if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
             if (tile.Entities.Values.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
             if (PathFinder.HasPathToTop(tile) == false) return false;
@@ -176,7 +176,7 @@ namespace GemMatch {
                 tiles = CurrentLevel.tiles.Select(tm => {
                     var tileModel = tm.Clone();
                     var entityModel = tileModel.entityModels.SingleOrDefault(em => em.index == EntityIndex.NormalPiece);
-                    if (entityModel != null) entityModel.color = ColorIndex.Dummy;
+                    if (entityModel != null) entityModel.color = ColorIndex.Sole;
                     return tileModel;
                 }).ToArray(),
                 missions = CurrentLevel.missions,
