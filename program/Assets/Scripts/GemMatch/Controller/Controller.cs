@@ -23,18 +23,7 @@ namespace GemMatch {
             CurrentLevel = level;
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
-            var randomColorCount = level.tiles
-                .Where(m => m.entityModels[0].color == ColorIndex.Random)
-                .Count();
-            var randomQue = MathUtility.Create3MatchColorQueue(randomColorCount);
-            // random color에 부를때마다 색 부여
-            Tiles = level.tiles.Select(tileModel => {
-                var m = tileModel.Clone();
-                var c = m.entityModels[0].color;
-                if (c == ColorIndex.Random) c = randomQue.Dequeue();
-                m.entityModels[0].color = c;
-                return new Tile(m);
-            }).ToArray();
+            Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             foreach (var tile in Tiles) tile.Initialize(this);
 
             // 게임 시작
