@@ -37,7 +37,7 @@ namespace GemMatch {
             return await gameCompletionSource.Task;
         }
 
-        public void Input(int tileIndex) {
+        public virtual void Input(int tileIndex) {
             if (Memory.Count >= MaxMemoryCount) return;
 
             var tile = Tiles[tileIndex];
