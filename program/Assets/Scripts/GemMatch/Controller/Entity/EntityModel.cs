@@ -8,6 +8,9 @@ namespace GemMatch {
         public int displayType;
         public int durability;
         public ColorIndex color;
+        public bool commonBoolParam;
+        public int commonIntParam;
+        public string commonStringParam;
 
         public EntityModel Clone() {
             return (EntityModel)MemberwiseClone();

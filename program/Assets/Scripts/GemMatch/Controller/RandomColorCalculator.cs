@@ -4,7 +4,7 @@ using UnityEngine.Assertions;
 
 namespace GemMatch {
     public class RandomColorCalculator {
-        public static Queue<ColorIndex> GenerateColorQueue(int queueCount, List<ColorIndex> colors) {
+        public virtual Queue<ColorIndex> GenerateColorQueue(int queueCount, List<ColorIndex> colors) {
             // 결과는 3의 배수여야 한다.
             Assert.AreEqual(0, queueCount % 3);
             
