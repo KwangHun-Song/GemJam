@@ -23,6 +23,7 @@ namespace GemMatch.LevelEditor {
             editInspector.Initialize(editCtrl);
             yield return null;
             controller.LoadInspector(editInspector);
+            IsLoaded = true;
         }
 
         public bool IsLoaded { get; set; }

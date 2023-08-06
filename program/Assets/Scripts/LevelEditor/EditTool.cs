@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GemMatch.LevelEditor {
     public interface IEditCtrlForTool {
@@ -11,16 +12,17 @@ namespace GemMatch.LevelEditor {
         [SerializeField] private RectTransform tilePanel;
         [SerializeField] private RectTransform normalEntityPanel;
         [SerializeField] private RectTransform SpawnerEntityPanel;
-        [SerializeField] private GameObject previewBase;
         [SerializeField] private RectTransform previewRoot;
 
         private IEditToolEventListener _controller;
 
         private ToolTileView _currentTileView = null;
-        private List<ToolTileView> allTiles;
+        private EditView _view;
+        private readonly List<ToolTileView> allTiles = new List<ToolTileView>();
 
         public void Initialize(IEditToolEventListener editGameController, EditView view) {
             this._controller = editGameController;
+            this._view = view;
 
             // EditTool Tile과 갯수 맞춰서 모델 초기화
             var initializer = new ToolInitializer();
@@ -29,8 +31,8 @@ namespace GemMatch.LevelEditor {
                 AddTiles(tilePanel, initializer.TileToolModel);
                 // init normalPieces
                 AddTiles(normalEntityPanel, initializer.NormalToolModels);
-                // init spawners
-                AddTiles(SpawnerEntityPanel, initializer.SpawnerToolModels);
+                // init spawners // todo: spawner 엔터티를 만들고 테스트
+                // AddTiles(SpawnerEntityPanel, initializer.SpawnerToolModels);
             }
 
             // Inner Method
@@ -45,16 +47,19 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        public bool IsEntityFocused => _currentTileView.TileModel.entityModels.Count > 0;
-        public bool IsEmptyTileFocused => _currentTileView.TileModel.entityModels.Count == 0;
-
-        public Tile GetCurrentTile() => _currentTileView.Tile;
+        public Tile GetCurrentTile() => _currentTileView?.Tile ?? null;
 
         public void OnClickToolTile(ToolTileView tileView) {
-            this._currentTileView = tileView;
-            var parent = previewRoot.parent;
-            Destroy(previewRoot);
-            previewRoot = Instantiate(previewBase, parent).GetComponent<RectTransform>();
+            if (_currentTileView != null) {
+                Destroy(_currentTileView.gameObject);
+            }
+            this._currentTileView = Instantiate(tileView, previewRoot);
+            _currentTileView.Initialize(this, _view, tileView.Tile);
+            _currentTileView.name = "Preview";
+            _currentTileView.GetComponent<Button>().enabled = false;
+            var tr = (_currentTileView.transform as RectTransform);
+            tr.anchorMin = new Vector2(0, 0);
+            tr.anchorMax = new Vector2(1, 1);
         }
 
         private class ToolInitializer {

@@ -17,7 +17,7 @@ namespace GemMatch.LevelEditor {
     public interface IEditViewEventListener {
         Tile[] Tiles { get; }
         void Input(int index);
-        Tile ChangeTile(Tile tile);
+        Tile ChangeTile(TileModel tile);
     }
 
     public class EditController : Controller, IEditViewEventListener, IEditToolEventListener, IEditInspectorEventListener {
@@ -32,21 +32,17 @@ namespace GemMatch.LevelEditor {
             this._view = editGameView;
             this._tool = tool;
             this._inspector = inspector;
-            // inspector.OnSaveLevel += lvs => {
-            // lvs.Add(CurrentLevel);
-            // return lvs;
-            // };
         }
 
         public void EditGame(Level level) {
-            base.StartGame(level);
-            // _view.OnEditGame(this); //todo: 필요할지 생각
-            // _tool.OnEditGame(this);
+            CurrentLevel = level;
+            Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
+            foreach (var tile in Tiles) tile.Initialize(this);
         }
 
-        public event Func<int, Level> OnLoadInspector;
         public void LoadInspector(EditInspector editInspector) {
-            editInspector.LoadLevel(1);
+            editInspector.LoadLevel(0);
+            editInspector.SetDirty();
         }
 
         public override void Input(int tileIndex) {
@@ -71,52 +67,62 @@ namespace GemMatch.LevelEditor {
         public void Input(KeyCode keyCode) {
             switch (keyCode) {
                 case KeyCode.UpArrow:
-                    if (BoardHeightOpened > 4) BoardHeightOpened--;
+                    if (BoardHeightOpened > 4) ResizeBoard(BoardHeightOpened-1, BoardWidthOpened);
                     break;
                 case KeyCode.DownArrow:
-                    if (BoardHeightOpened < 11) BoardHeightOpened++;
+                    if (BoardHeightOpened < 11) ResizeBoard(BoardHeightOpened+1, BoardWidthOpened);
                     break;
                 case KeyCode.LeftArrow:
-                    if (BoardWidthOpened > 4) BoardWidthOpened--;
+                    if (BoardWidthOpened > 4) ResizeBoard(BoardHeightOpened, BoardWidthOpened-1);
                     break;
                 case KeyCode.RightArrow:
-                    if (BoardWidthOpened < 9) BoardWidthOpened++;
+                    if (BoardWidthOpened < 9) ResizeBoard(BoardHeightOpened, BoardWidthOpened+1);
                     break;
             }
-            ResizeBoard(BoardHeightOpened, BoardWidthOpened);
         }
 
         private void ResizeBoard(int height, int width) {
-            var nCol = PickTargetIndex(height, BoardHeightOpened);
-            var nRow = PickTargetIndex(width, BoardWidthOpened);
+            var nCol = PickTargetIndex(height, Constants.Height);
+            var nRow = PickTargetIndex(width, Constants.Width);
 
             var closeTarget = CurrentLevel.tiles
                 .Where(tileModel => nRow.Contains(tileModel.X) && nCol.Contains(tileModel.Y));
 
-            foreach (var tileModel in CurrentLevel.tiles) {
-                if (nRow.Contains(tileModel.X) && nCol.Contains(tileModel.Y)) {
+            foreach (TileModel tileModel in CurrentLevel.tiles) {
+                if (nRow.Contains(tileModel.X) || nCol.Contains(tileModel.Y)) {
                     tileModel.isOpened = false;
+                } else {
+                    tileModel.isOpened = true;
                 }
             }
+
             EditGame(CurrentLevel);
+            _view.UpdateBoard(base.Tiles.ToList());
+
+            BoardHeightOpened = height;
+            BoardWidthOpened = width;
 
             // Inner Method
             IEnumerable<int> PickTargetIndex(int range, int max) {
                 // 양쪽 끝 인텍스부터 선택하는 알고리즘
-                var result = new LinkedList<int>(Enumerable.Range(0, max + 1));
+                var result = new LinkedList<int>(Enumerable.Range(0, max));
                 int cnt = max - range;
                 while (cnt > 0) {
                     if (cnt % 2 == 0) result.RemoveFirst();
                     else result.RemoveLast();
                     cnt--;
                 }
-                return Enumerable.Range(0,max+1).Except(result);
+                return Enumerable.Range(0,max).Except(result);
             }
         }
 
-        public Tile ChangeTile(Tile tile) {
-            CurrentLevel.tiles[tile.Index] =_tool.GetCurrentTile().Model.Clone();
-            return _tool.GetCurrentTile();
+        public Tile ChangeTile(TileModel tile) {
+            var tmpLv = CurrentLevel;
+            var newModel = _tool.GetCurrentTile().Model.Clone();
+            newModel.index = tile.index;
+            tmpLv.tiles[tile.index] = newModel;
+            EditGame(tmpLv);
+            return new Tile(newModel);
         }
 
         public void MakeLevel1() {
@@ -141,7 +147,7 @@ namespace GemMatch.LevelEditor {
         public void LoadLevel(Level level) {
             BoardWidthOpened = Constants.Width;
             BoardHeightOpened = Constants.Height;
-            StartGame(level); // 초기화 함수 재사용, base.Tiles 갱신
+            EditGame(level);
             _view.UpdateBoard(base.Tiles.ToList());
         }
 

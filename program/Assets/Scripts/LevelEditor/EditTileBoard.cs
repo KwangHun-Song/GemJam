@@ -42,5 +42,12 @@ namespace GemMatch.LevelEditor {
             var targetView = tilesOnBoard.Single(t => t.TileModel.index == tile.Index);
             targetView.UpdateEditTile(_view, tile);
         }
+
+        private void OnDisable() {
+            foreach (EditTileView view in tilesOnBoard) {
+                Destroy(view.gameObject);
+            }
+            tilesOnBoard.Clear();
+        }
     }
 }

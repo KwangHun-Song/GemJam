@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace GemMatch.LevelEditor {
     public class EditInspector : MonoBehaviour, IEditCtrlForInspector {
 #region Public Property
         public int LevelIndex {
-            get => PlayerPrefs.GetInt("LAST_INDEX", 1);
+            get => PlayerPrefs.GetInt("LAST_INDEX", 0);
             set {
                 PlayerPrefs.SetInt("LAST_INDEX", value);
                 PlayerPrefs.Save();
@@ -19,12 +20,8 @@ namespace GemMatch.LevelEditor {
         }
 
         public string SavePath { // txt파일로 뽑기 위한 준비
-            get {
-                return PlayerPrefs.GetString("EDIT_SAVE_PATH", "Assets/Data/text");
-            }
-            set {
-                PlayerPrefs.SetString("EDIT_SAVE_PATH", value);
-            }
+            get => PlayerPrefs.GetString("EDIT_SAVE_PATH", "Assets/Data/text");
+            set => PlayerPrefs.SetString("EDIT_SAVE_PATH", value);
         }
 #endregion
         private IEditInspectorEventListener _contorller;
@@ -37,7 +34,9 @@ namespace GemMatch.LevelEditor {
         }
 
         public void LoadLevel(int levelIndex) {
-            _contorller.LoadLevel(LevelLoader.GetLevel(levelIndex));
+            var levelsLength = LevelLoader.GetContainer().levels.Length;
+            LevelIndex = Math.Min(levelIndex, levelsLength - 1);
+            _contorller.LoadLevel(LevelLoader.GetLevel(LevelIndex));
         }
 
         public void NewLevel() {
@@ -49,21 +48,30 @@ namespace GemMatch.LevelEditor {
         }
 
         public void SaveLevel() {
-            LevelLoader.GetContainer().levels[LevelIndex] = _contorller.CurrentLevel;
+            var lvsCache = new List<Level>(LevelLoader.GetContainer().levels);
+            if (lvsCache.Count <= LevelIndex) {
+                lvsCache.Add(_contorller.CurrentLevel);
+            } else {
+                lvsCache[LevelIndex] = _contorller.CurrentLevel;
+            }
+            LevelLoader.GetContainer().levels = lvsCache.ToArray();
             SetDirty();
             EditorUtility.SetDirty(LevelLoader.GetContainer());
             AssetDatabase.SaveAssets();
         }
 
-        public async UniTask<bool> CheckToRefreshLevel() {
+        public async UniTask<bool> ExecuteWhenUpdateLevel(System.Action<EditInspector> callback) {
             if (IsDirty()) {
+                callback?.Invoke(this);
                 return true;
             }
             return false;
         }
 
-        public void SetColorCandidates(List<ColorIndex> colorCandidates) {
-            _contorller.SetColorCandidates(colorCandidates);
+        public void SetColorCandidates(IEnumerable<ColorIndex> colorCandidates) {
+            _contorller.SetColorCandidates(colorCandidates.ToList());
         }
+
+        public IEnumerable<ColorIndex> GetColorCandidates() => _contorller.CurrentLevel.colorCandidates;
     }
 }

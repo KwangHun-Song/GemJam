@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Random = UnityEngine.Random;
 
 namespace GemMatch {
     public enum GameResult { Clear, Fail }

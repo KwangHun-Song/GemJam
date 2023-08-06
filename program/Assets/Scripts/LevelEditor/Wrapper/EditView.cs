@@ -38,8 +38,8 @@ namespace GemMatch.LevelEditor {
         }
 
         public void OnClickTileOnBoard(TileView tileView) {
-            var tileModel = _controller.ChangeTile(tileView.Tile);
-            board.UpdateTileView(tileModel);
+            var tile = _controller.ChangeTile(tileView.Tile.Model);
+            board.UpdateTileView(tile);
         }
     }
 }

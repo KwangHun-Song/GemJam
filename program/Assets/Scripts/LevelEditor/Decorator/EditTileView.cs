@@ -1,5 +1,7 @@
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GemMatch.LevelEditor {
     /// <summary>
@@ -22,8 +24,7 @@ namespace GemMatch.LevelEditor {
 
         private void OnEnable() {
             this._tileView = this.GetComponent<TileView>();
-            this.Tile = _tileView.Tile;
-            this.TileModel = _tileView.Tile.Model;
+            this.AddComponent<Button>().onClick.AddListener(OnClick);
         }
 
         public void InjectView(EditView view) {
@@ -32,7 +33,16 @@ namespace GemMatch.LevelEditor {
 
         public void UpdateEditTile(EditView view, Tile tile) {
             this._view = view;
+            foreach (var entityView in _tileView.EntityViews) {
+                Destroy(entityView.gameObject);
+            }
+            _tileView.EntityViews.Clear();
             _tileView.Initialize(view, tile);
+            // EntityView의 버튼 인터렉션을 끄고 타일에서 가로챈다
+            foreach (EntityView entityView in _tileView.EntityViews) {
+                entityView.GetComponent<Button>().enabled = false;
+                entityView.OnCreate().Forget();
+            }
             this.Tile = this._tileView.Tile;
             this.TileModel = this._tileView.Tile.Model;
         }
