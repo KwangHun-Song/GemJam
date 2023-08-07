@@ -5,23 +5,6 @@ using UnityEditor;
 
 namespace GemMatch.Custom.Editor {
     public static class Utility {
-        [MenuItem("GemJam/xptmxm")]
-        private static void Test() {
-            var result = Controller.GenerateColorQueue(36, new List<ColorIndex> {
-                ColorIndex.Red, 
-                ColorIndex.Orange, 
-                ColorIndex.Yellow, 
-                ColorIndex.Green, 
-                ColorIndex.Blue, 
-                ColorIndex.Purple,
-                ColorIndex.Brown,
-                ColorIndex.Pink,
-                ColorIndex.Cyan,
-            });
-            
-            UnityEngine.Debug.Log($"{string.Join(", ", result)}");
-        }
-        
         [MenuItem("GemJam/임시 기능2 레벨의 모든 색깔 랜덤으로")]
         public static void SetRandomPieceColors() {
             var level = LevelLoader.GetContainer().levels.First();

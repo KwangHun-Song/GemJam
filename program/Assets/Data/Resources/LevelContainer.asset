@@ -48,7 +48,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 5
+        color: 9
     - index: 10
       isOpened: 1
       entityModels:
@@ -56,7 +56,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 4
+        color: 9
     - index: 11
       isOpened: 1
       entityModels:
@@ -64,7 +64,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 12
       isOpened: 0
       entityModels: []
@@ -75,7 +75,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 2
+        color: 9
     - index: 14
       isOpened: 1
       entityModels:
@@ -83,7 +83,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 5
+        color: 9
     - index: 15
       isOpened: 1
       entityModels:
@@ -91,7 +91,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 2
+        color: 9
     - index: 16
       isOpened: 0
       entityModels: []
@@ -102,7 +102,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 18
       isOpened: 1
       entityModels:
@@ -110,7 +110,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 19
       isOpened: 1
       entityModels:
@@ -118,7 +118,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 3
+        color: 9
     - index: 20
       isOpened: 0
       entityModels: []
@@ -129,7 +129,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 4
+        color: 9
     - index: 22
       isOpened: 1
       entityModels:
@@ -137,7 +137,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 3
+        color: 9
     - index: 23
       isOpened: 1
       entityModels:
@@ -145,7 +145,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 24
       isOpened: 0
       entityModels: []
@@ -180,7 +180,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 2
+        color: 9
     - index: 34
       isOpened: 1
       entityModels:
@@ -188,7 +188,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 35
       isOpened: 1
       entityModels:
@@ -196,7 +196,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 2
+        color: 9
     - index: 36
       isOpened: 0
       entityModels: []
@@ -207,7 +207,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 38
       isOpened: 1
       entityModels:
@@ -215,7 +215,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 2
+        color: 9
     - index: 39
       isOpened: 1
       entityModels:
@@ -223,7 +223,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 40
       isOpened: 0
       entityModels: []
@@ -234,7 +234,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 42
       isOpened: 0
       entityModels: []
@@ -245,7 +245,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 44
       isOpened: 0
       entityModels: []
@@ -265,7 +265,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 4
+        color: 9
     - index: 49
       isOpened: 1
       entityModels: []
@@ -279,7 +279,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 4
+        color: 9
     - index: 52
       isOpened: 0
       entityModels: []
@@ -314,7 +314,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 62
       isOpened: 1
       entityModels:
@@ -322,7 +322,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 63
       isOpened: 1
       entityModels:
@@ -330,7 +330,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 4
+        color: 9
     - index: 64
       isOpened: 1
       entityModels:
@@ -338,7 +338,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 4
+        color: 9
     - index: 65
       isOpened: 1
       entityModels:
@@ -346,7 +346,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 3
+        color: 9
     - index: 66
       isOpened: 1
       entityModels:
@@ -354,7 +354,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 67
       isOpened: 1
       entityModels:
@@ -362,7 +362,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 68
       isOpened: 0
       entityModels: []
@@ -373,7 +373,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 3
+        color: 9
     - index: 70
       isOpened: 1
       entityModels:
@@ -381,7 +381,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 5
+        color: 9
     - index: 71
       isOpened: 1
       entityModels:
@@ -389,7 +389,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 72
       isOpened: 1
       entityModels:
@@ -397,7 +397,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 0
+        color: 9
     - index: 73
       isOpened: 1
       entityModels:
@@ -405,7 +405,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 74
       isOpened: 1
       entityModels:
@@ -413,7 +413,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 75
       isOpened: 1
       entityModels:
@@ -421,7 +421,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 2
+        color: 9
     - index: 76
       isOpened: 0
       entityModels: []
@@ -432,7 +432,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 3
+        color: 9
     - index: 78
       isOpened: 1
       entityModels:
@@ -440,7 +440,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 1
+        color: 9
     - index: 79
       isOpened: 1
       entityModels:
@@ -448,7 +448,7 @@ MonoBehaviour:
         layer: 1
         displayType: 0
         durability: 0
-        color: 3
+        color: 9
     - index: 80
       isOpened: 0
       entityModels: []

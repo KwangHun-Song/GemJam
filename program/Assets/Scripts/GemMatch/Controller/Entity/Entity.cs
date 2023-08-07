@@ -12,19 +12,19 @@ namespace GemMatch {
         Piece,
     }
 
-    public class Entity : IComparable<Entity> {
+    public class Entity : IComparable<Entity>, ICloneable<Entity> {
         public EntityModel Model { get; }
-        public virtual EntityIndex Index => Model.index;
-        public virtual Layer Layer => Model.layer;
+        public EntityIndex Index => Model.index;
+        public Layer Layer => Model.layer;
 
         public virtual int Durability {
             get => Model.durability;
-            set { }
+            set => Model.durability = value;
         }
 
         public virtual ColorIndex Color {
             get => Model.color;
-            set { }
+            set => Model.color = value;
         }
 
         public virtual bool PreventTouch() => false;

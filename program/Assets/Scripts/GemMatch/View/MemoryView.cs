@@ -28,7 +28,7 @@ namespace GemMatch {
 
         public async UniTask RemoveEntityAsync(bool immediately = false) {
             if (EntityView == null) return;
-            if (immediately == false) await EntityView.DestroyAsync();
+            await EntityView.DestroyAsync();
 
             EntityView = null;
         }
