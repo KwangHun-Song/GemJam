@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -44,7 +43,7 @@ namespace GemMatch {
             return await gameCompletionSource.Task;
         }
 
-        public void Input(int tileIndex) {
+        public virtual void Input(int tileIndex) {
             if (Memory.Count >= MaxMemoryCount) return;
 
             var tile = Tiles[tileIndex];

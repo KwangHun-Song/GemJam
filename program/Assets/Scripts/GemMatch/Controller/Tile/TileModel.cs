@@ -8,7 +8,6 @@ namespace GemMatch {
         public int index;
         public bool isOpened;
         public List<EntityModel> entityModels;
-
         public TileModel Clone() {
             return new TileModel {
                 index = index,
@@ -16,5 +15,10 @@ namespace GemMatch {
                 entityModels = entityModels.Select(e => e.Clone()).ToList()
             };
         }
+
+
+        // todo:conflict시 지워야함
+        public int X => index % Constants.Width;
+        public int Y => index / Constants.Width;
     }
 }
