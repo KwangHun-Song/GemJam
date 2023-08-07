@@ -43,7 +43,7 @@ namespace GemMatch {
             return await gameCompletionSource.Task;
         }
 
-        public void Input(int tileIndex) {
+        public virtual void Input(int tileIndex) {
             if (Memory.Count >= MaxMemoryCount) return;
 
             // 타일 터치 처리

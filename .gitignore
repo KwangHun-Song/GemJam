@@ -108,3 +108,4 @@ program/Packages/TestAutomatorSelector-Relay.meta
 *__pycache__*
 # build output directory
 buildOutput
+.idea
