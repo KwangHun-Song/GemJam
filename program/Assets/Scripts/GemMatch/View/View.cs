@@ -86,6 +86,8 @@ namespace GemMatch {
             }
         }
 
+        public void OnRunAbility(Ability ability) { }
+
         public void OnAddActiveTiles(IEnumerable<Tile> tiles) {
             foreach (var entityView in TileViews.Where(tv => tiles.Contains(tv.Tile))
                          .SelectMany(tv => tv.EntityViews)

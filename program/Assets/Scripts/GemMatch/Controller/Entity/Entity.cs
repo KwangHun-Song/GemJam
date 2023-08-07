@@ -7,11 +7,6 @@ namespace GemMatch {
         SpawnerPiece,
     }
 
-    public enum Layer {
-        None,
-        Piece,
-    }
-
     public class Entity : IComparable<Entity>, ICloneable<Entity> {
         public EntityModel Model { get; }
         public EntityIndex Index => Model.index;

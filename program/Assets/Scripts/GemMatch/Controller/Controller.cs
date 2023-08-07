@@ -16,7 +16,8 @@ namespace GemMatch {
         public List<Entity> Memory { get; protected set; }
         public List<Tile> ActiveTiles { get; protected set; } = new List<Tile>();
 
-        public PathFinder PathFinder { get; protected set; }
+        public virtual PathFinder PathFinder { get; protected set; }
+        public virtual ColorsDistributor ColorsDistributor { get; protected set; }
 
         public virtual void StartGame(Level level) {
             // 초기화
@@ -25,9 +26,10 @@ namespace GemMatch {
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             PathFinder = new PathFinder(Tiles);
+            ColorsDistributor = new ColorsDistributor(CurrentLevel);
             
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
-            SetClearableColors();
+            ColorsDistributor.DistributeClearableColors(Tiles);
 
             // 게임 시작
             gameCompletionSource = new UniTaskCompletionSource<GameResult>();
@@ -54,6 +56,16 @@ namespace GemMatch {
             // 게임 종료조건 검사
             if (IsCleared()) ClearGame();
             if (IsFailed()) FailGame();
+        }
+
+        public void InputAbility(Ability ability) {
+            ability?.Run();
+            foreach (var subAbility in ability.GetCascador()) {
+                InputAbility(subAbility);
+            }
+            
+            // 이벤트 전달
+            foreach (var listener in Listeners) listener.OnRunAbility(ability);
         }
 
         public void ClearGame() {
@@ -109,12 +121,19 @@ namespace GemMatch {
             TryRemoveFromMemory(piece);
         }
 
-        protected void Hit(Tile tile) {
-            tile.Hit();
-            
-            // 주변 타일에 SplashHit
-            foreach (var adjacentTile in TileUtility.GetAdjacentTiles(tile, Tiles)) {
-                adjacentTile.Hit();
+        public void Hit(Tile targetTile) {
+            HitInternal(targetTile);
+
+            foreach (var adjacentTile in TileUtility.GetAdjacentTiles(targetTile, Tiles)) {
+                if (adjacentTile.Entities.Values.Any(e => e.CanSplashHit() == false)) continue;
+                Hit(adjacentTile);
+            }
+        }
+
+        private IEnumerable<HitResultInfo> HitInternal(Tile tile) {
+            foreach (var entity in tile.Entities.Values) {
+                if (entity.CanSplashHit()) yield return entity.Hit();
+                if (entity.PreventHit()) break;
             }
         }
 
@@ -156,71 +175,6 @@ namespace GemMatch {
             
             ActiveTiles.AddRange(newActiveTiles);
             foreach (var listener in Listeners) listener.OnAddActiveTiles(newActiveTiles);
-        }
-
-        protected void SetClearableColors() {
-            var randomColorPieces = Tiles
-                .SelectMany(t => t.Entities.Values)
-                .Where(e => e.Color == ColorIndex.Random)
-                .ToArray();
-            if (randomColorPieces.Any() == false) return;
-            
-            // 클리어 가능한 컬러들 큐 만들기
-            var availableColors = Constants.UsableColors.Take(CurrentLevel.colorCount).ToList();
-            var colorsQueue = RandomColorCalculator.GenerateColorQueue(randomColorPieces.Count(), availableColors);
-            
-            UnityEngine.Debug.Log($"colors : {string.Join(", ", colorsQueue.Select(ci => ci.ToString().Substring(0, 1)))}");
-            
-            // 랜덤 컬러를 단일 색상으로 교체해서, 클리어 가능한 타일 클릭 순서 찾아내기
-            var dummyLevel = new Level {
-                tiles = CurrentLevel.tiles.Select(tm => {
-                    var tileModel = tm.Clone();
-                    var entityModel = tileModel.entityModels.SingleOrDefault(em => em.index == EntityIndex.NormalPiece);
-                    if (entityModel != null) entityModel.color = ColorIndex.Sole;
-                    return tileModel;
-                }).ToArray(),
-                missions = CurrentLevel.missions,
-                colorCount = CurrentLevel.colorCount,
-            };
-            
-            // 가능한 것 아무거나 클릭하는 솔버를 만들어서 결과 얻기
-            var solver = new Solver(new PickRandomAvailableAI());
-            var solverResult = solver.Solve(dummyLevel);
-            if (solverResult.gameResult != GameResult.Clear) {
-                UnityEngine.Debug.Log("solver Failed!");
-                SetRandomColors(colorsQueue);
-                return;
-            }
-            UnityEngine.Debug.Log($"tileIndices: {string.Join(", ", solverResult.tileIndices)}");
-            
-            // 클릭한 순서에 맞게 색깔들 배치하기
-            var randomColorTilesIndices = Tiles.Where(t => {
-                var color = t.Piece?.Color ?? ColorIndex.None;
-                return color == ColorIndex.Random;
-            }).Select(t => t.Index).ToArray();
-
-            var clickedOrder = 1;
-            foreach (var tileIndex in solverResult.tileIndices) {
-                if (randomColorTilesIndices.Contains(tileIndex)) {
-                    Tiles[tileIndex].Piece.Color = colorsQueue.Dequeue();
-                    Tiles[tileIndex].ClickedOrder = clickedOrder++;
-                }
-            }
-        }
-
-        // 색상을 랜덤으로 지정합니다. 클리어 가능한 색상들을 얻어오는데 실패한 경우 사용됩니다.
-        private void SetRandomColors(Queue<ColorIndex> colorsQueue) {
-            var randomColorTilesIndices = Tiles.Where(t => {
-                var color = t.Piece?.Color ?? ColorIndex.None;
-                return color == ColorIndex.Random;
-            }).Select(t => t.Index).ToArray();
-            
-            UnityEngine.Debug.Log($"randomTileIndices: {string.Join(", ", randomColorTilesIndices)}");
-            foreach (var tileIndex in randomColorTilesIndices) {
-                if (randomColorTilesIndices.Contains(tileIndex)) {
-                    Tiles[tileIndex].Piece.Color = colorsQueue.Dequeue();
-                }
-            }
         }
     }
 }

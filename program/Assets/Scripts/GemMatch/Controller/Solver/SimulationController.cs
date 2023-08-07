@@ -12,8 +12,9 @@ namespace GemMatch {
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             PathFinder = new PathFinder(Tiles);
+            ColorsDistributor = new ColorsDistributor(CurrentLevel);
             
-            SetClearableColors();
+            ColorsDistributor.DistributeClearableColors(Tiles);
             CalculateActiveTiles();
         }
 
