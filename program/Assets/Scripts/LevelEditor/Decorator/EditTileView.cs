@@ -51,9 +51,5 @@ namespace GemMatch.LevelEditor {
         public void OnClick() {
             _view.OnClickTileOnBoard(_tileView);
         }
-
-        public EntityView RemoveEntityView(Layer layer) {
-            return _tileView.RemoveEntityView(layer);
-        }
     }
 }

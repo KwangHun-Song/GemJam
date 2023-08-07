@@ -37,7 +37,6 @@ namespace GemMatch.LevelEditor {
         public void EditGame(Level level) {
             CurrentLevel = level;
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
-            foreach (var tile in Tiles) tile.Initialize(this);
         }
 
         public void LoadInspector(EditInspector editInspector) {

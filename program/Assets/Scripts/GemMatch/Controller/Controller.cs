@@ -14,12 +14,12 @@ namespace GemMatch {
         private UniTaskCompletionSource<GameResult> gameCompletionSource;
         public List<IControllerEvent> Listeners { get; } = new List<IControllerEvent>();
 
-        public Level CurrentLevel { get; private set; }
-        public Tile[] Tiles { get; private set; }
-        public Mission[] Missions { get; private set; }
+        public Level CurrentLevel { get; protected set; }
+        public Tile[] Tiles { get; protected set; }
+        public Mission[] Missions { get; protected set; }
         
-        public List<Entity> Memory { get; private set; }
-        public HashSet<Tile> ActiveTiles { get; private set; } = new HashSet<Tile>();
+        public List<Entity> Memory { get; protected set; }
+        public HashSet<Tile> ActiveTiles { get; protected set; } = new HashSet<Tile>();
 
         public void StartGame(Level level) {
             // 초기화
@@ -117,7 +117,7 @@ namespace GemMatch {
                 .SelectMany(tm => tm.entityModels)
                 .Count(em => em.color == ColorIndex.Random);
             var colorCount = CurrentLevel.colorCount;
-            var availableColors = Enum.GetValues(typeof(ColorIndex)).Cast<ColorIndex>().Take(colorCount).ToList();
+            var availableColors = System.Enum.GetValues(typeof(ColorIndex)).Cast<ColorIndex>().Take(colorCount).ToList();
             var colorsQueue = GenerateColorQueue(randomEntityCount, availableColors);
             
             // TODO : 컬러 배치 작업중...
