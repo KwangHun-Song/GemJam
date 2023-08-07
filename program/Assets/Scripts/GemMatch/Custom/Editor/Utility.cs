@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +5,32 @@ using UnityEditor;
 
 namespace GemMatch.Custom.Editor {
     public static class Utility {
+        [MenuItem("GemJam/xptmxm")]
+        private static void Test() {
+            var result = Controller.GenerateColorQueue(36, new List<ColorIndex> {
+                ColorIndex.Red, 
+                ColorIndex.Orange, 
+                ColorIndex.Yellow, 
+                ColorIndex.Green, 
+                ColorIndex.Blue, 
+                ColorIndex.Purple,
+                ColorIndex.Brown,
+                ColorIndex.Pink,
+                ColorIndex.Cyan,
+            });
+            
+            UnityEngine.Debug.Log($"{string.Join(", ", result)}");
+        }
+        
+        [MenuItem("GemJam/임시 기능2 레벨의 모든 색깔 랜덤으로")]
+        public static void SetRandomPieceColors() {
+            var level = LevelLoader.GetContainer().levels.First();
+
+            foreach (var entityModel in level.tiles.SelectMany(tm => tm.entityModels)) {
+                entityModel.color = ColorIndex.Random;
+            }
+        }
+        
         [MenuItem("GemJam/임시 기능")]
         public static void TempMenuItem() {
             var lines = File.ReadAllLines("Assets/Data/text/dummy.csv").Skip(1).Reverse();
@@ -20,7 +45,15 @@ namespace GemMatch.Custom.Editor {
 
             var level = new Level {
                 tiles = rows,
-                colorCount = 6
+                colorCount = 6,
+                missions = rows
+                    .SelectMany(t => t.entityModels)
+                    .Where(em => em.color >= 0)
+                    .GroupBy(em => em.color)
+                    .Select(g => new Mission {
+                        entity = new EntityModel { index = EntityIndex.NormalPiece, layer = Layer.Piece, color = g.Key },
+                        count = g.Count()
+                }).ToArray()
             };
 
             LevelLoader.GetContainer().levels = new[] { level };

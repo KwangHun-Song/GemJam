@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace GemMatch {
     public interface IControllerEvent {
         void OnStartGame(Controller controller);
@@ -5,7 +7,9 @@ namespace GemMatch {
         void OnFailGame(Mission[] missions);
         void OnReplayGame(Mission[] missions);
         
-        void OnAddMemory(Controller controller, Entity entity);
-        void OnRemoveMemory(Controller controller,Entity entity);
+        void OnMoveToMemory(Tile tile, Entity entity);
+        void OnRemoveMemory(Entity entity);
+
+        void OnAddActiveTiles(IEnumerable<Tile> tiles);
     }
 }

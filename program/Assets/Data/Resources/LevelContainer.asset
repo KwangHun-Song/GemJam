@@ -151,55 +151,25 @@ MonoBehaviour:
       entityModels: []
     - index: 25
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 26
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 27
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 28
       isOpened: 0
       entityModels: []
     - index: 29
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 30
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 31
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 32
       isOpened: 0
       entityModels: []
@@ -281,28 +251,13 @@ MonoBehaviour:
       entityModels: []
     - index: 45
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 46
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 47
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 48
       isOpened: 1
       entityModels:
@@ -313,12 +268,7 @@ MonoBehaviour:
         color: 4
     - index: 49
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 50
       isOpened: 0
       entityModels: []
@@ -338,31 +288,16 @@ MonoBehaviour:
       entityModels: []
     - index: 54
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 55
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 56
       isOpened: 0
       entityModels: []
     - index: 57
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 58
       isOpened: 0
       entityModels: []
@@ -519,20 +454,10 @@ MonoBehaviour:
       entityModels: []
     - index: 81
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 82
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 83
       isOpened: 0
       entityModels: []
@@ -541,22 +466,54 @@ MonoBehaviour:
       entityModels: []
     - index: 85
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 86
       isOpened: 1
-      entityModels:
-      - index: 1
-        layer: 1
-        displayType: 0
-        durability: 0
-        color: 0
+      entityModels: []
     - index: 87
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 5
+      count: 3
+    - entity:
+        index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 4
+      count: 6
+    - entity:
+        index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 0
+      count: 9
+    - entity:
+        index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 2
+      count: 6
+    - entity:
+        index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 1
+      count: 9
+    - entity:
+        index: 1
+        layer: 1
+        displayType: 0
+        durability: 0
+        color: 3
+      count: 6
     colorCount: 6

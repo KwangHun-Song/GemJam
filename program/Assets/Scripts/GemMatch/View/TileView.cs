@@ -19,7 +19,13 @@ namespace GemMatch {
             View = view;
             Tile = tile;
             
-            Refresh();
+            Redraw();
+
+            foreach (var entityView in EntityViews) {
+                DestroyImmediate(entityView);
+            }
+            
+            EntityViews.Clear();
             
             foreach (var entity in Tile.Entities) {
                 var entityView = View.CreateEntityView(entity, entitiesRoot);
@@ -28,32 +34,8 @@ namespace GemMatch {
             }
         }
 
-        public void Refresh() {
+        public void Redraw() {
             background.color = Tile.IsOpened == false ? Color.gray : Color.white;
-        }
-
-        public async UniTask ApplyEntityViewAsync(EntityView entityView, bool immediately = false) {
-            EntityViews.Add(entityView);
-            
-            var entityViewTfm = entityView.transform;
-            entityViewTfm.SetParent(entitiesRoot);
-            entityViewTfm.localPosition = Vector3.zero;
-
-            if (immediately) {
-                entityViewTfm.localScale = Vector3.one;
-            } else {
-                entityViewTfm.localScale = Vector3.zero;
-                await entityViewTfm.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack).ToUniTask();
-            }
-        }
-
-        public EntityView RemoveEntityView(Layer layer) {
-            if (EntityViews.Any(view => view.Entity.Layer == layer) == false) return null;
-
-            var entityView = EntityViews.Single(view => view.Entity.Layer == layer);
-            EntityViews.Remove(entityView);
-
-            return entityView;
         }
     }
 }
