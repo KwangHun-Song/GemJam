@@ -8,12 +8,6 @@ namespace GemMatch {
         /// 타일을 클론할 때 이 모델만 클론하면 된다.
         /// </summary>
         public TileModel Model { get; }
-
-        #region 임시로 만든 치트기능입니다! 곧 삭제할 예정
-
-        public int ClickedOrder { get; set; } = -1;
-
-        #endregion
         
         public int Index => Model.index;
         public bool IsOpened => Model.IsOpened;
@@ -52,14 +46,6 @@ namespace GemMatch {
             var isSuccess = Model.RemoveEntity(Entities[layer]);
             
             return isSuccess;
-        }
-        
-        // TODO : 컨트롤러로 옮기자.
-        public IEnumerable<HitResultInfo> Hit() {
-            foreach (var entity in Entities.Values) {
-                if (entity.CanSplashHit()) yield return entity.Hit();
-                if (entity.PreventHit()) break;
-            }
         }
     }
 }
