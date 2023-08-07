@@ -9,6 +9,7 @@ namespace GemMatch {
         
         void OnMoveToMemory(Tile tile, Entity entity);
         void OnRemoveMemory(Entity entity);
+        void OnRunAbility(Ability ability);
 
         void OnAddActiveTiles(IEnumerable<Tile> tiles);
     }

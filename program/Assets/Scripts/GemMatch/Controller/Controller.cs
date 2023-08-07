@@ -58,8 +58,14 @@ namespace GemMatch {
             if (IsFailed()) FailGame();
         }
 
-        public void InputAbility(Ability ability, Tile targetTile, object extraParam) {
-            ability?.Run(this, targetTile, extraParam);
+        public void InputAbility(Ability ability) {
+            ability?.Run();
+            foreach (var subAbility in ability.GetCascador()) {
+                InputAbility(subAbility);
+            }
+            
+            // 이벤트 전달
+            foreach (var listener in Listeners) listener.OnRunAbility(ability);
         }
 
         public void ClearGame() {
@@ -115,12 +121,19 @@ namespace GemMatch {
             TryRemoveFromMemory(piece);
         }
 
-        protected void Hit(Tile tile) {
-            tile.Hit();
-            
-            // 주변 타일에 SplashHit
-            foreach (var adjacentTile in TileUtility.GetAdjacentTiles(tile, Tiles)) {
-                adjacentTile.Hit();
+        public void Hit(Tile targetTile) {
+            HitInternal(targetTile);
+
+            foreach (var adjacentTile in TileUtility.GetAdjacentTiles(targetTile, Tiles)) {
+                if (adjacentTile.Entities.Values.Any(e => e.CanSplashHit() == false)) continue;
+                Hit(adjacentTile);
+            }
+        }
+
+        private IEnumerable<HitResultInfo> HitInternal(Tile tile) {
+            foreach (var entity in tile.Entities.Values) {
+                if (entity.CanSplashHit()) yield return entity.Hit();
+                if (entity.PreventHit()) break;
             }
         }
 
