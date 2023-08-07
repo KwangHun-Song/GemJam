@@ -44,10 +44,5 @@ namespace GemMatch {
                 entityModels = entityModels?.Select(em => em.Clone()).ToList() ?? new List<EntityModel>()
             };
         }
-
-
-        // todo:conflict시 지워야함
-        public int X => index % Constants.Width;
-        public int Y => index / Constants.Width;
     }
 }
