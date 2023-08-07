@@ -58,6 +58,10 @@ namespace GemMatch {
             if (IsFailed()) FailGame();
         }
 
+        public void InputAbility(Ability ability, Tile targetTile, object extraParam) {
+            ability?.Run(this, targetTile, extraParam);
+        }
+
         public void ClearGame() {
             gameCompletionSource.TrySetResult(GameResult.Clear);
             // 이벤트 전달
