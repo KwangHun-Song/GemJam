@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace GemMatch {
         public static Entity GetEntity(EntityModel entityModel) {
             return entityModel.index switch {
                 EntityIndex.NormalPiece => new NormalPiece(entityModel),
+                EntityIndex.GoalPiece => new GoalPiece(entityModel),
             };
         }
     }

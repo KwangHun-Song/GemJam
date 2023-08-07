@@ -38,7 +38,7 @@ namespace GemMatch {
             };
 
             // 가능한 것 아무거나 클릭하는 솔버를 만들어서 결과 얻기
-            var solver = new Solver(new PickRandomAvailableAI());
+            var solver = new Solver(new PickRandomAvailableNormalPieceAI());
             var solverResult = solver.Solve(dummyLevel);
             if (solverResult.gameResult != GameResult.Clear) {
                 UnityEngine.Debug.Log("solver Failed!");

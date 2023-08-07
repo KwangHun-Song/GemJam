@@ -88,16 +88,20 @@ namespace GemMatch {
 
         public Tile GetTile(Entity entity) => Tiles.SingleOrDefault(t => t.Entities.Values.Any(e => ReferenceEquals(e, entity)));
 
-        protected bool IsCleared() {
-            return Tiles.Any(t => t.Entities.Any()) == false && Memory.Any() == false; // 임시로 미션과 관계 없이 모든 엔티티를 얻었는가를 목표로
-            return !Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any();
+        protected virtual bool IsCleared() {
+            if (Memory.Any(e => e is GoalPiece)) return true;
+            if (Tiles.SelectMany(t => t.Entities.Values).Any(e => e is NormalPiece) == false && Memory.Any() == false) return true;
+            if (!Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any())
+                return true;
+
+            return false;
         }
 
         protected bool IsFailed() {
             return Memory.Count >= MaxMemoryCount;
         }
 
-        public bool CanTouch(Tile tile) {
+        public virtual bool CanTouch(Tile tile) {
             if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
             if (tile.Entities.Values.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
             if (PathFinder.HasPathToTop(tile) == false) return false;
@@ -123,6 +127,8 @@ namespace GemMatch {
 
         public void Hit(Tile targetTile) {
             HitInternal(targetTile);
+
+            return;
 
             foreach (var adjacentTile in TileUtility.GetAdjacentTiles(targetTile, Tiles)) {
                 if (adjacentTile.Entities.Values.Any(e => e.CanSplashHit() == false)) continue;

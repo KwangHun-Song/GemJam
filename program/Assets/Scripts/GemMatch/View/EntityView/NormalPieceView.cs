@@ -9,6 +9,9 @@ namespace GemMatch {
         [SerializeField] private Image mainImage;
 
         public async override UniTask OnCreate() {
+            if ((int)Entity.Color >= sprites.Length) {
+                Debug.Log($"{(int)Entity.Color}");
+            }
             mainImage.sprite = sprites[(int)Entity.Color];
             mainImage.color = Color.gray;
         }
