@@ -4,6 +4,7 @@ namespace GemMatch {
     public enum EntityIndex {
         None,
         NormalPiece,
+        SpawnerPiece,
     }
 
     public class Entity : IComparable<Entity>, ICloneable<Entity> {
