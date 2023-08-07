@@ -24,6 +24,8 @@ namespace GemMatch {
             return entityModel.index switch {
                 EntityIndex.NormalPiece => new NormalPiece(entityModel),
                 EntityIndex.GoalPiece => new GoalPiece(entityModel),
+                EntityIndex.VisibleCover => new VisibleCover(entityModel),
+                EntityIndex.InvisibleCover => new InvisibleCover(entityModel),
             };
         }
     }

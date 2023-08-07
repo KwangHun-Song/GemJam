@@ -228,6 +228,14 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 34
       isOpened: 1
       entityModels:
@@ -239,6 +247,14 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 35
       isOpened: 1
       entityModels:
@@ -247,6 +263,14 @@ MonoBehaviour:
         displayType: 0
         durability: 0
         color: 1000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
@@ -275,6 +299,14 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 39
       isOpened: 1
       entityModels:
@@ -283,6 +315,14 @@ MonoBehaviour:
         displayType: 0
         durability: 0
         color: 1000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
@@ -300,6 +340,14 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 42
       isOpened: 0
       entityModels: []
@@ -311,6 +359,14 @@ MonoBehaviour:
         displayType: 0
         durability: 0
         color: 1000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
@@ -328,6 +384,9 @@ MonoBehaviour:
       entityModels: []
     - index: 48
       isOpened: 1
+      entityModels: []
+    - index: 49
+      isOpened: 1
       entityModels:
       - index: 1
         layer: 10000
@@ -337,9 +396,6 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    - index: 49
-      isOpened: 1
-      entityModels: []
     - index: 50
       isOpened: 0
       entityModels: []
@@ -351,6 +407,14 @@ MonoBehaviour:
         displayType: 0
         durability: 0
         color: 1000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: 0
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 

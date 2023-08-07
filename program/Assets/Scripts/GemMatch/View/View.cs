@@ -87,6 +87,13 @@ namespace GemMatch {
         }
 
         public void OnRunAbility(Ability ability) { }
+        public void OnDestroyEntity(Tile tile, Entity entity) {
+            var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
+            var entityView = tileView.EntityViews.Single(ev => ReferenceEquals(ev.Entity, entity));
+
+            tileView.EntityViews.Remove(entityView);
+            DestroyImmediate(entityView.gameObject);
+        }
 
         public void OnAddActiveTiles(IEnumerable<Tile> tiles) {
             foreach (var entityView in TileViews.Where(tv => tiles.Contains(tv.Tile))
