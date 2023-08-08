@@ -14,13 +14,16 @@ namespace GemMatch {
         public void DistributeClearableColors(Tile[] tiles) {
             var randomColorPieces = tiles
                 .SelectMany(t => t.Entities.Values)
-                .Where(e => e.Color == ColorIndex.Random)
+                .Where(e => e is NormalPiece && e.Color == ColorIndex.Random)
                 .ToArray();
             if (randomColorPieces.Any() == false) return;
 
             // 클리어 가능한 컬러들 큐 만들기
             var availableColors = Constants.UsableColors.Take(Level.colorCount).ToList();
             var colorsQueue = ColorCalculator.GenerateColorQueue(randomColorPieces.Count(), availableColors);
+            
+            SetRandomColors(colorsQueue);
+            return;
 
             UnityEngine.Debug.Log(
                 $"colors : {string.Join(", ", colorsQueue.Select(ci => ci.ToString().Substring(0, 1)))}");
@@ -37,8 +40,8 @@ namespace GemMatch {
                 colorCount = Level.colorCount,
             };
 
-            // 가능한 것 아무거나 클릭하는 솔버를 만들어서 결과 얻기
-            var solver = new Solver(new PickRandomAvailableAI());
+            // 가능한 노말피스 아무거나 클릭하는 솔버를 만들어서 결과 얻기
+            var solver = new Solver(new PickRandomAvailableNormalPieceAI());
             var solverResult = solver.Solve(dummyLevel);
             if (solverResult.gameResult != GameResult.Clear) {
                 UnityEngine.Debug.Log("solver Failed!");

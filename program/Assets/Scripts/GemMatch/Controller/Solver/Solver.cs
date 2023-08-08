@@ -10,7 +10,7 @@ namespace GemMatch {
         }
         
         public SolverResult Solve(Level level) {
-            var clonedCtrl = new SimulationController();
+            var clonedCtrl = new SelectColorController();
             clonedCtrl.StartGame(level);
 
             var clickedTileIndices = new List<int>();
@@ -23,9 +23,9 @@ namespace GemMatch {
                 simulationResult = clonedCtrl.SimulationInput(tileIndex);
                 clickedTileIndices.Add(tileIndex);
                 
-                // UnityEngine.Debug.Log($"click {tileIndex}, " +
-                //                       $"memory {string.Join(",", clonedCtrl.Memory.Select(e => e.Color.ToString().Substring(0, 1)))}, " +
-                //                       $"remain {string.Join(",", clonedCtrl.Tiles.SelectMany(t => t.Entities).Count())}");
+                UnityEngine.Debug.Log($"click {tileIndex}, " +
+                                      $"memory {string.Join(",", clonedCtrl.Memory.Select(e => e.Color.ToString().Substring(0, 1)))}, " +
+                                      $"remain {string.Join(",", clonedCtrl.Tiles.SelectMany(t => t.Entities).Count())}");
 
                 if (safeStop >= 5000) {
                     UnityEngine.Debug.Log("solver something wrong. safe stop!");

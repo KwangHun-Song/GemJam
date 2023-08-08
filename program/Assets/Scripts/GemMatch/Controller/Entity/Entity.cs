@@ -5,6 +5,9 @@ namespace GemMatch {
         None,
         NormalPiece,
         SpawnerPiece,
+        GoalPiece,
+        VisibleCover,
+        InvisibleCover,
     }
 
     public class Entity : IComparable<Entity>, ICloneable<Entity> {
@@ -24,9 +27,8 @@ namespace GemMatch {
 
         public virtual bool PreventTouch() => false;
         public virtual bool CanPassThrough() => Layer != Layer.Piece;
-        public virtual bool CanAddMemory() => Index == EntityIndex.NormalPiece;
-        public virtual bool CanSplashHit() => false;
-        public virtual bool PreventHit() => false;
+        public virtual bool CanAddMemory() => Index == EntityIndex.NormalPiece || Index == EntityIndex.GoalPiece;
+        public virtual bool CanBeHit() => false;
 
         public Entity(EntityModel model) {
             Model = model;
@@ -37,7 +39,7 @@ namespace GemMatch {
         public int CompareTo(Entity other) => Layer.CompareTo(other.Layer);
 
         public virtual HitResultInfo Hit() {
-            return new HitResultInfo { entity = this, hitResult = HitResult.None };
+            return new HitResultInfo(HitResult.None);
         }
     }
 }
