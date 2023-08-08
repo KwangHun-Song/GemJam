@@ -29,6 +29,7 @@ namespace GemMatch {
         public virtual bool CanPassThrough() => Layer != Layer.Piece;
         public virtual bool CanAddMemory() => Index == EntityIndex.NormalPiece || Index == EntityIndex.GoalPiece;
         public virtual bool CanBeHit() => false;
+        public virtual bool CanBeSplashHit() => false;
 
         public Entity(EntityModel model) {
             Model = model;
