@@ -15,9 +15,9 @@ namespace GemMatch {
             ColorIndex.Green,
             ColorIndex.Blue,
             ColorIndex.Purple,
-            ColorIndex.Brown,
-            ColorIndex.Pink,
-            ColorIndex.Cyan
+            // ColorIndex.Brown, // todo: 추수 보석 색 추가 시 연다
+            // ColorIndex.Pink,
+            // ColorIndex.Cyan,
         };
     }
 }
