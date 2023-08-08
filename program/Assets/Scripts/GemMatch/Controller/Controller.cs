@@ -17,7 +17,7 @@ namespace GemMatch {
         public List<Tile> ActiveTiles { get; protected set; } = new List<Tile>();
 
         public virtual PathFinder PathFinder { get; protected set; }
-        public virtual ColorsDistributor ColorsDistributor { get; protected set; }
+        public virtual IColorDistributor ColorDistributor { get; protected set; }
 
         public virtual void StartGame(Level level) {
             // 초기화
@@ -26,10 +26,10 @@ namespace GemMatch {
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             PathFinder = new PathFinder(Tiles);
-            ColorsDistributor = new ColorsDistributor(CurrentLevel);
+            ColorDistributor = new ClearableColorDistributor();
             
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
-            ColorsDistributor.DistributeClearableColors(Tiles);
+            ColorDistributor.DistributeClearableColors(CurrentLevel, Tiles, new ClearableColorCalculator());
 
             // 게임 시작
             gameCompletionSource = new UniTaskCompletionSource<GameResult>();

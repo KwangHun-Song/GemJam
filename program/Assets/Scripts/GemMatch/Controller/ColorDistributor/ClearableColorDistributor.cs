@@ -2,16 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GemMatch {
-    public class ColorsDistributor {
-        
-        public virtual RandomColorCalculator ColorCalculator { get; } = new RandomColorCalculator();
-        public Level Level { get;}
-        
-        public ColorsDistributor(Level currentLevel) {
-            Level = currentLevel;
-        }
-
-        public void DistributeClearableColors(Tile[] tiles) {
+    public class ClearableColorDistributor : IColorDistributor {
+        public void DistributeClearableColors(Level level, Tile[] tiles, IColorCalculator colorCalculator) {
             var randomColorPieces = tiles
                 .SelectMany(t => t.Entities.Values)
                 .Where(e => e is NormalPiece && e.Color == ColorIndex.Random)
@@ -19,29 +11,28 @@ namespace GemMatch {
             if (randomColorPieces.Any() == false) return;
 
             // 클리어 가능한 컬러들 큐 만들기
-            var availableColors = Constants.UsableColors.Take(Level.colorCount).ToList();
-            var colorsQueue = ColorCalculator.GenerateColorQueue(randomColorPieces.Count(), availableColors);
-            
-            SetRandomColors(colorsQueue);
-            return;
+            var availableColors = Constants.UsableColors.Take(level.colorCount).ToList();
+            var colorsQueue = colorCalculator.GenerateColorQueue(randomColorPieces.Count(), availableColors);
 
             UnityEngine.Debug.Log(
                 $"colors : {string.Join(", ", colorsQueue.Select(ci => ci.ToString().Substring(0, 1)))}");
 
             // 랜덤 컬러를 단일 색상으로 교체해서, 클리어 가능한 타일 클릭 순서 찾아내기
             var dummyLevel = new Level {
-                tiles = Level.tiles.Select(tm => {
+                tiles = level.tiles.Select(tm => {
                     var tileModel = tm.Clone();
                     var entityModel = tileModel.entityModels.SingleOrDefault(em => em.index == EntityIndex.NormalPiece);
                     if (entityModel != null) entityModel.color = ColorIndex.Sole;
                     return tileModel;
                 }).ToArray(),
-                missions = Level.missions,
-                colorCount = Level.colorCount,
+                missions = level.missions,
+                colorCount = level.colorCount,
             };
 
             // 가능한 노말피스 아무거나 클릭하는 솔버를 만들어서 결과 얻기
-            var solver = new Solver(new PickRandomAvailableNormalPieceAI());
+            var solver = new Solver(
+                new PickRandomAvailableNormalPieceAI(), 
+                new ColorShuffleController());
             var solverResult = solver.Solve(dummyLevel);
             if (solverResult.gameResult != GameResult.Clear) {
                 UnityEngine.Debug.Log("solver Failed!");

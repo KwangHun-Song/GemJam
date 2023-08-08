@@ -3,8 +3,11 @@ using System.Linq;
 using UnityEngine.Assertions;
 
 namespace GemMatch {
-    public class RandomColorCalculator {
-        public virtual Queue<ColorIndex> GenerateColorQueue(int queueCount, List<ColorIndex> colors) {
+    /// <summary>
+    /// 순서대로 선택해서 7개 슬롯에 넣을 경우 클리어할 수 있게 컬러를 반환하는 계산기
+    /// </summary>
+    public class ClearableColorCalculator : IColorCalculator {
+        public Queue<ColorIndex> GenerateColorQueue(int queueCount, List<ColorIndex> colors) {
             // 결과는 3의 배수여야 한다.
             Assert.AreEqual(0, queueCount % 3);
             
