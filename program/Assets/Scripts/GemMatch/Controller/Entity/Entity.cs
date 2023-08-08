@@ -2,7 +2,7 @@ using System;
 
 namespace GemMatch {
     public enum EntityIndex {
-        None,
+        None = 0,
         NormalPiece,
         SpawnerPiece,
         GoalPiece,
