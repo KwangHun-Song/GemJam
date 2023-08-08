@@ -29,7 +29,10 @@ namespace GemMatch {
             ColorDistributor = new ClearableColorDistributor();
             
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
-            ColorDistributor.DistributeClearableColors(CurrentLevel, Tiles, new ClearableColorCalculator());
+            if (ColorDistributor.DistributeColors(CurrentLevel, Tiles) == false) {
+                // 실패시 색깔을 랜덤으로 배치한다.
+                new RandomColorDistributor().DistributeColors(CurrentLevel, Tiles);
+            }
 
             // 게임 시작
             gameCompletionSource = new UniTaskCompletionSource<GameResult>();

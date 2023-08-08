@@ -14,7 +14,7 @@ namespace GemMatch {
             PathFinder = new PathFinder(Tiles);
             ColorDistributor = new ClearableColorDistributor();
             
-            ColorDistributor.DistributeClearableColors(CurrentLevel, Tiles, new ClearableColorCalculator());
+            ColorDistributor.DistributeColors(CurrentLevel, Tiles);
             CalculateActiveTiles();
         }
 

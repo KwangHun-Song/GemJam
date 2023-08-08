@@ -24,9 +24,9 @@ namespace GemMatch {
                 simulationResult = Controller.SimulationInput(tileIndex);
                 clickedTileIndices.Add(tileIndex);
                 
-                UnityEngine.Debug.Log($"click {tileIndex}, " +
-                                      $"memory {string.Join(",", Controller.Memory.Select(e => e.Color.ToString().Substring(0, 1)))}, " +
-                                      $"remain {string.Join(",", Controller.Tiles.SelectMany(t => t.Entities).Count())}");
+                // UnityEngine.Debug.Log($"click {tileIndex}, " +
+                //                       $"memory {string.Join(",", Controller.Memory.Select(e => e.Color.ToString().Substring(0, 1)))}, " +
+                //                       $"remain {string.Join(",", Controller.Tiles.SelectMany(t => t.Entities).Count())}");
 
                 if (safeStop >= 5000) {
                     UnityEngine.Debug.Log("solver something wrong. safe stop!");
