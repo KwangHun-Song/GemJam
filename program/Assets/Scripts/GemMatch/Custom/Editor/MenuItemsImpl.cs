@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 
 namespace GemMatch.Custom.Editor {
-    public static class Utility {
+    public static class MenuItemsImpl {
         [MenuItem("GemJam/임시 기능2 레벨의 모든 색깔 랜덤으로")]
         public static void SetRandomPieceColors() {
             var level = LevelLoader.GetContainer().levels.First();
