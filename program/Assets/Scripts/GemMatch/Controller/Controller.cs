@@ -128,18 +128,23 @@ namespace GemMatch {
         public void Hit(Tile targetTile) {
             HitInternal(targetTile);
 
-            return;
-
             foreach (var adjacentTile in TileUtility.GetAdjacentTiles(targetTile, Tiles)) {
-                if (adjacentTile.Entities.Values.Any(e => e.CanSplashHit() == false)) continue;
-                Hit(adjacentTile);
+                HitInternal(adjacentTile);
+                // Hit(adjacentTile);
             }
         }
 
-        private IEnumerable<HitResultInfo> HitInternal(Tile tile) {
+        private void HitInternal(Tile tile) {
             foreach (var entity in tile.Entities.Values) {
-                if (entity.CanSplashHit()) yield return entity.Hit();
-                if (entity.PreventHit()) break;
+                if (entity.CanBeHit()) {
+                    var hitInfo = entity.Hit();
+                    if (hitInfo.hitResult == HitResult.Destroyed) {
+                        tile.RemoveLayer(entity.Layer);
+                        foreach (var listener in Listeners) listener.OnDestroyEntity(tile, entity);
+                    }
+                    
+                    if (hitInfo.prevent) break;
+                } 
             }
         }
 

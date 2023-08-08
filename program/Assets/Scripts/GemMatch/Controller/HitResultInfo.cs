@@ -1,7 +1,12 @@
 namespace GemMatch {
     public enum HitResult { None, Hit, Destroyed }
     public struct HitResultInfo {
-        public Entity entity;
-        public HitResult hitResult;
+        public readonly HitResult hitResult;
+        public bool prevent;
+
+        public HitResultInfo(HitResult hitResult, bool prevent = false) {
+            this.hitResult = hitResult;
+            this.prevent = prevent;
+        }
     }
 }

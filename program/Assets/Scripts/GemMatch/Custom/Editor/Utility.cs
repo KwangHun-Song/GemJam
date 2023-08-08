@@ -9,9 +9,13 @@ namespace GemMatch.Custom.Editor {
         public static void SetRandomPieceColors() {
             var level = LevelLoader.GetContainer().levels.First();
 
-            foreach (var entityModel in level.tiles.SelectMany(tm => tm.entityModels)) {
-                entityModel.color = ColorIndex.Random;
+            foreach (var tileModel in level.tiles.Where(t => t.entityModels.Any(em => em.layer == Layer.Cover))) {
+                tileModel.entityModels.Single(em => em.layer == Layer.Cover).index = EntityIndex.InvisibleCover;
             }
+
+            // foreach (var entityModel in level.tiles.SelectMany(tm => tm.entityModels)) {
+            //     entityModel.color = ColorIndex.Random;
+            // }
         }
         
         [MenuItem("GemJam/임시 기능")]
