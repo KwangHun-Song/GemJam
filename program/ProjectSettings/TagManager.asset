@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Page
+    uniqueID: 3920992143
+    locked: 0
+  - name: Popup
+    uniqueID: 2521286085
+    locked: 0

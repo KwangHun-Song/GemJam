@@ -1,8 +1,10 @@
 using GemMatch;
+using PagePopupSystem;
+using Popups;
 using UnityEngine;
 
 namespace Pages {
-    public class PlayPage : MonoBehaviour {
+    public class PlayPage : PageHandler {
         [SerializeField] private View view;
         
         public Controller Controller { get; private set; }
@@ -19,6 +21,23 @@ namespace Pages {
             var result = await Controller.WaitUntilGameEnd();
             
             Debug.Log(result);
+        }
+
+        private async void Update() {
+            if (Input.GetKeyDown(KeyCode.O)) {
+                FadeOutHelper.FadeOut();
+            } else if (Input.GetKeyDown(KeyCode.I)) {
+                FadeOutHelper.FadeIn();
+            }
+
+            if (Input.GetKeyDown(KeyCode.X)) {
+                ChangeTo(nameof(MainPage));
+            }
+
+            if (Input.GetKeyDown(KeyCode.P)) {
+                var result =  await PopupManager.ShowAsync<bool>(nameof(ReadyPopup));
+                Debug.Log(result);
+            }
         }
     }
 }
