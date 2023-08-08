@@ -16,9 +16,6 @@ namespace GemMatch.LevelEditor {
 
         private void OnEnable() {
             this._entityView = this.GetComponent<EntityView>();
-            var btn = this.GetComponent<Button>();
-            btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(this.OnClick);
         }
 
         public void Initialize(EditTool tool, EditView view, Tile tile) {
@@ -28,14 +25,19 @@ namespace GemMatch.LevelEditor {
             var entityViewScript = _entityView.GetComponent<EntityView>();
             Entity = entityViewScript.Entity;
             _entityView.Initialize(null, tile.Entities[Layer.Piece]);
-            _entityView.GetComponent<Button>().enabled = false;
+            TakeMeOnClick();
             if (entityViewScript is NormalPieceView normalPiece) {
-                normalPiece.SetClickable(true);
+                normalPiece.SetClickableUI(true);
             } else {
                 //todo: 다른 블록 계열일때 처리
             }
         }
 
+        private void TakeMeOnClick() {
+            var btn = this.GetComponent<Button>();
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(this.OnClick);
+        }
 
         public void OnClick() {
             _tool.OnClickToolTile(this);

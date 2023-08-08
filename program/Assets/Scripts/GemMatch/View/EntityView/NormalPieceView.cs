@@ -20,19 +20,19 @@ namespace GemMatch {
             mainImage.sprite = sprites[index];
             dimImage.sprite = dimSprites[index];
             slotImage.sprite = slotSprites[index];
-            SetForSlot(false);
-            SetClickable(false);
+            SetForSlotUI(false);
+            SetClickableUI(false);
         }
 
-        public void SetClickable(bool isClickable) {
-            mainImage.enabled = isClickable;
-            dimImage.enabled = !isClickable;
+        public void SetClickableUI(bool isClickable) {
+            mainImage.gameObject.SetActive(isClickable);
+            dimImage.gameObject.SetActive(!isClickable);
         }
 
-        public void SetForSlot(bool isForSlot) {
-            mainImage.enabled = !isForSlot;
-            dimImage.enabled = !isForSlot;
-            slotImage.enabled = isForSlot;
+        public void SetForSlotUI(bool isForSlot) {
+            mainImage.gameObject.SetActive(!isForSlot);
+            dimImage.gameObject.SetActive(!isForSlot);
+            slotImage.gameObject.SetActive(isForSlot);
         }
 
         public void OnClick() {
@@ -40,8 +40,8 @@ namespace GemMatch {
         }
 
         public async UniTask OnActive() {
-            SetForSlot(false);
-            SetClickable(true);
+            SetForSlotUI(false);
+            SetClickableUI(true);
         }
     }
 }

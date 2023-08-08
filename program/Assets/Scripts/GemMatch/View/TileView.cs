@@ -16,7 +16,7 @@ namespace GemMatch {
             View = view;
             Tile = tile;
             
-            // Redraw(); dimmed 처리를 EntityView가 한다.
+            Redraw();
 
             foreach (var entityView in EntityViews) {
                 DestroyImmediate(entityView.gameObject);

@@ -11,7 +11,8 @@ namespace GemMatch.LevelEditor {
     public partial class EditTool : MonoBehaviour, IEditCtrlForTool {
         [SerializeField] private RectTransform tilePanel;
         [SerializeField] private RectTransform normalEntityPanel;
-        [SerializeField] private RectTransform SpawnerEntityPanel;
+        [SerializeField] private RectTransform spawnerEntityPanel;
+        [SerializeField] private RectTransform goalEntityPanel;
         [SerializeField] private RectTransform previewRoot;
 
         private IEditToolEventListener _controller;
@@ -26,22 +27,18 @@ namespace GemMatch.LevelEditor {
 
             // EditTool Tile과 갯수 맞춰서 모델 초기화
             {
-                // init emptyTiles
                 AddTiles(tilePanel, ModelTemplates.TileToolModel);
-                // init normalPieces
                 AddTiles(normalEntityPanel, ModelTemplates.NormalToolModels);
-                // init spawners // todo: spawner 엔터티를 만들고 테스트
-                // AddTiles(SpawnerEntityPanel, initializer.SpawnerToolModels);
+                AddTiles(spawnerEntityPanel, ModelTemplates.SpawnerToolModels);
+                AddTiles(goalEntityPanel, ModelTemplates.GoalToolModels);
             }
 
             // Inner Method
             void AddTiles(RectTransform root, Tile[] model) {
                 var tiles = root.GetComponentsInChildren<IEditToolView>();
-                if (tiles.Length != 0) {
-                    tiles.Select((t, idx) => {
-                        t.Initialize(this, view, model[idx]);
-                        return t;
-                    });
+                for (int i = 0; i < tiles.Length; i++) {
+                    var cursor = tiles[i];
+                    cursor.Initialize(this, view, model[i]);
                 }
                 allTiles.AddRange(tiles);
             }

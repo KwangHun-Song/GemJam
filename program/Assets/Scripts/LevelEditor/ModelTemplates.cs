@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UIElements;
 
 namespace GemMatch.LevelEditor {
 
@@ -55,24 +54,50 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        private static ColorIndex[] SpawnTypes = new[] { //todo: spawner가 생기면 수정
-            ColorIndex.Red,
-            ColorIndex.Orange,
-            ColorIndex.Yellow,
+        private static EntityIndex[] spawnTypes = new[] {
+            EntityIndex.InvisibleCover,
+            EntityIndex.VisibleCover,
         };
         public static Tile[] SpawnerToolModels {
             get {
                 var tiles = new List<Tile>();
-                foreach (var spawnType in SpawnTypes)
+                foreach (var type in spawnTypes)
                     tiles.Add(new Tile(
                         new TileModel() {
                             entityModels = new List<EntityModel>() {
                                 new EntityModel() {
-                                    index = EntityIndex.SpawnerPiece,
+                                    index = type,
                                     layer = Layer.Piece,
                                     displayType = 0,
                                     durability = 0,
-                                    color = spawnType,
+                                    color = ColorIndex.None,
+                                    commonStringParam = string.Empty,
+                                }
+                            },
+                            index = 0,
+                            isOpened = true
+                        }
+                    ));
+                return tiles.ToArray();
+            }
+        }
+
+        private static EntityIndex[] goalTypes = new[] {
+            EntityIndex.GoalPiece,
+        };
+        public static Tile[] GoalToolModels {
+            get {
+                var tiles = new List<Tile>();
+                foreach (var type in goalTypes)
+                    tiles.Add(new Tile(
+                        new TileModel() {
+                            entityModels = new List<EntityModel>() {
+                                new EntityModel() {
+                                    index = type,
+                                    layer = Layer.Piece,
+                                    displayType = 0,
+                                    durability = 0,
+                                    color = ColorIndex.None,
                                     commonStringParam = string.Empty,
                                 }
                             },
