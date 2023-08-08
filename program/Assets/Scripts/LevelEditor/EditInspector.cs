@@ -73,5 +73,12 @@ namespace GemMatch.LevelEditor {
         }
 
         public IEnumerable<ColorIndex> GetColorCandidates() => _contorller.CurrentLevel.colorCandidates;
+
+        public void SetMissions(List<Mission> missions) {
+            _contorller.SetMissions(missions);
+        }
+
+        public IEnumerable<Mission> GetMissions() => _contorller.CurrentLevel.missions;
+
     }
 }
