@@ -41,5 +41,15 @@ namespace GemMatch.LevelEditor {
             var tile = _controller.ChangeTile(tileView.Tile.Model);
             board.UpdateTileView(tile);
         }
+
+        internal override EntityView CreateEntityView(Entity entity, Transform parent) {
+            var prefab = Resources.Load<EntityView>($"Editor_{entity.Index}");
+            var view = Instantiate(prefab, parent, true);
+            view.transform.localPosition = Vector3.zero;
+            view.transform.localScale = Vector3.one;
+            view.Initialize(null, entity);
+
+            return view;
+        }
     }
 }

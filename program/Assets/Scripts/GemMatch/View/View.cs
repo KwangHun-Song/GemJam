@@ -119,7 +119,7 @@ namespace GemMatch {
             Controller.Input(Controller.GetTile(entity).Index);
         }
 
-        internal EntityView CreateEntityView(Entity entity, Transform parent) {
+        internal virtual EntityView CreateEntityView(Entity entity, Transform parent) {
             var prefab = Resources.Load<EntityView>(entity.Index.ToString());
             var view = Instantiate(prefab, parent, true);
             view.transform.localPosition = Vector3.zero;

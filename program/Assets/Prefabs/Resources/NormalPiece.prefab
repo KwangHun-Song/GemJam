@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4177012301346316129}
   - component: {fileID: 7071064157806717147}
   - component: {fileID: 1712538457076358324}
-  - component: {fileID: -8526253434096589360}
   m_Layer: 5
   m_Name: NormalPiece
   m_TagString: Untagged
@@ -69,63 +68,23 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 68328e529db9b48faa68759655429f71, type: 3}
   - {fileID: 21300000, guid: c4e5494aad4d645c0bbf9dcc241541f8, type: 3}
   - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
+  dimSprites:
+  - {fileID: 21300000, guid: 572814e33d9654cc5b15a1a52a249cb1, type: 3}
+  - {fileID: 21300000, guid: c58dda71d1ad84b259c2c12eee50b5b1, type: 3}
+  - {fileID: 21300000, guid: 29db9fd971c3943dab69d8a66f67bd05, type: 3}
+  - {fileID: 21300000, guid: 8cdf38e8b0c1e421b95fd574b51459a5, type: 3}
+  - {fileID: 21300000, guid: f32cdc6d4400c435c9c8a56342ffc8cd, type: 3}
+  - {fileID: 21300000, guid: b44af068bd20541b480767bee389e841, type: 3}
+  slotSprites:
+  - {fileID: 21300000, guid: 4060a50fff36f4d70a62eac5f3a9f293, type: 3}
+  - {fileID: 21300000, guid: d96e8f1dbb5034f629dba7e522156bda, type: 3}
+  - {fileID: 21300000, guid: 3190a5b036b204c499b6a14d336db6c9, type: 3}
+  - {fileID: 21300000, guid: 68328e529db9b48faa68759655429f71, type: 3}
+  - {fileID: 21300000, guid: c4e5494aad4d645c0bbf9dcc241541f8, type: 3}
+  - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
   mainImage: {fileID: 9192351032170399212}
---- !u!114 &-8526253434096589360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2390828362597232258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 9192351032170399212}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1712538457076358324}
-        m_TargetAssemblyTypeName: GemMatch.NormalPieceView, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  dimImage: {fileID: 5940224919311629400}
+  slotImage: {fileID: 8042171681023600220}
 --- !u!1 &2765536171184966895
 GameObject:
   m_ObjectHideFlags: 0
