@@ -14,10 +14,12 @@ namespace GemMatch {
         [SerializeField] private Image slotImage;
 
         public async override UniTask OnCreate() {
-            if (Constants.UsableColors.Contains(Entity.Color)) return;
-            mainImage.sprite = sprites[(int)Entity.Color];
-            dimImage.sprite = dimSprites[(int)Entity.Color];
-            slotImage.sprite = slotSprites[(int)Entity.Color];
+            if (Entity.Color != ColorIndex.Random)
+                if (Constants.UsableColors.Contains(Entity.Color) == false) return;
+            var index = Entity.Color == ColorIndex.Random ? sprites.Length-1 : (int)Entity.Color;
+            mainImage.sprite = sprites[index];
+            dimImage.sprite = dimSprites[index];
+            slotImage.sprite = slotSprites[index];
             SetForSlot(false);
             SetClickable(false);
         }
