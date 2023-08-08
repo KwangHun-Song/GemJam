@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace PagePopupSystem {
     public abstract class PageHandler : MonoBehaviour {
-        public virtual void OnWillEnter<TInParam>(TInParam param) { }
+        public virtual void OnWillEnter(object param) { }
 
         public string Name => GetType().Name;
 

@@ -1,5 +1,6 @@
 using GemMatch;
 using PagePopupSystem;
+using Popups;
 using UnityEngine;
 
 namespace Pages {
@@ -22,7 +23,7 @@ namespace Pages {
             Debug.Log(result);
         }
 
-        private void Update() {
+        private async void Update() {
             if (Input.GetKeyDown(KeyCode.O)) {
                 FadeOutHelper.FadeOut();
             } else if (Input.GetKeyDown(KeyCode.I)) {
@@ -31,6 +32,11 @@ namespace Pages {
 
             if (Input.GetKeyDown(KeyCode.X)) {
                 ChangeTo(nameof(MainPage));
+            }
+
+            if (Input.GetKeyDown(KeyCode.P)) {
+                var result =  await PopupManager.ShowAsync<bool>(nameof(ReadyPopup));
+                Debug.Log(result);
             }
         }
     }
