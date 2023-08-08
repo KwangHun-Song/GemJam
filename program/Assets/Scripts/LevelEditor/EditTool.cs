@@ -68,9 +68,10 @@ namespace GemMatch.LevelEditor {
                     var isOpeneds = new []{true,false};
                     return isOpeneds.Select((t, idx) => {
                         return new Tile(new TileModel() {
-                            entityModels = new List<EntityModel>(),
                             index = 0,
-                            isOpened = isOpeneds[idx] }); }).ToArray();
+                            isOpened = isOpeneds[idx],
+                        });
+                    }).ToArray();
                 }
             }
 
@@ -91,11 +92,12 @@ namespace GemMatch.LevelEditor {
                             new TileModel() {
                                 entityModels = new List<EntityModel>() {
                                     new EntityModel() {
-                                        color = color,
+                                        index = EntityIndex.NormalPiece,
+                                        layer = Layer.Piece,
                                         displayType = 0,
                                         durability = 0,
-                                        index = EntityIndex.NormalPiece,
-                                        layer = Layer.Piece
+                                        color = color,
+                                        commonStringParam = string.Empty,
                                     }
                                 },
                                 index = 0,
@@ -119,11 +121,12 @@ namespace GemMatch.LevelEditor {
                             new TileModel() {
                                 entityModels = new List<EntityModel>() {
                                     new EntityModel() {
-                                        color = spawnType,
+                                        index = EntityIndex.SpawnerPiece,
+                                        layer = Layer.Piece,
                                         displayType = 0,
                                         durability = 0,
-                                        index = EntityIndex.SpawnerPiece,
-                                        layer = Layer.Piece
+                                        color = spawnType,
+                                        commonStringParam = string.Empty,
                                     }
                                 },
                                 index = 0,
