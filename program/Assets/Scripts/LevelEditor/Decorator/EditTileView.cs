@@ -40,9 +40,13 @@ namespace GemMatch.LevelEditor {
             _tileView.Initialize(view, tile);
             // EntityView의 버튼 인터렉션을 끄고 타일에서 가로챈다
             foreach (EntityView entityView in _tileView.EntityViews) {
-                if (entityView.Entity.Index != EntityIndex.NormalPiece) continue;
-                (entityView as NormalPieceView).IsEditMode = true;
+                if (entityView.Entity.Index == EntityIndex.None) continue;
                 entityView.OnCreate().Forget();
+                if (entityView is NormalPieceView normal) {
+                    normal.SetForSlot(true);
+                } else {
+                    // todo: 다른 블럭이 생기면 처리
+                }
             }
             this.Tile = this._tileView.Tile;
             this.TileModel = this._tileView.Tile.Model;
