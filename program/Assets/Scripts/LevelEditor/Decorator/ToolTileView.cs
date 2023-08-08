@@ -3,14 +3,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace GemMatch.LevelEditor {
-    [RequireComponent(typeof(TileView))]
     [RequireComponent(typeof(Button))]
-    public class ToolTileView : MonoBehaviour{
+    [RequireComponent(typeof(TileView))]
+    public class ToolTileView : MonoBehaviour, IEditToolView {
         private EditTool _tool;
         private TileView _tileView;
         private Entity[] _entities;
 
         public Tile Tile { get; private set; }
+        public RectTransform transform => gameObject.transform as RectTransform;
         public TileModel TileModel { get; private set; }
 
         private void OnEnable() {

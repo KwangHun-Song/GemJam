@@ -40,13 +40,9 @@ namespace GemMatch.LevelEditor {
             _tileView.Initialize(view, tile);
             // EntityView의 버튼 인터렉션을 끄고 타일에서 가로챈다
             foreach (EntityView entityView in _tileView.EntityViews) {
-                if (entityView.Entity.Index == EntityIndex.NormalPiece)
-                    entityView.GetComponent<Button>().enabled = false;
-                entityView.OnCreate().ContinueWith(() => {
-                    if (entityView.Entity.Index == EntityIndex.NormalPiece)
-                        entityView.GetComponent<Image>().color = Color.white;
-                });
-
+                if (entityView.Entity.Index != EntityIndex.NormalPiece) continue;
+                (entityView as NormalPieceView).IsEditMode = true;
+                entityView.OnCreate().Forget();
             }
             this.Tile = this._tileView.Tile;
             this.TileModel = this._tileView.Tile.Model;
