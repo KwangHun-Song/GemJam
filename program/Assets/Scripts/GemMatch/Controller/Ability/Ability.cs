@@ -11,6 +11,9 @@ namespace GemMatch {
         }
         
         public abstract Ability Run();
-        public abstract IEnumerable<Ability> GetCascador();
+
+        public virtual IEnumerable<Ability> GetCascadedAbility() {
+            yield break;
+        }
     }
 }

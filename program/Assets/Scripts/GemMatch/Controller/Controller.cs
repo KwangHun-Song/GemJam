@@ -62,8 +62,9 @@ namespace GemMatch {
         }
 
         public void InputAbility(Ability ability) {
-            ability?.Run();
-            foreach (var subAbility in ability.GetCascador()) {
+            if (ability == null) return;
+            ability.Run();
+            foreach (var subAbility in ability.GetCascadedAbility()) {
                 InputAbility(subAbility);
             }
             
@@ -92,7 +93,7 @@ namespace GemMatch {
         public Tile GetTile(Entity entity) => Tiles.SingleOrDefault(t => t.Entities.Values.Any(e => ReferenceEquals(e, entity)));
 
         protected virtual bool IsCleared() {
-            if (Memory.Any(e => e is GoalPiece)) return true;
+            if (ActiveTiles.Any(t => t.Piece is GoalPiece)) return true;
             if (Tiles.SelectMany(t => t.Entities.Values).Any(e => e is NormalPiece) == false && Memory.Any() == false) return true;
             if (!Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any())
                 return true;
