@@ -40,11 +40,6 @@ namespace GemMatch.LevelEditor {
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
         }
 
-        public void LoadInspector(EditInspector editInspector) {
-            editInspector.LoadLevel(0);
-            editInspector.SetDirty();
-        }
-
         public override void Input(int tileIndex) {
             Touch(Tiles[tileIndex]);
         }
@@ -136,9 +131,9 @@ namespace GemMatch.LevelEditor {
             }
 
             var newLevel = new Level() {
-                colorCandidates = new[] { ColorIndex.None },
+                colorCandidates = new ColorIndex[] { },
                 colorCount = 1,
-                missions = new[] { new Mission() },
+                missions = new Mission[] {},
                 tiles = newTiles.Select(t => t.Model).ToArray()
             };
             LoadLevel(newLevel);

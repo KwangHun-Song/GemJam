@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3077933669935469181}
   - component: {fileID: 1712538457076358324}
   - component: {fileID: -8526253434096589360}
+  - component: {fileID: 6455738841036889518}
   m_Layer: 5
   m_Name: NormalPiece
   m_TagString: Untagged
@@ -97,6 +98,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 68328e529db9b48faa68759655429f71, type: 3}
   - {fileID: 21300000, guid: c4e5494aad4d645c0bbf9dcc241541f8, type: 3}
   - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
+  - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
+  - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
+  - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
+  - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
+  - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
   mainImage: {fileID: 3077933669935469181}
 --- !u!114 &-8526253434096589360
 MonoBehaviour:
@@ -154,3 +160,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6455738841036889518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2390828362597232258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92083440dd674228b2b71694b1a63d52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 3077933669935469181}
+  entitiesRoot: {fileID: 4177012301346316129}

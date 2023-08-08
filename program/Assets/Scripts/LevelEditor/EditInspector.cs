@@ -36,10 +36,13 @@ namespace GemMatch.LevelEditor {
         public void LoadLevel(int levelIndex) {
             var levelsLength = LevelLoader.GetContainer().levels.Length;
             LevelIndex = Math.Min(levelIndex, levelsLength - 1);
-            _contorller.LoadLevel(LevelLoader.GetLevel(LevelIndex));
+            var levelCache = LevelLoader.GetLevel(LevelIndex).Clone();
+            _contorller.LoadLevel(levelCache);
+            OnLoadLevel?.Invoke(this);
         }
 
         public void NewLevel() {
+            LevelIndex = LevelLoader.GetContainer().levels.Length;
             _contorller.MakeLevel1();
         }
 
@@ -59,6 +62,8 @@ namespace GemMatch.LevelEditor {
             EditorUtility.SetDirty(LevelLoader.GetContainer());
             AssetDatabase.SaveAssets();
         }
+
+        public event Action<EditInspector> OnLoadLevel;
 
         public async UniTask<bool> ExecuteWhenUpdateLevel(System.Action<EditInspector> callback) {
             if (IsDirty()) {
