@@ -36,10 +36,13 @@ namespace GemMatch.LevelEditor {
         public void LoadLevel(int levelIndex) {
             var levelsLength = LevelLoader.GetContainer().levels.Length;
             LevelIndex = Math.Min(levelIndex, levelsLength - 1);
-            _contorller.LoadLevel(LevelLoader.GetLevel(LevelIndex));
+            var levelCache = LevelLoader.GetLevel(LevelIndex).Clone();
+            _contorller.LoadLevel(levelCache);
+            OnLoadLevel?.Invoke(this);
         }
 
         public void NewLevel() {
+            LevelIndex = LevelLoader.GetContainer().levels.Length;
             _contorller.MakeLevel1();
         }
 
@@ -60,6 +63,8 @@ namespace GemMatch.LevelEditor {
             AssetDatabase.SaveAssets();
         }
 
+        public event Action<EditInspector> OnLoadLevel;
+
         public async UniTask<bool> ExecuteWhenUpdateLevel(System.Action<EditInspector> callback) {
             if (IsDirty()) {
                 callback?.Invoke(this);
@@ -73,5 +78,12 @@ namespace GemMatch.LevelEditor {
         }
 
         public IEnumerable<ColorIndex> GetColorCandidates() => _contorller.CurrentLevel.colorCandidates;
+
+        public void SetMissions(List<Mission> missions) {
+            _contorller.SetMissions(missions);
+        }
+
+        public IEnumerable<Mission> GetMissions() => _contorller.CurrentLevel.missions;
+
     }
 }

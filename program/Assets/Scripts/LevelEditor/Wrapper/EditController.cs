@@ -9,6 +9,7 @@ namespace GemMatch.LevelEditor {
         void LoadLevel(Level getLevel);
         void SetColorCandidates(List<ColorIndex> colorCandidates);
         Level CurrentLevel { get; }
+        void SetMissions(List<Mission> missions);
     }
 
     public interface IEditToolEventListener {
@@ -37,11 +38,6 @@ namespace GemMatch.LevelEditor {
         public void EditGame(Level level) {
             CurrentLevel = level;
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
-        }
-
-        public void LoadInspector(EditInspector editInspector) {
-            editInspector.LoadLevel(0);
-            editInspector.SetDirty();
         }
 
         public override void Input(int tileIndex) {
@@ -135,9 +131,9 @@ namespace GemMatch.LevelEditor {
             }
 
             var newLevel = new Level() {
-                colorCandidates = new[] { ColorIndex.None },
+                colorCandidates = new ColorIndex[] { },
                 colorCount = 1,
-                missions = new[] { new Mission() },
+                missions = new Mission[] {},
                 tiles = newTiles.Select(t => t.Model).ToArray()
             };
             LoadLevel(newLevel);
@@ -152,6 +148,10 @@ namespace GemMatch.LevelEditor {
 
         public void SetColorCandidates(List<ColorIndex> colorCandidates) {
             CurrentLevel.colorCandidates = colorCandidates.ToArray();
+        }
+
+        public void SetMissions(List<Mission> missions) {
+            CurrentLevel.missions = missions.ToArray();
         }
 
         public int BoardWidthOpened { get; private set; } = 8;
