@@ -1,8 +1,9 @@
 using GemMatch;
+using PagePopupSystem;
 using UnityEngine;
 
 namespace Pages {
-    public class PlayPage : MonoBehaviour {
+    public class PlayPage : PageHandler {
         [SerializeField] private View view;
         
         public Controller Controller { get; private set; }
@@ -19,6 +20,18 @@ namespace Pages {
             var result = await Controller.WaitUntilGameEnd();
             
             Debug.Log(result);
+        }
+
+        private void Update() {
+            if (Input.GetKeyDown(KeyCode.O)) {
+                FadeOutHelper.FadeOut();
+            } else if (Input.GetKeyDown(KeyCode.I)) {
+                FadeOutHelper.FadeIn();
+            }
+
+            if (Input.GetKeyDown(KeyCode.X)) {
+                ChangeTo(nameof(MainPage));
+            }
         }
     }
 }
