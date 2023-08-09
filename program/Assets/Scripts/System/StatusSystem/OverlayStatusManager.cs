@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Triggers;
 
 namespace OverlayStatusSystem {
     internal class OverlayStatusManager {
@@ -25,22 +27,32 @@ namespace OverlayStatusSystem {
         // 외부에선 helper로 통신
         // listener를 iter로 돌때 오브젝트가 살아있나 확인 gameObject 또는 onasyncdestory 같은걸 걸어도 좋을듯?
 
-        private readonly Dictionary<Type, object> _inputPool = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, IOverlayStatus> _statusDict = new Dictionary<Type, IOverlayStatus>();
         private readonly List<IOverlayStatus> _statusList = new List<IOverlayStatus>();
-        private event  Action<List<IOverlayStatus>> OnSave;
 
-        public void Input(IOverlayStatusParam inputParam) {
-            _inputPool[inputParam.GetType()] = inputParam.Value;
+        public void Init(IOverlayStatus status) {
+            this._statusList.Add(status);
+            this._statusDict.Add(status.GetType(), status);
+            WaitForPopListener(status.EventListener);
         }
 
-        public void Save() {
-            foreach (IOverlayStatus status in _statusList) {
-                if (_inputPool.TryGetValue(status.GetType(), out object input)) {
-                    status.Save(input);
-                    _inputPool.Remove(status.GetType());
-                }
+        private async UniTask WaitForPopListener(IOverlayStatusEvent status) {
+            await status.gameObject.OnDestroyAsync();
+            var destroyedStatus = _statusDict[status.GetType()];
+            _statusDict.Remove(status.GetType());
+            _statusList.Remove(destroyedStatus);
+        }
+
+        public void Input(IOverlayStatusEvent key, OverlayStatusParam inputParam) {
+            _statusDict[key.GetType()].Enqueue(inputParam);
+        }
+
+        public void Save(IOverlayStatusEvent key) {
+            if (_statusDict.ContainsKey(key.GetType()) == false) {
+                return;
             }
-            OnSave?.Invoke(_statusList);
+
+            _statusDict[key.GetType()].Save();
         }
     }
 }

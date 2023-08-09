@@ -1,14 +1,15 @@
-using System;
-
 namespace OverlayStatusSystem {
     public static class OverlayStatusHelper {
-        public static void Input(IOverlayStatusParam inputParam) {
-            OverlayStatusManager.Instance.Input(inputParam);
+        public static void Init(IOverlayStatus statusEvent) {
+            OverlayStatusManager.Instance.Init(statusEvent);
         }
-    }
 
-    public interface IOverlayStatusParam {
-        Type GetType();
-        object Value { get; }
+        public static void Input(IOverlayStatusEvent keyObject, OverlayStatusParam inputParam) {
+            OverlayStatusManager.Instance.Input(keyObject, inputParam);
+        }
+
+        public static void Save(IOverlayStatusEvent keyObject) {
+            OverlayStatusManager.Instance.Save(keyObject);
+        }
     }
 }

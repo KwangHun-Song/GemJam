@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class CoinOverlayStatus
+map CoinStatusView {
+CoinOverlayStatus=>
+}
+class IOverlayStatus
+class IOverlayStatusEvent {
+    gameObject:GameObject
+    OnSave(IOverlayStatus status):void
+}
+class OverlayStatusHelper
+class OverlayStatusManager
+
+OverlayStatusHelper -> OverlayStatusManager
+OverlayStatusManager --> OverlayStatusParam
+CoinOverlayStatus --|> IOverlayStatus
+CoinStatusView ---> OverlayStatusHelper : Init(CoinOverlayStatus)
+CoinStatusView --|> IOverlayStatusEvent
+OverlayStatusManager --> IOverlayStatusEvent
+IOverlayStatus <-- OverlayStatusManager: List<>, Pop(IOverlayStatus)
+@enduml

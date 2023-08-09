@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace OverlayStatusSystem {
-    internal interface IOverlayStatusEvent {
+    public interface IOverlayStatusEvent {
         GameObject gameObject { get; }
-        internal void OnSave(IOverlayStatus status);
+        Type GetType();
     }
 }

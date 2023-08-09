@@ -1,5 +1,7 @@
 namespace OverlayStatusSystem {
-    internal interface IOverlayStatus {
-        void Save(object value);
+    public interface IOverlayStatus {
+        internal void Save();
+        IOverlayStatusEvent EventListener { get; }
+        void Enqueue(OverlayStatusParam inputParam);
     }
 }
