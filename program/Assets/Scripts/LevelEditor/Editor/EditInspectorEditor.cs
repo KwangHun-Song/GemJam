@@ -52,6 +52,8 @@ namespace GemMatch.LevelEditor {
 
         private bool isValidated;
         private int selectedColorCount;
+        private int boardHeight = Constants.Height;
+        private int boardWidth = Constants.Width;
 #endregion
 
         public override void OnInspectorGUI() {
@@ -64,6 +66,15 @@ namespace GemMatch.LevelEditor {
             inspector.SavePath = EditorGUILayout.TextField("Save Path", inspector.SavePath);
             var levelStage = EditorGUILayout.IntField("Level Stage", inspector.LevelIndex + 1);
             inspector.LevelIndex = levelStage - 1;
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("보석 보드 사이즈 : ");
+            boardHeight = EditorGUILayout.Popup(selectedIndex: boardHeight, new[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", }); // string 배열은 1부터
+            boardWidth = EditorGUILayout.Popup(selectedIndex: boardWidth, new[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", });
+            if (GUILayout.Button("Set Board Size")) {
+                inspector.SetBoardSize(boardHeight, boardWidth);
+            }
+            EditorGUILayout.EndHorizontal();
 
             // Load
             if (GUILayout.Button("Load")) {

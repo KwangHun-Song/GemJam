@@ -106,6 +106,10 @@ namespace GemMatch.LevelEditor {
             validColorCount = _validator.GetColorCountCachedOnBoard();
             return result;
         }
+
+        public void SetBoardSize(int boardHeight, int boardWidth) {
+            _contorller.ResizeBoard(boardHeight, boardWidth);
+        }
     }
 
     internal class EditLevelValidator {
