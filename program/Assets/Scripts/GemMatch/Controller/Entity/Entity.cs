@@ -42,5 +42,7 @@ namespace GemMatch {
         public virtual HitResultInfo Hit() {
             return new HitResultInfo(HitResult.None);
         }
+
+        public virtual void OnUpdateEntity() { }
     }
 }

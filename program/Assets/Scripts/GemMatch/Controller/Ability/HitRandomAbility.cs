@@ -2,6 +2,8 @@ using System.Linq;
 
 namespace GemMatch {
     public class HitRandomAbility : Ability {
+
+        public override AbilityIndex Index => AbilityIndex.HitRandomAbility;
         public bool Found { get; set; }
         
         public HitRandomAbility(Tile targetTile, Controller controller) : base(targetTile, controller) { }

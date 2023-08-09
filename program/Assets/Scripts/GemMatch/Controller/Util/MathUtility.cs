@@ -1,8 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace GemMatch {
     public static class MathUtility {
+        private static Random randomCache;
+        private static Random RandomCache => randomCache ??= new Random();
+        
         private static int[] primeNumbers = {
             17 ,13 ,11 ,7 ,5 ,3 ,2
         };
@@ -42,14 +47,11 @@ namespace GemMatch {
             return (first, second);
         }
 
-        public static IList<T> Shuffle<T>(this IList<T> list) {
-            int cnt = list.Count;
-            while (cnt > 1) {
-                cnt--;
-                int ran = UnityEngine.Random.Range(0, cnt + 1);
-                (list[ran], list[cnt]) = (list[cnt], list[ran]);
-            }
-            return list;
+        [Pure]
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> collection, Random random = null) {
+            random ??= RandomCache;
+
+            return collection.OrderBy(_ => random.Next());
         }
 
 

@@ -9,6 +9,9 @@ namespace GemMatch {
         [SerializeField] private Transform tileViewRoot;
         [SerializeField] private Transform memoryViewRoot;
         [SerializeField] private TMP_Text gameStatusText;
+        
+        [Header("MonoBehaviour를 상속한 AbilityView들은 여기에!")]
+        [SerializeField] private ShuffleAbilityView shuffleAbilityView;
 
         private TileView[] tileViews;
         public TileView[] TileViews => tileViews ??= tileViewRoot.GetComponentsInChildren<TileView>();
@@ -20,7 +23,12 @@ namespace GemMatch {
         }
 
         private Controller Controller { get; set; }
-        
+
+        private Dictionary<AbilityIndex, IAbilityView> abilityViews;
+        private Dictionary<AbilityIndex, IAbilityView> AbilityViews => abilityViews ??= new Dictionary<AbilityIndex, IAbilityView> {
+            { AbilityIndex.ShuffleAbility, shuffleAbilityView }
+        };
+
         public void OnStartGame(Controller controller) {
             Controller = controller;
             var tiles = controller.Tiles;
@@ -86,7 +94,11 @@ namespace GemMatch {
             }
         }
 
-        public void OnRunAbility(Ability ability) { }
+        public void OnRunAbility(Ability ability) {
+            if (AbilityViews.ContainsKey(ability.Index) == false) return;
+            AbilityViews[ability.Index].RunAbilityAsync(this, ability, Controller).Forget();
+        }
+        
         public void OnDestroyEntity(Tile tile, Entity entity) {
             var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
             var entityView = tileView.EntityViews.Single(ev => ReferenceEquals(ev.Entity, entity));

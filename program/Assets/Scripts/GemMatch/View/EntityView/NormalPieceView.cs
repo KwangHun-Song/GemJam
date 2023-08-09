@@ -14,14 +14,11 @@ namespace GemMatch {
         [SerializeField] private Image slotImage;
 
         public async override UniTask OnCreate() {
-            if (Entity.Color != ColorIndex.Random)
-                if (Constants.UsableColors.Contains(Entity.Color) == false) return;
-            var index = Entity.Color == ColorIndex.Random ? sprites.Length-1 : (int)Entity.Color;
-            mainImage.sprite = sprites[index];
-            dimImage.sprite = dimSprites[index];
-            slotImage.sprite = slotSprites[index];
-            SetForSlotUI(false);
-            SetClickableUI(false);
+            Redraw();
+        }
+
+        public async override UniTask OnUpdate() {
+            Redraw();
         }
 
         public void SetClickableUI(bool isClickable) {
@@ -33,6 +30,17 @@ namespace GemMatch {
             mainImage.gameObject.SetActive(!isForSlot);
             dimImage.gameObject.SetActive(!isForSlot);
             slotImage.gameObject.SetActive(isForSlot);
+        }
+
+        public void Redraw() {
+            if (Entity.Color != ColorIndex.Random)
+                if (Constants.UsableColors.Contains(Entity.Color) == false) return;
+            var index = Entity.Color == ColorIndex.Random ? sprites.Length-1 : (int)Entity.Color;
+            mainImage.sprite = sprites[index];
+            dimImage.sprite = dimSprites[index];
+            slotImage.sprite = slotSprites[index];
+            SetForSlotUI(false);
+            SetClickableUI(false);
         }
 
         public void OnClick() {
