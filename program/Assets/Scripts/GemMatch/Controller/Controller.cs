@@ -68,7 +68,7 @@ namespace GemMatch {
             if (IsFailed()) FailGame();
         }
 
-        public void InputAbility(IAbility ability) {
+        public void InputAbility(IAbility ability, bool triggeredByPrev = false) {
             if (ability == null) return;
             
             UndoHandler.Do(new Command(
@@ -79,17 +79,14 @@ namespace GemMatch {
                 undo: () => {
                     ability.Undo();
                     foreach (var listener in Listeners) listener.OnRestoreAbility(ability);
-                }));
+                },
+                triggeredByPrev: triggeredByPrev
+            ));
 
-            // TODO: 어빌리티 캐스케이딩은 추후 필요하게 될 때.
-            // foreach (var subAbility in ability.GetCascadedAbility()) {
-            //     InputAbility(subAbility);
-            // }
+            foreach (var subAbility in ability.GetCascadedAbility()) {
+                InputAbility(subAbility, true);
+            }
         }
-
-        // public void RemoveEntity(Tile tile, Entity entity) {
-        //     if (tile.Entities.ContainsKey(entity.Layer))
-        // }
 
         public void ClearGame() {
             gameCompletionSource.TrySetResult(GameResult.Clear);
@@ -162,18 +159,7 @@ namespace GemMatch {
                 
                 var hitInfo = entity.Hit();
                 if (hitInfo.hitResult == HitResult.Destroyed) {
-                    UndoHandler.Do(new Command<Entity>(
-                        @do: () => {
-                            tile.RemoveLayer(entity.Layer);
-                            foreach (var listener in Listeners) listener.OnDestroyEntity(tile, entity);
-                        },
-                        undo: destroyedEntity => {
-                            tile.AddEntity(destroyedEntity);
-                            foreach (var listener in Listeners) listener.OnCreateEntity(tile, entity);
-                        },
-                        param: entity,
-                        triggeredByPrev: true // 이 파라미터로 인해 앵커 커맨드에 속하게 된다.
-                    ));
+                    UndoHandler.Do(new HitCommand(this, tile, entity, true));
                 }
                     
                 if (hitInfo.prevent) break;
@@ -246,7 +232,7 @@ namespace GemMatch {
             return true;
         }
 
-        protected void CalculateActiveTiles() {
+        public void CalculateActiveTiles() {
             ActiveTiles = Tiles.Where(CanTouch).ToList();
             foreach (var listener in Listeners) listener.OnAddActiveTiles(ActiveTiles);
         }
