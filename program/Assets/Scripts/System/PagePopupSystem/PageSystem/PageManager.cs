@@ -34,5 +34,12 @@ namespace PagePopupSystem {
             CurrentPage = pageType;
             await FadeOutHelper.FadeIn();
         }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        public static void InitializePages() {
+            foreach (var kvp in Pages) {
+                kvp.Value.gameObject.SetActive(false);
+            }
+        }
     }
 }

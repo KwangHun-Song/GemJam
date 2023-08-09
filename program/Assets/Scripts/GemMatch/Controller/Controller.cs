@@ -29,7 +29,7 @@ namespace GemMatch {
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             if (isReplay == false) {
                 PathFinder = new PathFinder(Tiles);
-                ColorDistributor = new RandomColorDistributor() /* new ClearableColorDistributor()*/;
+                ColorDistributor = new ClearableColorDistributor();
                 UndoHandler = new UndoHandler();
             } else {
                 UndoHandler.Reset();

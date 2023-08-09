@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GemMatch.UndoSystem;
 
 namespace GemMatch {
     public class SimulationController : Controller {
@@ -13,6 +14,7 @@ namespace GemMatch {
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             PathFinder = new PathFinder(Tiles);
             ColorDistributor = new ClearableColorDistributor();
+            UndoHandler = new UndoHandler();
             
             ColorDistributor.DistributeColors(CurrentLevel, Tiles);
             CalculateActiveTiles();
