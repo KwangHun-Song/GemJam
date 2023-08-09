@@ -12,7 +12,8 @@ namespace GemMatch {
         void OnMoveFromMemory(Tile tile, Entity entity);
         void OnCreateMemory(Entity entity);
         void OnDestroyMemory(Entity entity);
-        void OnRunAbility(Ability ability);
+        void OnRunAbility(IAbility ability);
+        void OnRestoreAbility(IAbility ability);
         void OnCreateEntity(Tile tile, Entity entity);
         void OnDestroyEntity(Tile tile, Entity entity);
 

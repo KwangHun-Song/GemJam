@@ -68,15 +68,23 @@ namespace GemMatch {
             if (IsFailed()) FailGame();
         }
 
-        public void InputAbility(Ability ability) {
+        public void InputAbility(IAbility ability) {
             if (ability == null) return;
-            ability.Run();
-            foreach (var subAbility in ability.GetCascadedAbility()) {
-                InputAbility(subAbility);
-            }
             
-            // 이벤트 전달
-            foreach (var listener in Listeners) listener.OnRunAbility(ability);
+            UndoHandler.Do(new Command(
+                @do: () => {
+                    ability.Run();
+                    foreach (var listener in Listeners) listener.OnRunAbility(ability);
+                }, 
+                undo: () => {
+                    ability.Undo();
+                    foreach (var listener in Listeners) listener.OnRestoreAbility(ability);
+                }));
+
+            // TODO: 어빌리티 캐스케이딩은 추후 필요하게 될 때.
+            // foreach (var subAbility in ability.GetCascadedAbility()) {
+            //     InputAbility(subAbility);
+            // }
         }
 
         // public void RemoveEntity(Tile tile, Entity entity) {

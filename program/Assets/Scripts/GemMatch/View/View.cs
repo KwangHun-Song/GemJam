@@ -135,9 +135,14 @@ namespace GemMatch {
             }
         }
 
-        public void OnRunAbility(Ability ability) {
+        public void OnRunAbility(IAbility ability) {
             if (AbilityViews.ContainsKey(ability.Index) == false) return;
             AbilityViews[ability.Index].RunAbilityAsync(this, ability, Controller).Forget();
+        }
+
+        public void OnRestoreAbility(IAbility ability) {
+            if (AbilityViews.ContainsKey(ability.Index) == false) return;
+            AbilityViews[ability.Index].RestoreAbilityAsync(this, ability, Controller).Forget();
         }
 
         public void OnCreateEntity(Tile tile, Entity entity) {
