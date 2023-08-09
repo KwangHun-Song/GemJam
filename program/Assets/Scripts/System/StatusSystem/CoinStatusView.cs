@@ -21,13 +21,11 @@ namespace OverlayStatusSystem {
             OverlayStatusHelper.Save(this);
         }
 
-        public MonoBehaviour Mono => this;
-
         private void OnCoin(int value) {
             coin.text = $"{value}";
         }
 
-        public Type GetType() {
+        public Type GetKeyType() {
             return typeof(CoinOverlayStatus);
         }
     }

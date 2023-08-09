@@ -4,6 +4,6 @@ using UnityEngine;
 namespace OverlayStatusSystem {
     public interface IOverlayStatusEvent {
         GameObject gameObject { get; }
-        Type GetType();
+        Type GetKeyType();
     }
 }
