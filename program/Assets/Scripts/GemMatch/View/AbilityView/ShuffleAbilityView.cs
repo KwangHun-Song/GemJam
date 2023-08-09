@@ -22,7 +22,8 @@ namespace GemMatch {
             shuffleTfm.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack);
             
             // 다섯 번정도 색깔을 랜덤으로 바꾸어준다.
-            for (int i = 0; i < 5; i++) {
+            const int ShuffleCount = 10;
+            for (int i = 0; i < ShuffleCount; i++) {
                 var randomColors = decidedColors.Shuffle().ToArray();
                 var updateTasks = new List<UniTask>();
                 for (int ci = 0; ci < normalPieceViews.Length; ci++) {
@@ -31,7 +32,7 @@ namespace GemMatch {
                 }
 
                 await UniTask.WhenAll(updateTasks);
-                await UniTask.Delay(200);
+                await UniTask.Delay(1000 / ShuffleCount);
             }
             
             await shuffleTfm.DOScale(Vector3.zero, 0.2F).SetEase(Ease.InBack).ToUniTask();

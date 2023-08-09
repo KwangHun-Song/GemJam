@@ -15,6 +15,8 @@ namespace GemMatch {
 
         public async override UniTask OnCreate() {
             Redraw();
+            SetForSlotUI(false);
+            SetClickableUI(false);
         }
 
         public async override UniTask OnUpdate() {
@@ -39,8 +41,6 @@ namespace GemMatch {
             mainImage.sprite = sprites[index];
             dimImage.sprite = dimSprites[index];
             slotImage.sprite = slotSprites[index];
-            SetForSlotUI(false);
-            SetClickableUI(false);
         }
 
         public void OnClick() {
