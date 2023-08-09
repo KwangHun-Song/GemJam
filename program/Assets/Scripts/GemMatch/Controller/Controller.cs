@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using GemMatch.UndoSystem;
 
 namespace GemMatch {
     public class Controller {
@@ -18,15 +19,21 @@ namespace GemMatch {
 
         public virtual PathFinder PathFinder { get; protected set; }
         public virtual IColorDistributor ColorDistributor { get; protected set; }
+        public UndoHandler UndoHandler { get; protected set; }
 
-        public virtual void StartGame(Level level) {
+        public virtual void StartGame(Level level, bool isReplay = false) {
             // 초기화
             CurrentLevel = level;
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
-            PathFinder = new PathFinder(Tiles);
-            ColorDistributor = new RandomColorDistributor()/* new ClearableColorDistributor()*/;
+            if (isReplay == false) {
+                PathFinder = new PathFinder(Tiles);
+                ColorDistributor = new RandomColorDistributor() /* new ClearableColorDistributor()*/;
+                UndoHandler = new UndoHandler();
+            } else {
+                UndoHandler.Reset();
+            }
 
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
             if (ColorDistributor.DistributeColors(CurrentLevel, Tiles) == false) {
@@ -119,9 +126,11 @@ namespace GemMatch {
 
         protected void Touch(Tile tile) {
             var piece = tile.Piece;
+            // 앵커 역할을 할 커맨드를 하나 추가한다. 이 함수 내에서 사용될 Command는 자동 트리거된다(함께 언두시키기 위해).
+            UndoHandler.Do(new Command(null, null));
 
-            // 먼저 타일을 Hit 처리
-            Hit(tile);
+            // 먼저 타일을 SplashHit 처리
+            SplashHit(tile);
             
             // 메모리로 이동시킨다.
             MoveToMemory(tile);
@@ -133,34 +142,53 @@ namespace GemMatch {
             TryRemoveFromMemory(piece);
         }
 
-        public void Hit(Tile targetTile) {
-            HitInternal(targetTile);
-
+        public void SplashHit(Tile targetTile) {
             foreach (var adjacentTile in TileUtility.GetAdjacentTiles(targetTile, Tiles)) {
-                HitInternal(adjacentTile);
-                // Hit(adjacentTile);
+                Hit(adjacentTile);
             }
         }
 
-        private void HitInternal(Tile tile) {
+        private void Hit(Tile tile) {
             foreach (var entity in tile.Entities.Values) {
-                if (entity.CanBeHit()) {
-                    var hitInfo = entity.Hit();
-                    if (hitInfo.hitResult == HitResult.Destroyed) {
-                        tile.RemoveLayer(entity.Layer);
-                        foreach (var listener in Listeners) listener.OnDestroyEntity(tile, entity);
-                    }
+                if (!entity.CanBeHit()) continue;
+                
+                var hitInfo = entity.Hit();
+                if (hitInfo.hitResult == HitResult.Destroyed) {
+                    UndoHandler.Do(new Command<Entity>(
+                        @do: () => {
+                            tile.RemoveLayer(entity.Layer);
+                            foreach (var listener in Listeners) listener.OnDestroyEntity(tile, entity);
+                        },
+                        undo: destroyedEntity => {
+                            tile.AddEntity(destroyedEntity);
+                            foreach (var listener in Listeners) listener.OnCreateEntity(tile, entity);
+                        },
+                        param: entity,
+                        triggeredByPrev: true // 이 파라미터로 인해 앵커 커맨드에 속하게 된다.
+                    ));
+                }
                     
-                    if (hitInfo.prevent) break;
-                } 
+                if (hitInfo.prevent) break;
             }
         }
 
         protected void MoveToMemory(Tile tile) {
             var piece = tile.Piece;
-            Memory.Add(piece);
-            tile.RemoveLayer(Layer.Piece);
-            foreach (var listener in Listeners) listener.OnMoveToMemory(tile, piece);
+            UndoHandler.Do(new Command<Entity>(
+                @do: () => {
+                    Memory.Add(piece);
+                    tile.RemoveLayer(Layer.Piece);
+                    foreach (var listener in Listeners) listener.OnMoveToMemory(tile, piece);
+                }, 
+                undo: movedEntity => {
+                    tile.AddEntity(movedEntity);
+                    Memory.Remove(movedEntity);
+                    foreach (var listener in Listeners) listener.OnMoveFromMemory(tile, piece);
+                    CalculateActiveTiles();
+                }, 
+                param: piece,
+                triggeredByPrev: true
+            ));
         }
 
         protected bool TryRemoveFromMemory(Entity piece) {
@@ -175,25 +203,44 @@ namespace GemMatch {
             }
 
             // 메모리에서 엔티티를 제거
-            foreach (var e in targetEntitiesInMemory.Take(3)) {
-                Memory.Remove(e);
-                foreach (var listener in Listeners) listener.OnRemoveMemory(e);
+            foreach (var entityToRemove in targetEntitiesInMemory.Take(3)) {
+                UndoHandler.Do(new Command<Entity>(
+                    @do: () => {
+                        Memory.Remove(entityToRemove);
+                        foreach (var listener in Listeners) listener.OnDestroyMemory(entityToRemove);
+                    }, 
+                    undo: removedEntity => {
+                        Memory.Add(removedEntity);
+                        foreach (var listener in Listeners) listener.OnCreateMemory(removedEntity);
+                    }, 
+                    param: entityToRemove,
+                    triggeredByPrev:true
+                    ));
             }
             
             // 미션 증가
             var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model));
-            if (mission != null) mission.count += 3;
+            if (mission != null) {
+                UndoHandler.Do(new Command<Mission>(
+                    @do: () => {
+                        mission.count += 3;
+                        foreach (var listener in Listeners) listener.OnChangeMission(mission, 3);
+                    }, 
+                    undo: addedMission => {
+                        addedMission.count -= 3;
+                        foreach (var listener in Listeners) listener.OnChangeMission(addedMission, -3);
+                    }, 
+                    param: mission,
+                    triggeredByPrev:true
+                ));
+            }
 
             return true;
         }
 
         protected void CalculateActiveTiles() {
-            var newActiveTiles = Tiles
-                .Where(t => !ActiveTiles.Contains(t) && CanTouch(t))
-                .ToArray();
-            
-            ActiveTiles.AddRange(newActiveTiles);
-            foreach (var listener in Listeners) listener.OnAddActiveTiles(newActiveTiles);
+            ActiveTiles = Tiles.Where(CanTouch).ToList();
+            foreach (var listener in Listeners) listener.OnAddActiveTiles(ActiveTiles);
         }
     }
 }

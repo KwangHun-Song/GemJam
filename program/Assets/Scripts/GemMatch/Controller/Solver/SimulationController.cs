@@ -6,7 +6,7 @@ namespace GemMatch {
         /// <summary>
         /// 시뮬레이션은 completionSource를 쓰지 않는다.
         /// </summary>
-        public override void StartGame(Level level) {
+        public override void StartGame(Level level, bool isReplay = false) {
             CurrentLevel = level;
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();

@@ -33,7 +33,7 @@ namespace GemMatch {
 
             var threeTiles = tileGroup.ToList().Shuffle().Take(3);
             foreach (var tile in threeTiles) {
-                Controller.Hit(tile);
+                Controller.SplashHit(tile);
             }
 
             return this;

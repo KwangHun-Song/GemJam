@@ -6,12 +6,16 @@ namespace GemMatch {
         void OnClearGame(Mission[] missions);
         void OnFailGame(Mission[] missions);
         void OnReplayGame(Mission[] missions);
+        void OnChangeMission(Mission mission, int changeCount);
         
         void OnMoveToMemory(Tile tile, Entity entity);
-        void OnRemoveMemory(Entity entity);
+        void OnMoveFromMemory(Tile tile, Entity entity);
+        void OnCreateMemory(Entity entity);
+        void OnDestroyMemory(Entity entity);
         void OnRunAbility(Ability ability);
+        void OnCreateEntity(Tile tile, Entity entity);
         void OnDestroyEntity(Tile tile, Entity entity);
 
-        void OnAddActiveTiles(IEnumerable<Tile> tiles);
+        void OnAddActiveTiles(IEnumerable<Tile> activeTiles);
     }
 }

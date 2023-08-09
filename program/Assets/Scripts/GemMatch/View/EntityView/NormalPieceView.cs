@@ -47,9 +47,9 @@ namespace GemMatch {
             TileView.View.OnClickEntity(Entity);
         }
 
-        public async UniTask OnActive() {
+        public async UniTask OnActive(bool isActive) {
             SetForSlotUI(false);
-            SetClickableUI(true);
+            SetClickableUI(isActive);
         }
     }
 }

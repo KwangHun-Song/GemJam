@@ -9,7 +9,7 @@ namespace GemMatch {
         [SerializeField] private Transform shuffleTfm;
         public async UniTask RunAbilityAsync(View view, Ability ability, Controller controller) {
             var normalPieceViews = view.TileViews
-                .SelectMany(tv => tv.EntityViews)
+                .SelectMany(tv => tv.EntityViews.Values)
                 .Select(ev => ev as NormalPieceView)
                 .Where(ev => ev != null)
                 .ToArray();

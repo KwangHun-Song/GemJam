@@ -5,6 +5,6 @@ namespace GemMatch {
     /// 활성화 여부를 받는지 여부
     /// </summary>
     public interface IReceiveActivation {
-        UniTask OnActive();
+        UniTask OnActive(bool isActive);
     }
 }

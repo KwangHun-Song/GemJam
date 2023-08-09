@@ -48,6 +48,16 @@ namespace Pages {
             }
         }
 
+        public void OnClickUndo() {
+            if (Controller != null) {
+                if (Controller.UndoHandler.IsEmpty()) {
+                    Debug.Log($"Is Empty");
+                    return;
+                }
+                Controller.UndoHandler.Undo();
+            }
+        }
+
         public void OnClickShuffle() {
             Controller?.InputAbility(new ShuffleAbility(null, Controller));
         }

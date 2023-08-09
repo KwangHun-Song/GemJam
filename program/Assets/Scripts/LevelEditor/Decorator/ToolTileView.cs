@@ -24,11 +24,11 @@ namespace GemMatch.LevelEditor {
         public void Initialize(EditTool tool, EditView view, Tile tile) {
             this._tool = tool;
             _tileView.Initialize(view, tile);
-            foreach (EntityView entityView in _tileView.EntityViews) {
+            foreach (EntityView entityView in _tileView.EntityViews.Values) {
                 entityView.GetComponent<Button>().enabled = false;
                 entityView.GetComponent<Image>().enabled = false;
             }
-            this._entities = _tileView.EntityViews.Select(t=>t.Entity).ToArray();
+            this._entities = _tileView.EntityViews.Values.Select(t=>t.Entity).ToArray();
             this.Tile = _tileView.Tile;
             this.TileModel = _tileView.Tile.Model;
         }
