@@ -1,7 +1,9 @@
 using GemMatch;
+using GemMatch.LevelEditor;
 using PagePopupSystem;
 using Popups;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Pages {
     public class PlayPage : PageHandler {
@@ -13,8 +15,12 @@ namespace Pages {
         public async void StartGame() {
             Controller = new Controller();
             Controller.Listeners.Add(view);
-            
-            var level = LevelLoader.GetLevel(0);
+
+            var levelIndex = 0;
+            if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
+                levelIndex = indicator.LevelIndex;
+            }
+            var level = LevelLoader.GetLevel(levelIndex);
             
             Controller.StartGame(level);
 
@@ -38,6 +44,15 @@ namespace Pages {
                 var result =  await PopupManager.ShowAsync<bool>(nameof(ReadyPopup));
                 Debug.Log(result);
             }
+
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                GoBackToEditMode();
+            }
+        }
+
+        private void GoBackToEditMode() {
+            if (FindObjectOfType<EditLevelIndicator>() != null)
+                SceneManager.LoadScene("EditScene");
         }
     }
 }

@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2390828362597232258, guid: 3f5a1aaff116641e28f61af38fc04922, type: 3}
       propertyPath: m_Name
-      value: GoalPiece
+      value: Editor_GoalPiece
       objectReference: {fileID: 0}
     - target: {fileID: 4177012301346316129, guid: 3f5a1aaff116641e28f61af38fc04922, type: 3}
       propertyPath: m_Pivot.x
@@ -97,20 +97,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f5a1aaff116641e28f61af38fc04922, type: 3}
---- !u!1 &3700317570260220016 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2390828362597232258, guid: 3f5a1aaff116641e28f61af38fc04922, type: 3}
-  m_PrefabInstance: {fileID: 1330750481340192498}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4318752440189059812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3700317570260220016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032a2e860f9c4c47a789faed7e32a710, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

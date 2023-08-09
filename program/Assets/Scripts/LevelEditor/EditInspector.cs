@@ -12,9 +12,9 @@ namespace GemMatch.LevelEditor {
     public class EditInspector : MonoBehaviour, IEditCtrlForInspector {
 #region Public Property
         public int LevelIndex {
-            get => PlayerPrefs.GetInt("LAST_INDEX", 0);
+            get => PlayerPrefs.GetInt(Constants.LevelIndexPrefsKey, 0);
             set {
-                PlayerPrefs.SetInt("LAST_INDEX", value);
+                PlayerPrefs.SetInt(Constants.LevelIndexPrefsKey, value);
                 PlayerPrefs.Save();
             }
         }
@@ -51,7 +51,7 @@ namespace GemMatch.LevelEditor {
         }
 
         public void SaveLevel() {
-            var lvsCache = new List<Level>(LevelLoader.GetContainer().levels);
+            var lvsCache = LevelLoader.GetContainer().levels.Select(l=>l.Clone()).ToList();
             if (lvsCache.Count <= LevelIndex) {
                 lvsCache.Add(_contorller.CurrentLevel);
             } else {

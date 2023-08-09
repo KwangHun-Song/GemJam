@@ -1019,7 +1019,7 @@ MonoBehaviour:
         commonIntParam: 0
         commonStringParam: 
     - index: 60
-      isOpened: 0
+      isOpened: 1
       entityModels: []
     - index: 61
       isOpened: 1
@@ -1048,10 +1048,10 @@ MonoBehaviour:
       isOpened: 0
       entityModels: []
     - index: 67
-      isOpened: 0
+      isOpened: 1
       entityModels: []
     - index: 68
-      isOpened: 0
+      isOpened: 1
       entityModels: []
     - index: 69
       isOpened: 0
@@ -1072,10 +1072,10 @@ MonoBehaviour:
       isOpened: 0
       entityModels: []
     - index: 75
-      isOpened: 0
+      isOpened: 1
       entityModels: []
     - index: 76
-      isOpened: 0
+      isOpened: 1
       entityModels: []
     - index: 77
       isOpened: 0
@@ -1096,10 +1096,10 @@ MonoBehaviour:
       isOpened: 0
       entityModels: []
     - index: 83
-      isOpened: 0
+      isOpened: 1
       entityModels: []
     - index: 84
-      isOpened: 0
+      isOpened: 1
       entityModels: []
     - index: 85
       isOpened: 0

@@ -1,6 +1,7 @@
 using System.Collections;
 using Pages;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GemMatch.LevelEditor {
     public class EditPage : MonoBehaviour {
@@ -16,6 +17,8 @@ namespace GemMatch.LevelEditor {
         }
 
         private IEnumerator CoInitialize() {
+            yield return null;
+            yield return null;
             var editCtrl = new EditController(editView, editTool, editInspector);
             controller = editCtrl;
             editView.Initialize(editCtrl);
@@ -53,8 +56,12 @@ namespace GemMatch.LevelEditor {
         }
 
         private void PlayTestGame() {
-            var playPage = Resources.Load<PlayPage>("PlayPage");
-            Instantiate(playPage, null);
+            if (FindObjectOfType<EditLevelIndicator>() == null) {
+                var indicator = new GameObject();
+                indicator.AddComponent<EditLevelIndicator>();
+                DontDestroyOnLoad(indicator);
+            }
+            SceneManager.LoadScene("Play");
         }
     }
 }

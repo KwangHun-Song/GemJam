@@ -26,7 +26,7 @@ namespace GemMatch {
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             PathFinder = new PathFinder(Tiles);
-            ColorDistributor = new ClearableColorDistributor();
+            ColorDistributor = new RandomColorDistributor();
             
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
             if (ColorDistributor.DistributeColors(CurrentLevel, Tiles) == false) {

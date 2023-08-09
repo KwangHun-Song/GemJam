@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2390828362597232258, guid: 73874c38463e641c79659864b1fecfe5, type: 3}
       propertyPath: m_Name
-      value: InvisibleCover
+      value: Editor_InvisibleCover
       objectReference: {fileID: 0}
     - target: {fileID: 4177012301346316129, guid: 73874c38463e641c79659864b1fecfe5, type: 3}
       propertyPath: m_Pivot.x
@@ -146,18 +146,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1551024214543107869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7370975218488202817}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032a2e860f9c4c47a789faed7e32a710, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7912858696773593790 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3077933669935469181, guid: 73874c38463e641c79659864b1fecfe5, type: 3}
