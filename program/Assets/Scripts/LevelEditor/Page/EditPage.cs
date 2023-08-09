@@ -44,17 +44,17 @@ namespace GemMatch.LevelEditor {
                 PlayTestGame();
             }
 
-            KeyCode[] usableKeys = new[] {
-                KeyCode.UpArrow,
-                KeyCode.DownArrow,
-                KeyCode.LeftArrow,
-                KeyCode.RightArrow,
-            };
-            foreach (var key in usableKeys) {
-                if (Input.GetKeyUp(key)) {
-                    controller.Input(key);
-                }
-            }
+            // KeyCode[] usableKeys = new[] {
+            //     KeyCode.UpArrow,
+            //     KeyCode.DownArrow,
+            //     KeyCode.LeftArrow,
+            //     KeyCode.RightArrow,
+            // };
+            // foreach (var key in usableKeys) {
+            //     if (Input.GetKeyUp(key)) {
+            //         controller.Input(key);
+            //     }
+            // }
         }
 
         private void PlayTestGame() {
