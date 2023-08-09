@@ -19,5 +19,7 @@ namespace GemMatch {
             // ColorIndex.Pink,
             // ColorIndex.Cyan,
         };
+
+        public const string LevelIndexPrefsKey = "LAST_INDEX";
     }
 }
