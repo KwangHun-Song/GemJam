@@ -6,13 +6,17 @@ using UnityEngine;
 namespace OverlayStatusSystem {
     public class LevelStatusView : OverlayStatusEvent<LevelOverlayStatus> {
         [SerializeField] private GameObject[] stageIndexers;
-        private int stageIndex => PlayerInfo.HighestClearedLevelIndex % 3;
+        private int PlayerInfoIndex => PlayerInfo.HighestClearedLevelIndex % 3;
+        private int stageIndex = 0;
 
         public void Start() {
+            stageIndex = PlayerInfoIndex;
             OverlayStatusHelper.Init(new LevelOverlayStatus(this, OnStage));
         }
 
         private void OnStage(int count) {
+            stageIndex += count;
+            stageIndex %= 3;
             TurnOnStageIndex();
         }
 

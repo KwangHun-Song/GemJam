@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 
 namespace OverlayStatusSystem {
+    /// <summary>
+    /// IOverlayStatus의 추상화 클래스
+    /// </summary>
+    /// <typeparam name="ParamType">Save이후 불리는 OnEvent의 매개변수형</typeparam>
     public abstract class OverlayStatus<ParamType> : IOverlayStatus {
         public IOverlayStatusEvent EventListener { get; private set; }
         public Queue<OverlayStatusParam> EventRecord { get; private set; } = new Queue<OverlayStatusParam>();
