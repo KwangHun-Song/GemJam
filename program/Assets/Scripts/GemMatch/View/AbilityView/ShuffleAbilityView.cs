@@ -7,9 +7,9 @@ using UnityEngine;
 namespace GemMatch {
     public class ShuffleAbilityView : MonoBehaviour, IAbilityView {
         [SerializeField] private Transform shuffleTfm;
-        public async UniTask RunAbilityAsync(View view, Ability ability, Controller controller) {
+        public async UniTask RunAbilityAsync(View view, IAbility ability, Controller controller) {
             var normalPieceViews = view.TileViews
-                .SelectMany(tv => tv.EntityViews)
+                .SelectMany(tv => tv.EntityViews.Values)
                 .Select(ev => ev as NormalPieceView)
                 .Where(ev => ev != null)
                 .ToArray();
@@ -41,6 +41,18 @@ namespace GemMatch {
             // 마지막에는 원래 결정되었던 색깔로 교체해준다.
             for (int ci = 0; ci < normalPieceViews.Length; ci++) {
                 normalPieceViews[ci].Entity.Color = decidedColors[ci];
+                normalPieceViews[ci].OnUpdate().Forget();
+            }
+        }
+
+        public async UniTask RestoreAbilityAsync(View view, IAbility ability, Controller controller) {
+            var normalPieceViews = view.TileViews
+                .SelectMany(tv => tv.EntityViews.Values)
+                .Select(ev => ev as NormalPieceView)
+                .Where(ev => ev != null)
+                .ToArray();
+            
+            for (int ci = 0; ci < normalPieceViews.Length; ci++) {
                 normalPieceViews[ci].OnUpdate().Forget();
             }
         }

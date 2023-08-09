@@ -38,7 +38,7 @@ namespace GemMatch {
             }
 
             foreach (var tileView in TileViews) {
-                foreach (var entityView in tileView.EntityViews) {
+                foreach (var entityView in tileView.EntityViews.Values) {
                     entityView.OnCreate().Forget();
                 }
             }
@@ -60,12 +60,16 @@ namespace GemMatch {
 
         public void OnReplayGame(Mission[] missions) { }
 
+        public void OnChangeMission(Mission mission, int changeCount) {
+            // TODO : 구현님 투두리스트에서 이곳에 구현 부탁드려요
+        }
+
         public void OnMoveToMemory(Tile tile, Entity entity) {
             AddMemoryAsync().Forget();
 
             async UniTask AddMemoryAsync() {
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
-                var entityView = tileView.EntityViews.Single(ev => ReferenceEquals(ev.Entity, entity));
+                var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
                 
                 // 엔티티뷰의 부모를 타일에서 메모리로 바꾼다.
@@ -73,7 +77,7 @@ namespace GemMatch {
                 entityView.transform.localPosition = Vector3.zero;
 
                 // 타일뷰 소속에서 해당 엔티티뷰를 제거한다.
-                tileView.EntityViews.Remove(entityView);
+                tileView.EntityViews.Remove(entity.Layer);
                 
                 // 메모리뷰 소속에서는 엔티티뷰를 추가한다.
                 await memoryView.AddEntityAsync(entityView);
@@ -83,35 +87,86 @@ namespace GemMatch {
             }
         }
 
-        public void OnRemoveMemory(Entity entity) {
+        public void OnMoveFromMemory(Tile tile, Entity entity) {
+            MoveToTileAsync().Forget();
+
+            async UniTask MoveToTileAsync() {
+                var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
+                var memoryView = MemoryViews.Single(mv => ReferenceEquals(mv.EntityView?.Entity, entity));
+                var entityView = memoryView.EntityView;
+                
+                // 엔티티뷰의 부모를 메모리에서 타일로 바꾼다.
+                entityView.transform.SetParent(tileView.entitiesRoot);
+                
+                // 메모리 소속에서 해당 엔티티뷰를 제거한다.
+                await memoryView.RemoveEntityAsync(false);
+                
+                // 타일뷰 소속에 엔티티뷰를 추가한다.
+                tileView.AddEntityView(entityView);
+                
+                // 메모리를 정렬한다.
+                await SortMemoryAsync();
+            }
+        }
+
+        public void OnCreateMemory(Entity entity) {
+            CreateMemoryAsync().Forget();
+            
+            async UniTask CreateMemoryAsync() {
+                var firstEmptyMemoryView = MemoryViews.First(v => v.EntityView == null);
+                var entityView = CreateEntityView(entity);
+                entityView.transform.SetParent(firstEmptyMemoryView.CellRoot);
+                entityView.transform.localPosition = Vector3.zero;
+                if (entityView is NormalPieceView normalPieceView) normalPieceView.SetForSlotUI(true);
+
+                await firstEmptyMemoryView.AddEntityAsync(entityView);
+                await SortMemoryAsync();
+            }
+        }
+
+        public void OnDestroyMemory(Entity entity) {
             RemoveMemoryAsync().Forget();
 
             async UniTask RemoveMemoryAsync() {
                 await MemoryViews
                     .Single(v => v.EntityView != null && ReferenceEquals(v.EntityView.Entity, entity))
-                    .RemoveEntityAsync();
+                    .RemoveEntityAsync(true);
                 await SortMemoryAsync();
             }
         }
 
-        public void OnRunAbility(Ability ability) {
+        public void OnRunAbility(IAbility ability) {
             if (AbilityViews.ContainsKey(ability.Index) == false) return;
             AbilityViews[ability.Index].RunAbilityAsync(this, ability, Controller).Forget();
         }
-        
+
+        public void OnRestoreAbility(IAbility ability) {
+            if (AbilityViews.ContainsKey(ability.Index) == false) return;
+            AbilityViews[ability.Index].RestoreAbilityAsync(this, ability, Controller).Forget();
+        }
+
+        public void OnCreateEntity(Tile tile, Entity entity) {
+            var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
+            var entityView = CreateEntityView(entity, tileView);
+            tileView.EntityViews.Add(entity.Layer, entityView);
+        }
+
         public void OnDestroyEntity(Tile tile, Entity entity) {
             var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
-            var entityView = tileView.EntityViews.Single(ev => ReferenceEquals(ev.Entity, entity));
+            var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
 
-            tileView.EntityViews.Remove(entityView);
+            tileView.EntityViews.Remove(entity.Layer);
             DestroyImmediate(entityView.gameObject);
         }
 
-        public void OnAddActiveTiles(IEnumerable<Tile> tiles) {
-            foreach (var entityView in TileViews.Where(tv => tiles.Contains(tv.Tile))
-                         .SelectMany(tv => tv.EntityViews)
-                         .Where(ev => ev is IReceiveActivation)) {
-                ((IReceiveActivation)entityView).OnActive();
+        public void OnAddActiveTiles(IEnumerable<Tile> activeTiles) {
+            foreach (var tileView in TileViews) {
+                var isActive = activeTiles.Contains(tileView.Tile);
+                var receiveEVs = tileView.EntityViews.Values.OfType<IReceiveActivation>();
+                
+                foreach (var iReceive in receiveEVs) {
+                    iReceive.OnActive(isActive);
+                }
             }
         }
 
@@ -131,14 +186,17 @@ namespace GemMatch {
             Controller.Input(Controller.GetTile(entity).Index);
         }
 
-        internal virtual EntityView CreateEntityView(Entity entity, Transform parent) {
+        internal virtual EntityView CreateEntityView(Entity entity, TileView tileView = null) {
             var prefab = Resources.Load<EntityView>(entity.Index.ToString());
-            var view = Instantiate(prefab, parent, true);
-            view.transform.localPosition = Vector3.zero;
-            view.transform.localScale = Vector3.one;
-            view.Initialize(null, entity);
+            var parent = tileView == null ? transform : tileView.entitiesRoot;
+            var entityView = Instantiate(prefab, parent, true);
 
-            return view;
+            entityView.transform.localPosition = Vector3.zero;
+            entityView.transform.localScale = Vector3.one;
+            entityView.Initialize(tileView, entity);
+            entityView.OnCreate().Forget();
+
+            return entityView;
         }
     }
 }

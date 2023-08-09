@@ -11,7 +11,7 @@ namespace GemMatch {
         public EntityView EntityView { get; private set; }
         
         public void Initialize() {
-            if (IsEmpty() == false) RemoveEntityAsync(true).Forget();
+            if (IsEmpty() == false) RemoveEntityAsync(true, true).Forget();
         }
 
         public bool IsEmpty() {
@@ -26,9 +26,11 @@ namespace GemMatch {
             EntityView = entityView;
         }
 
-        public async UniTask RemoveEntityAsync(bool immediately = false) {
+        public async UniTask RemoveEntityAsync(bool destroy, bool immediately = false) {
             if (EntityView == null) return;
-            await EntityView.DestroyAsync();
+            if (destroy) {
+                await EntityView.DestroyAsync();
+            }
 
             EntityView = null;
         }

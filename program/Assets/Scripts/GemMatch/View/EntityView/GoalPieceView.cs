@@ -10,8 +10,8 @@ namespace GemMatch {
             TileView.View.OnClickEntity(Entity);
         }
 
-        public async UniTask OnActive() {
-            mainImage.color = Color.white;
+        public async UniTask OnActive(bool isActive) {
+            if (isActive) mainImage.color = Color.white;
         }
     }
 }

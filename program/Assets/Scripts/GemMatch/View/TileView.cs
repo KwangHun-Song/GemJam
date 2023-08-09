@@ -5,12 +5,12 @@ using UnityEngine.UI;
 namespace GemMatch {
     public class TileView : MonoBehaviour {
         [SerializeField] private Image background;
-        [SerializeField] private Transform entitiesRoot;
+        [SerializeField] public Transform entitiesRoot;
         
         public Tile Tile { get; private set; }
         public View View { get; private set; }
 
-        public List<EntityView> EntityViews { get; } = new List<EntityView>();
+        public Dictionary<Layer, EntityView> EntityViews { get; } = new Dictionary<Layer, EntityView>();
 
         public void Initialize(View view, Tile tile) {
             View = view;
@@ -18,17 +18,25 @@ namespace GemMatch {
             
             Redraw();
 
-            foreach (var entityView in EntityViews) {
+            foreach (var entityView in EntityViews.Values) {
                 DestroyImmediate(entityView.gameObject);
             }
             
             EntityViews.Clear();
             
             foreach (var entity in Tile.Entities.Values) {
-                var entityView = View.CreateEntityView(entity, entitiesRoot);
+                var entityView = View.CreateEntityView(entity, this);
                 entityView.Initialize(this, entity);
-                EntityViews.Add(entityView);
+                EntityViews.Add(entity.Layer, entityView);
             }
+        }
+
+        public void AddEntityView(EntityView entityView) {
+            EntityViews.Add(entityView.Entity.Layer, entityView);
+            entityView.transform.SetParent(entitiesRoot);
+            entityView.transform.localPosition = Vector3.zero;
+            entityView.transform.localScale = Vector3.one;
+            entityView.Initialize(this, entityView.Entity);
         }
 
         public void Redraw() {

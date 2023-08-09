@@ -33,13 +33,13 @@ namespace GemMatch.LevelEditor {
 
         public void UpdateEditTile(EditView view, Tile tile) {
             this._view = view;
-            foreach (var entityView in _tileView.EntityViews) {
+            foreach (var entityView in _tileView.EntityViews.Values) {
                 Destroy(entityView.gameObject);
             }
             _tileView.EntityViews.Clear();
             _tileView.Initialize(view, tile);
             // EntityView의 버튼 인터렉션을 끄고 타일에서 가로챈다
-            foreach (EntityView entityView in _tileView.EntityViews) {
+            foreach (EntityView entityView in _tileView.EntityViews.Values) {
                 if (entityView.GetComponent<Button>() is Button btn && btn != null) {
                     Destroy(entityView.GetComponent<Button>());
                 }
