@@ -232,7 +232,7 @@ namespace GemMatch {
             return true;
         }
 
-        protected void CalculateActiveTiles() {
+        public void CalculateActiveTiles() {
             ActiveTiles = Tiles.Where(CanTouch).ToList();
             foreach (var listener in Listeners) listener.OnAddActiveTiles(ActiveTiles);
         }

@@ -14,11 +14,13 @@ namespace GemMatch {
             UndoParam = DestroyEntity.Clone();
             TargetTile.RemoveLayer(DestroyEntity.Layer);
             foreach (var listener in Controller.Listeners) listener.OnDestroyEntity(TargetTile, DestroyEntity);
+            Controller.CalculateActiveTiles();
         }
 
         public override void Undo(Entity destroyedEntity) {
             TargetTile.AddEntity(destroyedEntity);
             foreach (var listener in Controller.Listeners) listener.OnCreateEntity(TargetTile, destroyedEntity);
+            Controller.CalculateActiveTiles();
         }
     }
 }
