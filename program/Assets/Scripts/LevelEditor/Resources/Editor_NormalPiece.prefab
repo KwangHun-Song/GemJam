@@ -16,21 +16,9 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1712538457076358324, guid: 1d3025dfef2ad4b58b1797badb856e1a, type: 3}
-      propertyPath: sprites.Array.data[6]
-      value: 
-      objectReference: {fileID: 21300000, guid: f11d0fd26249b4f39a9d424250a558b8, type: 3}
-    - target: {fileID: 1712538457076358324, guid: 1d3025dfef2ad4b58b1797badb856e1a, type: 3}
       propertyPath: slotSprites.Array.size
       value: 7
       objectReference: {fileID: 0}
-    - target: {fileID: 1712538457076358324, guid: 1d3025dfef2ad4b58b1797badb856e1a, type: 3}
-      propertyPath: dimSprites.Array.data[6]
-      value: 
-      objectReference: {fileID: 21300000, guid: f11d0fd26249b4f39a9d424250a558b8, type: 3}
-    - target: {fileID: 1712538457076358324, guid: 1d3025dfef2ad4b58b1797badb856e1a, type: 3}
-      propertyPath: slotSprites.Array.data[6]
-      value: 
-      objectReference: {fileID: 21300000, guid: f11d0fd26249b4f39a9d424250a558b8, type: 3}
     - target: {fileID: 2390828362597232258, guid: 1d3025dfef2ad4b58b1797badb856e1a, type: 3}
       propertyPath: m_Name
       value: Editor_NormalPiece
