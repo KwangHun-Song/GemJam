@@ -9,7 +9,7 @@ namespace OverlayStatusSystem {
     /// <summary>
     /// canvas에 들어갈 클래스
     /// </summary>
-    public class CoinStatusView : MonoBehaviour, IOverlayStatusEvent {
+    public class CoinStatusView : OverlayStatusEvent<CoinOverlayStatus> {
         [SerializeField] private TMP_Text coin;
 
         private void Start() {
@@ -18,42 +18,29 @@ namespace OverlayStatusSystem {
         }
 
         public async UniTaskVoid GetCoin(int amount) {
-            OverlayStatusHelper.Input(this, new OverlayStatusParam(amount));
-            await UniTask.Delay(1000); // 몬가 애니메이션 연출을 여기 넣는다
-            OverlayStatusHelper.Save(this);
+            await Get<int>(amount);
+        }
+
+        public override UniTask Animate() {
+            return base.Animate();  // 몬가 애니메이션 연출을 여기 넣는다
         }
 
         private void OnCoin(int value) {
             coin.text = $"{value}";
         }
-
-        public Type GetKeyType() {
-            return typeof(CoinOverlayStatus);
-        }
     }
 
-    public class CoinOverlayStatus : IOverlayStatus {
-        private int _coinCount;
-        public IOverlayStatusEvent EventListener { get; private set; }
-        public Queue<OverlayStatusParam> EventRecord { get; private set; } = new Queue<OverlayStatusParam>();
-        private event Action<int> OnCoin;
-
-        public CoinOverlayStatus(IOverlayStatusEvent coinStatusView, Action<int> onCoin) {
-            EventListener = coinStatusView;
-            this.OnCoin += onCoin;
+    public class CoinOverlayStatus : OverlayStatus<int> {
+        public CoinOverlayStatus(IOverlayStatusEvent statusView, Action<int> onCoin) : base(statusView, onCoin) {
         }
 
-        void IOverlayStatus.Save() {
+        public override void Save() {
             int newCoin = 0;
             while (EventRecord.Count > 0) {
                 newCoin += (int)EventRecord.Dequeue().Value;
             }
             Wallet.Gain(Item.Coin, newCoin);
-            OnCoin?.Invoke(Wallet.GetItemCount(Item.Coin));
-        }
-
-        public void Enqueue(OverlayStatusParam inputParam) {
-            EventRecord.Enqueue(inputParam);
+            base.OnEvent?.Invoke(Wallet.GetItemCount(Item.Coin));
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using GemMatch;
 using TMPro;
@@ -42,7 +41,7 @@ namespace OverlayStatusSystem {
         public void InitializeMission(Mission mission) {
             this.mission = mission;
             this.targetEntityModel = mission.entity;
-            OverlayStatusHelper.Init(new MissionOverlayStatus(this, OnMission).SetTargetModel(mission.entity));
+            OverlayStatusHelper.Init(new MissionOverlayStatus(this, OnMission));
             if (targetEntityModel.index == EntityIndex.NormalPiece) {
                 var index = targetEntityModel.color == ColorIndex.Random ? sprites.Length-1 : (int)targetEntityModel.color;
                 imgMission.sprite = sprites[index];
@@ -52,30 +51,14 @@ namespace OverlayStatusSystem {
             txtCount.text = $"{mission.count}";
         }
 
-        public class MissionOverlayStatus : IOverlayStatus {
-            private EntityModel _targetModel;
-            public IOverlayStatusEvent EventListener { get; private set; }
-            public Queue<OverlayStatusParam> EventRecord { get; private set; } = new Queue<OverlayStatusParam>();
-            private event Action<EntityModel> OnMission;
-
-            public MissionOverlayStatus(IOverlayStatusEvent missionStatusView, Action<EntityModel> onMission) {
-                EventListener = missionStatusView;
-                this.OnMission += onMission;
+        public class MissionOverlayStatus : OverlayStatus<EntityModel> {
+            public MissionOverlayStatus(IOverlayStatusEvent missionStatusView, Action<EntityModel> onMission) : base(missionStatusView, onMission) {
             }
 
-            public MissionOverlayStatus SetTargetModel(EntityModel targetModel) {
-                this._targetModel = targetModel;
-                return this;
-            }
-
-            void IOverlayStatus.Save() {
+            public override void Save() {
                 while (EventRecord.Count > 0) {
-                    OnMission?.Invoke((EntityModel)EventRecord.Dequeue().Value);
+                    OnEvent?.Invoke((EntityModel)EventRecord.Dequeue().Value);
                 }
-            }
-
-            public void Enqueue(OverlayStatusParam inputParam) {
-                EventRecord.Enqueue(inputParam);
             }
         }
     }
