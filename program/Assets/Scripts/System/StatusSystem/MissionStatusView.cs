@@ -7,7 +7,12 @@ namespace OverlayStatusSystem {
         [SerializeField] private List<MissionView> missions;
 
         public void InitializeMissions(Mission[] targetMissions) {
-            for (var i = 0; i < targetMissions.Length; i++) {
+            for (var i = 0; i < missions.Count; i++) {
+                if (targetMissions.Length <= i) {
+                    missions[i].gameObject.SetActive(false);
+                    continue;
+                }
+                missions[i].gameObject.SetActive(true);
                 missions[i].InitializeMission(targetMissions[i]);
             }
         }

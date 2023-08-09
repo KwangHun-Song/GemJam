@@ -17,6 +17,9 @@ namespace OverlayStatusSystem {
 
         private void Add(IOverlayStatus status) {
             this._statusList.Add(status);
+            if (this._statusDict.ContainsKey(status.GetType()) == false) {
+                this._statusDict[status.GetType()] = new List<IOverlayStatus>();
+            }
             this._statusDict[status.GetType()].Add(status);
         }
 
