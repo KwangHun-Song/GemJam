@@ -26,7 +26,9 @@ namespace GemMatch.LevelEditor {
             editInspector.Initialize(editCtrl);
             yield return null;
             editInspector.LoadLevel(0);
+#if UNITY_EDITOR
             editInspector.SetDirty();
+#endif
             IsLoaded = true;
         }
 

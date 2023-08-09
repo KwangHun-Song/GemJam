@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using DG.Tweening.Plugins.Options;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace GemMatch.LevelEditor {
     public class EditInspector : MonoBehaviour {
@@ -25,8 +26,10 @@ namespace GemMatch.LevelEditor {
         private IEditInspectorEventListener _contorller;
         private EditLevelValidator _validator;
 
+#if UNITY_EDITOR
         public void SetDirty() => EditorUtility.SetDirty(this.gameObject);
         private bool IsDirty() => EditorUtility.IsDirty(this.gameObject);
+#endif
 
         public void Initialize(IEditInspectorEventListener gameController) {
             this._contorller = gameController;
@@ -58,18 +61,22 @@ namespace GemMatch.LevelEditor {
                 lvsCache[LevelIndex] = _contorller.CurrentLevel;
             }
             LevelLoader.GetContainer().levels = lvsCache.ToArray();
+#if UNITY_EDITOR
             SetDirty();
             EditorUtility.SetDirty(LevelLoader.GetContainer());
             AssetDatabase.SaveAssets();
+#endif
         }
 
         public event Action<EditInspector> OnLoadLevel;
 
         public async UniTask<bool> ExecuteWhenUpdateLevel(System.Action<EditInspector> callback) {
+#if UNITY_EDITOR
             if (IsDirty()) {
                 callback?.Invoke(this);
                 return true;
             }
+#endif
             return false;
         }
 
