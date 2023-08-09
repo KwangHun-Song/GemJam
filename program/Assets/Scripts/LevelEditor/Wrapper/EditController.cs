@@ -10,6 +10,7 @@ namespace GemMatch.LevelEditor {
         void SetColorCandidates(List<ColorIndex> colorCandidates);
         Level CurrentLevel { get; }
         void SetMissions(List<Mission> missions);
+        void ResizeBoard(int boardHeight, int boardWidth);
     }
 
     public interface IEditToolEventListener {
@@ -74,7 +75,7 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        private void ResizeBoard(int height, int width) {
+        public void ResizeBoard(int height, int width) {
             var nCol = PickTargetIndex(height, Constants.Height);
             var nRow = PickTargetIndex(width, Constants.Width);
 

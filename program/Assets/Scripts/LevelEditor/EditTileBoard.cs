@@ -13,8 +13,8 @@ namespace GemMatch.LevelEditor {
     public class EditTileBoard : UIBehaviour {
         [SerializeField] private TileView prefabBase;
 
-        private const int Height = 11;
-        private const int Width = 8;
+        private int Height = Constants.Height;
+        private int Width = Constants.Width;
 
         private GridLayoutGroup gridBoard;
         private EditView _view;
@@ -29,7 +29,6 @@ namespace GemMatch.LevelEditor {
             tilesOnBoard.Clear();
             for (int i = 0; i < Height * Width; i++) {
                 var tile = Instantiate(prefabBase, gridBoard.transform);
-                tile.name = $"Tile({i % Width},{i / Width})";
                 var editTileView = tile.AddComponent<EditTileView>();
                 editTileView.InjectView(editView);
                 tilesOnBoard.Add(editTileView);
