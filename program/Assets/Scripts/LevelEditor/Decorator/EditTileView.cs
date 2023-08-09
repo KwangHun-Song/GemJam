@@ -40,7 +40,9 @@ namespace GemMatch.LevelEditor {
             _tileView.Initialize(view, tile);
             // EntityView의 버튼 인터렉션을 끄고 타일에서 가로챈다
             foreach (EntityView entityView in _tileView.EntityViews) {
-                Destroy(entityView.GetComponent<Button>());
+                if (entityView.GetComponent<Button>() is Button btn && btn != null) {
+                    Destroy(entityView.GetComponent<Button>());
+                }
                 if (entityView.Entity.Index == EntityIndex.None) continue;
                 entityView.OnCreate().Forget();
                 if (entityView is NormalPieceView normal) {
