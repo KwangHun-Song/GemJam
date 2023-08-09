@@ -16,31 +16,19 @@ namespace OverlayStatusSystem {
         }
 
         public async UniTaskVoid GetCoin(int amount) {
-            OverlayStatusHelper.Input(this, new CoinStatusParam(amount));
-            await UniTask.DelayFrame(1); // 몬가 애니메이션 연출을 여기 넣는다
+            OverlayStatusHelper.Input(this, new OverlayStatusParam(amount));
+            await UniTask.Delay(1000); // 몬가 애니메이션 연출을 여기 넣는다
             OverlayStatusHelper.Save(this);
         }
 
         public MonoBehaviour Mono => this;
 
-        public void OnCoin(int value) {
+        private void OnCoin(int value) {
             coin.text = $"{value}";
         }
 
         public Type GetType() {
             return typeof(CoinOverlayStatus);
-        }
-    }
-
-    public class CoinStatusParam : OverlayStatusParam {
-        public object Value { get; private set; }
-
-        public CoinStatusParam(int value) {
-            this.Value = value;
-        }
-
-        public int GetValue() {
-            return this.Value is int i ? i : 0;
         }
     }
 }
