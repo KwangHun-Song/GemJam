@@ -54,9 +54,5 @@ namespace PagePopupSystem {
                 Debug.LogWarning("Popup task is not initialized.");
             }
         }
-
-        public void ChangeTo(string pageName, object inParam = null) {
-            PageManager.ChangeTo(pageName, inParam, gameObject).Forget();
-        }
     }
 }

@@ -26,8 +26,8 @@ namespace GemMatch {
             Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             PathFinder = new PathFinder(Tiles);
-            ColorDistributor = new ClearableColorDistributor();
-            
+            ColorDistributor = new RandomColorDistributor()/* new ClearableColorDistributor()*/;
+
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
             if (ColorDistributor.DistributeColors(CurrentLevel, Tiles) == false) {
                 // 실패시 색깔을 랜덤으로 배치한다.
@@ -71,6 +71,10 @@ namespace GemMatch {
             // 이벤트 전달
             foreach (var listener in Listeners) listener.OnRunAbility(ability);
         }
+
+        // public void RemoveEntity(Tile tile, Entity entity) {
+        //     if (tile.Entities.ContainsKey(entity.Layer))
+        // }
 
         public void ClearGame() {
             gameCompletionSource.TrySetResult(GameResult.Clear);

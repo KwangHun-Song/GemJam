@@ -7,19 +7,17 @@ namespace Pages {
     public class PlayPage : PageHandler {
         [SerializeField] private View view;
         
+        public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
 
-        [ContextMenu("Start")]
         public async void StartGame() {
             Controller = new Controller();
             Controller.Listeners.Add(view);
             
-            var level = LevelLoader.GetLevel(0);
-            
+            var level = LevelLoader.GetLevel(1);
             Controller.StartGame(level);
 
             var result = await Controller.WaitUntilGameEnd();
-            
             Debug.Log(result);
         }
 
@@ -31,7 +29,7 @@ namespace Pages {
             }
 
             if (Input.GetKeyDown(KeyCode.X)) {
-                ChangeTo(nameof(MainPage));
+                ChangeTo(Page.MainPage);
             }
 
             if (Input.GetKeyDown(KeyCode.P)) {
