@@ -638,30 +638,6 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    - index: 80
-      isOpened: 0
-      entityModels: []
-    - index: 81
-      isOpened: 1
-      entityModels: []
-    - index: 82
-      isOpened: 1
-      entityModels: []
-    - index: 83
-      isOpened: 0
-      entityModels: []
-    - index: 84
-      isOpened: 0
-      entityModels: []
-    - index: 85
-      isOpened: 1
-      entityModels: []
-    - index: 86
-      isOpened: 1
-      entityModels: []
-    - index: 87
-      isOpened: 0
-      entityModels: []
     missions:
     - entity:
         index: 1
@@ -1084,30 +1060,6 @@ MonoBehaviour:
       isOpened: 0
       entityModels: []
     - index: 79
-      isOpened: 0
-      entityModels: []
-    - index: 80
-      isOpened: 0
-      entityModels: []
-    - index: 81
-      isOpened: 0
-      entityModels: []
-    - index: 82
-      isOpened: 0
-      entityModels: []
-    - index: 83
-      isOpened: 1
-      entityModels: []
-    - index: 84
-      isOpened: 1
-      entityModels: []
-    - index: 85
-      isOpened: 0
-      entityModels: []
-    - index: 86
-      isOpened: 0
-      entityModels: []
-    - index: 87
       isOpened: 0
       entityModels: []
     missions: []

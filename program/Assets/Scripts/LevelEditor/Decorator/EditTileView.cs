@@ -53,6 +53,7 @@ namespace GemMatch.LevelEditor {
             }
             this.Tile = this._tileView.Tile;
             this.TileModel = this._tileView.Tile.Model;
+            this.gameObject.name = $"Tile({Tile.X},{Tile.Y})";
         }
 
         // engine은 EntityView만 인터렉션하지만 에디터는 여기서 모두 한다
