@@ -3,5 +3,7 @@ namespace GemMatch {
         None = 0,
         HitRandomAbility,
         ShuffleAbility,
+        DestroyEntityOnTileAbility,
+        DestroyEntityOnMemoryAbility,
     }
 }

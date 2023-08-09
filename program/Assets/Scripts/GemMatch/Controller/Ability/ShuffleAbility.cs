@@ -3,7 +3,7 @@ using System.Linq;
 namespace GemMatch {
     public class ShuffleAbility : Ability<ColorIndex[]> {
         public override AbilityIndex Index => AbilityIndex.ShuffleAbility;
-        public ShuffleAbility(Tile targetTile, Controller controller) : base(targetTile, controller) { }
+        public ShuffleAbility(Controller controller) : base(null, controller) { }
 
         public override void Run() {
             var colorEntities = Controller.Tiles

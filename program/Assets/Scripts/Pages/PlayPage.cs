@@ -58,8 +58,12 @@ namespace Pages {
             }
         }
 
+        public void OnClickMagnet() {
+            Controller?.InputAbility(new MagneticAbility(Controller));
+        }
+
         public void OnClickShuffle() {
-            Controller?.InputAbility(new ShuffleAbility(null, Controller));
+            Controller?.InputAbility(new ShuffleAbility(Controller));
         }
 
         private void GoBackToEditMode() {
