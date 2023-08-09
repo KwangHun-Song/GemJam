@@ -111,7 +111,7 @@ namespace GemMatch.LevelEditor {
             EditorGUILayout.Space();
             EditorGUILayout.Separator();
             // 미션 추가
-            if (CustomButton("Add Missions", "#AE72B1") && SelectedMissions.Count >= 4) {
+            if (CustomButton("Add Missions", "#AE72B1") && SelectedMissions.Count < 4) {
                 SelectedMissions.Add(new Mission() {
                     count = 10,
                     entity = ModelTemplates.NormalEntityModel(ColorIndex.Red)
@@ -181,13 +181,11 @@ namespace GemMatch.LevelEditor {
         }
 
         private ColorIndex ColorEnumPopup(ColorIndex index, GUIStyle style) {
-            var viewWidth = EditorGUIUtility.currentViewWidth;
             var selection = (UsableColorIndex)EditorGUILayout.EnumPopup((UsableColorIndex)index, style);
             return (ColorIndex)selection;
         }
 
         private EntityIndex EntityEnumPopup(EntityIndex index, GUIStyle style) {
-            var viewWidth = EditorGUIUtility.currentViewWidth;
             var selection = (UsableMission)EditorGUILayout.EnumPopup((UsableMission)index, style);
             return (EntityIndex)selection;
         }
