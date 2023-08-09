@@ -25,14 +25,12 @@ namespace GemMatch.LevelEditor {
 
         private readonly IEditCtrlForView _view;
         private readonly IEditCtrlForTool _tool;
-        private readonly IEditCtrlForInspector _inspector;
 
         // Memory와 Missions을 사용하지 않는다
         // CurrentLevel,Tiles만 사용
-        public EditController(IEditCtrlForView editGameView, IEditCtrlForTool tool, IEditCtrlForInspector inspector) {
+        public EditController(IEditCtrlForView editGameView, IEditCtrlForTool tool) {
             this._view = editGameView;
             this._tool = tool;
-            this._inspector = inspector;
         }
 
         public void EditGame(Level level) {

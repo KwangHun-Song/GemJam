@@ -21,6 +21,7 @@ namespace GemMatch.LevelEditor {
         public void UpdateFields(EditInspector inspector) {
             ColorCandidates = inspector.GetColorCandidates().ToList();
             SelectedMissions = inspector.GetMissions().ToList();
+            selectedColorCount = inspector.GetColorCount();
         }
 
 #region Fields
@@ -48,6 +49,9 @@ namespace GemMatch.LevelEditor {
             // InvisibleCover = 5,
         }
         public List<Mission> SelectedMissions { get; private set; } = new List<Mission>();
+
+        private bool isValidated;
+        private int selectedColorCount;
 #endregion
 
         public override void OnInspectorGUI() {
@@ -143,9 +147,36 @@ namespace GemMatch.LevelEditor {
             }
             EditorGUILayout.Separator();
             EditorGUILayout.Space();
+            // level validator
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Valid Level Count : ");
+            selectedColorCount = EditorGUILayout.Popup(selectedIndex: selectedColorCount, new[] { "0", "1", "2", "3", "4", "5", "6", }); // string 배열은 1부터
+            EditorGUILayout.EndHorizontal();
+            if (CustomButton("Validate", Color.blue)) {
+                if (inspector.ValidateCurrentLevel(selectedColorCount, out var validCount)) {
+                    inspector.SetColorCount(selectedColorCount);
+                    isValidated = true;
+                } else {
+                    EditorUtility.DisplayDialog(
+                        title: "Error : Validation",
+                      message: $"레벨카운트에 적인 보석과 \n사용된 보석의 수가 다릅니다.\n사용된 보석 수: {validCount}\n기입한 보석 수: {selectedColorCount}",
+                        ok:"Go Back");
+                }
+            }
+
+            if (isValidated == false) {
+                EditorGUILayout.HelpBox("아직 Validation 하지 않았습니다.", MessageType.Error);
+            }
             // Save
             if (CustomButton("Save", Color.green)) {
-                inspector.SaveLevel();
+                if (isValidated == false) {
+                    EditorUtility.DisplayDialog(
+                        title: "Error : Validation",
+                        message: "아직 Validation 하지 않았습니다.\n저장하지 않겠습니다.",
+                        ok:"Go Back");
+                } else {
+                    inspector.SaveLevel();
+                }
             }
         }
 

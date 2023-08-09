@@ -2,19 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using DG.Tweening.Plugins.Options;
 using UnityEditor;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
-    public interface IEditCtrlForInspector {
-    }
-
-    public class EditInspector : MonoBehaviour, IEditCtrlForInspector {
+    public class EditInspector : MonoBehaviour {
 #region Public Property
         public int LevelIndex {
-            get => PlayerPrefs.GetInt("LAST_INDEX", 0);
+            get => PlayerPrefs.GetInt(Constants.LevelIndexPrefsKey, 0);
             set {
-                PlayerPrefs.SetInt("LAST_INDEX", value);
+                PlayerPrefs.SetInt(Constants.LevelIndexPrefsKey, value);
                 PlayerPrefs.Save();
             }
         }
@@ -25,12 +23,14 @@ namespace GemMatch.LevelEditor {
         }
 #endregion
         private IEditInspectorEventListener _contorller;
+        private EditLevelValidator _validator;
 
         public void SetDirty() => EditorUtility.SetDirty(this.gameObject);
         private bool IsDirty() => EditorUtility.IsDirty(this.gameObject);
 
         public void Initialize(IEditInspectorEventListener gameController) {
             this._contorller = gameController;
+            this._validator = new EditLevelValidator();
         }
 
         public void LoadLevel(int levelIndex) {
@@ -51,7 +51,7 @@ namespace GemMatch.LevelEditor {
         }
 
         public void SaveLevel() {
-            var lvsCache = new List<Level>(LevelLoader.GetContainer().levels);
+            var lvsCache = LevelLoader.GetContainer().levels.Select(l=>l.Clone()).ToList();
             if (lvsCache.Count <= LevelIndex) {
                 lvsCache.Add(_contorller.CurrentLevel);
             } else {
@@ -85,5 +85,35 @@ namespace GemMatch.LevelEditor {
 
         public IEnumerable<Mission> GetMissions() => _contorller.CurrentLevel.missions;
 
+        public int GetColorCount() {
+            if (_contorller?.CurrentLevel == null) return -1;
+            return _contorller.CurrentLevel.colorCount;
+        }
+
+        public void SetColorCount(int colorCount) {
+            _contorller.CurrentLevel.colorCount = colorCount;
+        }
+
+        public bool ValidateCurrentLevel(int inputColorCount, out int? validColorCount) {
+            bool result = _validator.Validate(_contorller.CurrentLevel, inputColorCount);
+            validColorCount = _validator.GetColorCountCachedOnBoard();
+            return result;
+        }
+    }
+
+    internal class EditLevelValidator {
+        private int validColorCached = -1;
+        public bool Validate(Level level, int colorCount) {
+            if (level?.tiles == null || level?.colorCandidates == null) return false;
+            var colorOnBoard = level.tiles
+                .SelectMany(t => t.entityModels)
+                .Where(m => m.index == EntityIndex.NormalPiece && Constants.UsableColors.Contains(m.color))
+                .Select(m => m.color)
+                .Distinct();
+            validColorCached = colorOnBoard.Union(level.colorCandidates).Count();
+            return colorCount == validColorCached;
+        }
+
+        public int GetColorCountCachedOnBoard() => validColorCached;
     }
 }
