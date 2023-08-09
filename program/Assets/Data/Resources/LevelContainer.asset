@@ -723,7 +723,7 @@ MonoBehaviour:
         commonIntParam: 0
         commonStringParam: 
       count: 6
-    colorCount: 6
+    colorCount: 5
     colorCandidates: 0000000001000000020000000300000004000000
   - tiles:
     - index: 0

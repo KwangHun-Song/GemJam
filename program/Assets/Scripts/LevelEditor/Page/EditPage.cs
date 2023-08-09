@@ -19,7 +19,7 @@ namespace GemMatch.LevelEditor {
         private IEnumerator CoInitialize() {
             yield return null;
             yield return null;
-            var editCtrl = new EditController(editView, editTool, editInspector);
+            var editCtrl = new EditController(editView, editTool);
             controller = editCtrl;
             editView.Initialize(editCtrl);
             editTool.Initialize(editCtrl, editView);

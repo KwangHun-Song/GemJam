@@ -19,7 +19,7 @@ namespace GemMatch {
             if (randomColorPieces.Any() == false) return true;
 
             // 클리어 가능한 컬러들 큐 만들기
-            var availableColors = Constants.UsableColors.Take(level.colorCount).ToList();
+            var availableColors = level.colorCandidates.ToList();
             var colorsQueue = colorCalculator.GenerateColorQueue(randomColorPieces.Count(), availableColors);
 
             var randomColorTilesIndices = tiles.Where(t => {
