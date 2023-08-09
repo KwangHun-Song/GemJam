@@ -1,10 +1,27 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Record;
 using UnityEngine;
 
 namespace OverlayStatusSystem {
     public class LevelStatusView : OverlayStatusEvent<LevelOverlayStatus> {
         [SerializeField] private GameObject[] stageIndexers;
+        private int stageIndex => PlayerInfo.HighestClearedLevelIndex % 3;
+
+        public void Start() {
+            OverlayStatusHelper.Init(new LevelOverlayStatus(this, OnStage));
+        }
+
+        private void OnStage(int count) {
+            TurnOnStageIndex();
+        }
+
+        private void TurnOnStageIndex() {
+            for (int i = 0; i < stageIndexers.Length; i++) {
+                var cursor = stageIndexers[i];
+                cursor.SetActive(i <= stageIndex);
+            }
+        }
 
         public async UniTaskVoid GetStage() {
             await base.Get<int>(1);
@@ -20,12 +37,10 @@ namespace OverlayStatusSystem {
         }
 
         public override void Save() {
-            int newCoin = 0;
             while (EventRecord.Count > 0) {
-                newCoin += (int)EventRecord.Dequeue().Value;
+                EventRecord.Dequeue();
+                OnEvent?.Invoke(1); // stage는 1개씩 클리어 고정
             }
-            Wallet.Gain(Item.Coin, newCoin);
-            OnCoin?.Invoke(Wallet.GetItemCount(Item.Coin));
         }
     }
 }
