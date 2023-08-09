@@ -12,11 +12,10 @@ namespace Pages {
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
 
-        public async void StartGame() {
+        public async void StartGame(int levelIndex) {
             Controller = new Controller();
             Controller.Listeners.Add(view);
 
-            var levelIndex = 0;
             if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
                 levelIndex = indicator.LevelIndex;
             }
@@ -49,9 +48,30 @@ namespace Pages {
             }
         }
 
+        public void OnClickShuffle() {
+            Controller?.InputAbility(new ShuffleAbility(null, Controller));
+        }
+
         private void GoBackToEditMode() {
             if (FindObjectOfType<EditLevelIndicator>() != null)
                 SceneManager.LoadScene("EditScene");
         }
+
+        #region CHEAT
+
+        private int levelIndexInput;
+        public string LevelIndexInput {
+            set {
+                if (int.TryParse(value, out var levelIndex)) {
+                    levelIndexInput = levelIndex;
+                }
+            }
+        }
+        
+        public void OnClickStartGame() {
+            StartGame(levelIndexInput);    
+        }
+
+        #endregion
     }
 }

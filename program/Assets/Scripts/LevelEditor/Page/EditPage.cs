@@ -73,7 +73,7 @@ namespace GemMatch.LevelEditor {
             await UniTask.DelayFrame(2);
             var playpage = FindObjectOfType<PlayPage>();
             Assert.IsNotNull(playpage);
-            playpage.StartGame();
+            playpage.StartGame(0);
         }
     }
 }

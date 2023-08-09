@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace GemMatch {
     public abstract class Ability {
+        public abstract AbilityIndex Index { get; }
         public virtual Tile TargetTile { get; }
         public Controller Controller { get; }
         
