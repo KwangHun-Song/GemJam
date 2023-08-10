@@ -10,7 +10,6 @@ namespace GemMatch {
     public class View : MonoBehaviour, IControllerEvent {
         [SerializeField] private Transform tileViewRoot;
         [SerializeField] private Transform memoryViewRoot;
-        [SerializeField] private TMP_Text gameStatusText;
         [SerializeField] private Transform extraSlot;
         
         [Header("MonoBehaviour를 상속한 AbilityView들은 여기에!")]
@@ -56,6 +55,7 @@ namespace GemMatch {
 
         #endregion
 
+        // (주의) 아직 Page GameObject가 만들어지기 전이므로 component 호출은 지양한다
         public void OnStartGame(Controller controller) {
             Controller = controller;
             var tiles = controller.Tiles;
@@ -74,9 +74,6 @@ namespace GemMatch {
             foreach (var memoryView in MemoryViews) {
                 memoryView.Initialize();
             }
-
-            gameStatusText.text = "";
-            extraSlot.localScale = Vector3.one;
         }
 
         public void OnClearGame(Mission[] missions) {
