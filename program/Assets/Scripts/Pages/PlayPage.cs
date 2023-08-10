@@ -29,6 +29,7 @@ namespace Pages {
             foreach (var selectedBooster in Param.selectedBoosters) {
                 switch (selectedBooster) {
                     case BoosterIndex.ReadyBoosterRocket:
+                        Controller.InputAbility(new RocketAbility(Controller));
                         break;
                     case BoosterIndex.ReadyBoosterExtraSlot:
                         break;
@@ -48,6 +49,14 @@ namespace Pages {
             controller.StartGame(level);
             return controller;
         }
+
+        #region EVENT
+
+        public void OnClickBack() {
+            ChangeTo(Page.MainPage);
+        }
+
+        #endregion
 
         #region Booster
 
@@ -76,6 +85,7 @@ namespace Pages {
                 GoBackToEditMode();
             }
         }
+        
 
         private void GoBackToEditMode() {
             if (FindObjectOfType<EditLevelIndicator>() != null)

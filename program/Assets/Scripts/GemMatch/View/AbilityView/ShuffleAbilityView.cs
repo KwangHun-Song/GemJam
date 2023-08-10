@@ -7,6 +7,7 @@ using UnityEngine;
 namespace GemMatch {
     public class ShuffleAbilityView : MonoBehaviour, IAbilityView {
         [SerializeField] private Transform shuffleTfm;
+
         public async UniTask RunAbilityAsync(View view, IAbility ability, Controller controller) {
             var normalPieceViews = view.TileViews
                 .SelectMany(tv => tv.EntityViews.Values)
@@ -20,7 +21,7 @@ namespace GemMatch {
             shuffleTfm.gameObject.SetActive(true);
             shuffleTfm.localScale = Vector3.zero;
             shuffleTfm.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack);
-            
+
             // 다섯 번정도 색깔을 랜덤으로 바꾸어준다.
             const int ShuffleCount = 10;
             for (int i = 0; i < ShuffleCount; i++) {
