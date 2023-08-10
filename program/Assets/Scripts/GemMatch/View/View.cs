@@ -93,7 +93,6 @@ namespace GemMatch {
             EnqueueAnimation(AddMemoryAsync);
             
             async UniTask AddMemoryAsync() {
-                Debug.Log(nameof(AddMemoryAsync));
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
@@ -117,7 +116,6 @@ namespace GemMatch {
             EnqueueAnimation(MoveToTileAsync);
 
             async UniTask MoveToTileAsync() {
-                Debug.Log(nameof(MoveToTileAsync));
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var memoryView = MemoryViews.Single(mv => ReferenceEquals(mv.EntityView?.Entity, entity));
                 var entityView = memoryView.EntityView;
@@ -140,7 +138,6 @@ namespace GemMatch {
             EnqueueAnimation(CreateMemoryAsync);
             
             async UniTask CreateMemoryAsync() {
-                Debug.Log(nameof(CreateMemoryAsync));
                 var firstEmptyMemoryView = MemoryViews.First(v => v.EntityView == null);
                 var entityView = CreateEntityView(entity);
                 if (entityView is NormalPieceView normalPieceView) normalPieceView.SetOnMemoryUI(true);
@@ -154,7 +151,6 @@ namespace GemMatch {
             EnqueueAnimation(RemoveMemoryAsync);
 
             async UniTask RemoveMemoryAsync() {
-                Debug.Log(nameof(RemoveMemoryAsync));
                 await MemoryViews
                     .Single(v => v.EntityView != null && ReferenceEquals(v.EntityView.Entity, entity))
                     .RemoveEntityAsync(true);
@@ -176,7 +172,6 @@ namespace GemMatch {
             EnqueueAnimation(CreateEntityAsync);
 
             UniTask CreateEntityAsync() {
-                Debug.Log(nameof(CreateEntityAsync));
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = CreateEntityView(entity);
                 tileView.AddEntityView(entityView);
@@ -189,7 +184,6 @@ namespace GemMatch {
             EnqueueAnimation(DestroyEntityAsync);
 
             UniTask DestroyEntityAsync() {
-                Debug.Log(nameof(DestroyEntityAsync));
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
 
