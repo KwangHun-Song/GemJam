@@ -1,5 +1,3 @@
-using System;
-using Cysharp.Threading.Tasks;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
@@ -29,8 +27,10 @@ namespace Pages {
             foreach (var selectedBooster in Param.selectedBoosters) {
                 switch (selectedBooster) {
                     case BoosterIndex.ReadyBoosterRocket:
+                        Controller.InputAbility(new RocketAbility(Controller));
                         break;
                     case BoosterIndex.ReadyBoosterExtraSlot:
+                        Controller.AddExtraMemorySlot();
                         break;
                 }
             }
@@ -48,6 +48,14 @@ namespace Pages {
             controller.StartGame(level);
             return controller;
         }
+
+        #region EVENT
+
+        public void OnClickBack() {
+            ChangeTo(Page.MainPage);
+        }
+
+        #endregion
 
         #region Booster
 
@@ -76,6 +84,7 @@ namespace Pages {
                 GoBackToEditMode();
             }
         }
+        
 
         private void GoBackToEditMode() {
             if (FindObjectOfType<EditLevelIndicator>() != null)

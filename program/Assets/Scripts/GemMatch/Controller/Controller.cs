@@ -5,7 +5,7 @@ using GemMatch.UndoSystem;
 
 namespace GemMatch {
     public class Controller {
-        protected int MaxMemoryCount => 7;
+        protected int MaxMemoryCount => 7 + (ExtraMemorySlot ? 1 : 0);
         
         private UniTaskCompletionSource<GameResult> gameCompletionSource;
         public List<IControllerEvent> Listeners { get; } = new List<IControllerEvent>();
@@ -20,6 +20,8 @@ namespace GemMatch {
         public virtual PathFinder PathFinder { get; protected set; }
         public virtual IColorDistributor ColorDistributor { get; protected set; }
         public UndoHandler UndoHandler { get; protected set; }
+        
+        public bool ExtraMemorySlot { get; private set; }
 
         public virtual void StartGame(Level level, bool isReplay = false) {
             // 초기화
@@ -33,6 +35,7 @@ namespace GemMatch {
                 UndoHandler = new UndoHandler();
             } else {
                 UndoHandler.Reset();
+                RemoveExtraMemorySlot();
             }
 
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
@@ -68,24 +71,28 @@ namespace GemMatch {
             if (IsFailed()) FailGame();
         }
 
-        public void InputAbility(IAbility ability, bool triggeredByPrev = false) {
+        public void InputAbility(IAbility ability, bool triggeredByPrev = false, bool isViewFirst = false) {
             if (ability == null) return;
             
-            UndoHandler.Do(new Command(
-                @do: () => {
-                    ability.Run();
-                    foreach (var listener in Listeners) listener.OnRunAbility(ability);
-                }, 
-                undo: () => {
-                    ability.Undo();
-                    foreach (var listener in Listeners) listener.OnRestoreAbility(ability);
-                },
-                triggeredByPrev: triggeredByPrev
-            ));
-
+            UnityEngine.Debug.Log(ability.Index);
+            UndoHandler.Do(new AbilityCommand(this, ability, triggeredByPrev));
+            
             foreach (var subAbility in ability.GetCascadedAbility()) {
                 InputAbility(subAbility, true);
             }
+        }
+
+        public void AddExtraMemorySlot() {
+            ExtraMemorySlot = true;
+            // 이벤트 전달
+            foreach (var listener in Listeners) listener.OnAddExtraSlot();
+            
+        }
+
+        public void RemoveExtraMemorySlot() {
+            ExtraMemorySlot = false;
+            // 이벤트 전달
+            foreach (var listener in Listeners) listener.OnRemoveExtraSlot();
         }
 
         public void ClearGame() {

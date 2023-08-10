@@ -6,7 +6,7 @@ namespace GemMatch {
     /// 이 어빌리티는 직접 기능하는 것은 없고 타겟 엔티티들을 찾아 캐스케이드 어빌리티들만 만들어서 반환한다.
     /// </summary>
     public class MagneticAbility : Ability<bool> {
-        public override AbilityIndex Index => AbilityIndex.HitRandomAbility;
+        public override AbilityIndex Index => AbilityIndex.MagneticAbility;
         public bool Found { get; set; }
         public IEnumerable<Entity> EntitiesInMemory { get; private set; }
         public IEnumerable<Tile> TilesToHit { get; private set; }

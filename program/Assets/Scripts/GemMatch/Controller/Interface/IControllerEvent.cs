@@ -18,5 +18,7 @@ namespace GemMatch {
         void OnDestroyEntity(Tile tile, Entity entity);
 
         void OnAddActiveTiles(IEnumerable<Tile> activeTiles);
+        void OnAddExtraSlot();
+        void OnRemoveExtraSlot();
     }
 }
