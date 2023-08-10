@@ -1,9 +1,11 @@
 namespace GemMatch {
     public enum BoosterIndex {
         None,
-        Undo,
-        Shuffle,
-        PopColors,
+        ReadyBoosterRocket,
+        ReadyBoosterExtraSlot,
+        PlayBoosterUndo,
+        PlayBoosterShuffle,
+        PlayBoosterMagnet,
     }
     
     public class Booster {

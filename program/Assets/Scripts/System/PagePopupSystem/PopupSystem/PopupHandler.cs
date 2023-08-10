@@ -8,6 +8,10 @@ namespace PagePopupSystem {
     public abstract class PopupHandler : MonoBehaviour {
         public virtual void OnWillEnter(object param) { }
 
+        public virtual UniTask OnDidEnter(object param) => UniTask.CompletedTask;
+        public virtual void OnWillLeave() { }
+        public virtual void OnDidLeave() { }
+
         public virtual void OnClickOk() {
             HideWithAnimation(true).Forget();
         }
@@ -34,17 +38,23 @@ namespace PagePopupSystem {
 
             gameObject.SetActive(true);
             transform.localScale = Vector3.zero;
+            OnWillEnter(param);
             await transform.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack).ToUniTask();
+            OnDidEnter(param).Forget();
 
             popupTask = new UniTaskCompletionSource<object>();
         }
+
+        public void Close(object param) => HideWithAnimation(param).Forget();
 
         internal async UniTask HideWithAnimation(object param) {
             if (!gameObject.activeSelf) {
                 throw new InvalidOperationException("The popup is already hidden.");
             }
 
+            OnWillLeave();
             await transform.DOScale(Vector3.zero, 0.15F).SetEase(Ease.InBack).ToUniTask();
+            OnDidLeave();
 
             gameObject.SetActive(false);
 
