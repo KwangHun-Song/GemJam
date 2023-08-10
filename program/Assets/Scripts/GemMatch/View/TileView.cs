@@ -106,6 +106,7 @@ namespace GemMatch {
             points[3].SetActive(right && down);
 
             if (left && down) {
+                randomBackground.gameObject.SetActive(true);
                 var ranTr = (randomBackground.transform as RectTransform);
                 ranTr.pivot = new Vector2(Random.Range(0f, 0.08f), Random.Range(0f, 0.08f));
                 ranTr.localPosition = Vector3.zero;
@@ -115,6 +116,5 @@ namespace GemMatch {
                     : randomBackgroundSprites[4];
             }
         }
-
     }
 }
