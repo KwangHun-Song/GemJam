@@ -59,7 +59,7 @@ namespace GemMatch {
             }
 
             foreach (var tile in TilesToHit) {
-                foreach (var entity in tile.Entities.Values) {
+                foreach (var entity in tile.Entities.OrderByDescending(kvp => kvp.Key).Select(kvp => kvp.Value)) {
                     yield return new DestroyEntityOnTileAbility(tile, Controller, entity);
                 }
             }
