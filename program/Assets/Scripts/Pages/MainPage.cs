@@ -2,6 +2,8 @@ using Cysharp.Threading.Tasks;
 using PagePopupSystem;
 using Popups;
 using Record;
+using UnityEngine;
+using Utility.CustomMouse;
 
 namespace Pages {
     public class MainPage : PageHandler {
@@ -19,6 +21,12 @@ namespace Pages {
                         selectedBoosters = readyPopupResult.selectedBoosters
                     });
                 }
+            }
+        }
+
+        private void Update() {
+            if (Input.GetKeyDown(KeyCode.F10)) {
+                CustomMouse.Show();
             }
         }
     }

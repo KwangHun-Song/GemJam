@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +10,9 @@ namespace GemMatch {
     public class View : MonoBehaviour, IControllerEvent {
         [SerializeField] private Transform tileViewRoot;
         [SerializeField] private Transform memoryViewRoot;
-
+        [SerializeField] private TMP_Text gameStatusText;
+        [SerializeField] private Transform extraSlot;
+        
         [Header("MonoBehaviour를 상속한 AbilityView들은 여기에!")]
         [SerializeField] private ShuffleAbilityView shuffleAbilityView;
 
@@ -71,6 +74,9 @@ namespace GemMatch {
             foreach (var memoryView in MemoryViews) {
                 memoryView.Initialize();
             }
+
+            gameStatusText.text = "";
+            extraSlot.localScale = Vector3.one;
         }
 
         public void OnClearGame(Mission[] missions) {
@@ -201,6 +207,19 @@ namespace GemMatch {
                     iReceive.OnActive(isActive);
                 }
             }
+        }
+
+        public void OnAddExtraSlot() {
+            AddExtraSlotAsync().Forget();
+
+            async UniTask AddExtraSlotAsync() {
+                await UniTask.Delay(1000);
+                extraSlot.DOScale(Vector3.zero, 0.3F).SetEase(Ease.InBack, 3);
+            }
+        }
+
+        public void OnRemoveExtraSlot() {
+            extraSlot.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack, 3);
         }
 
         public async UniTask SortMemoryAsync() {
