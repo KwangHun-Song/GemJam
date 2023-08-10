@@ -42,7 +42,7 @@ namespace GemMatch {
                 
                 var memoryEntities = Controller.Memory.Where(me => me.Color == color).ToList();
                 EntitiesInMemory = memoryEntities;
-                TilesToHit = tiles.Where(t => t.Piece.Color == color).Take(3 - memoryEntities.Count).ToList();
+                TilesToHit = tiles.Where(t => t.Piece.Color == color).Shuffle().Take(3 - memoryEntities.Count).ToList();
 
                 Found = true;
                 return;
