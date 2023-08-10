@@ -1,5 +1,3 @@
-using System;
-using Cysharp.Threading.Tasks;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
@@ -32,6 +30,7 @@ namespace Pages {
                         Controller.InputAbility(new RocketAbility(Controller));
                         break;
                     case BoosterIndex.ReadyBoosterExtraSlot:
+                        Controller.AddExtraMemorySlot();
                         break;
                 }
             }
