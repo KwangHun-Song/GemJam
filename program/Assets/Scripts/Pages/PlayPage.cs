@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
@@ -13,6 +15,7 @@ namespace Pages {
     
     public class PlayPage : PageHandler {
         [SerializeField] private View view;
+        [SerializeField] private PlayBoosterUI[] playBoosters;
         
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
@@ -57,7 +60,12 @@ namespace Pages {
 
         #endregion
 
-        #region Booster
+        #region PlayBooster
+        public void UpdatePlayBooster() {
+            foreach (var booster in playBoosters) {
+                booster.Refresh();
+            }
+        }
 
         public void OnClickUndo() {
             if (Controller != null) {
@@ -77,7 +85,17 @@ namespace Pages {
             Controller?.InputAbility(new ShuffleAbility(Controller));
         }
 
-        #endregion
+        #endregion // PlayBooster
+
+        private IEnumerator Start() {
+            yield return null;
+            yield return null;
+            GetStable();
+        }
+
+        private void GetStable() {
+            UpdatePlayBooster();
+        }
 
         private void Update() {
             if (Input.GetKeyDown(KeyCode.Escape)) {
