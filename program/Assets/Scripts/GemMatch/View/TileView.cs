@@ -6,11 +6,13 @@ namespace GemMatch {
     public class TileView : MonoBehaviour {
         [SerializeField] private Image background;
         [SerializeField] public Transform entitiesRoot;
+        [SerializeField] public Transform guestRoom;
         
         public Tile Tile { get; private set; }
         public View View { get; private set; }
 
-        public Dictionary<Layer, EntityView> EntityViews { get; } = new Dictionary<Layer, EntityView>();
+        private Dictionary<Layer, EntityView> entityViews;
+        public IReadOnlyDictionary<Layer, EntityView> EntityViews => entityViews ??= new Dictionary<Layer, EntityView>();
 
         public void Initialize(View view, Tile tile) {
             View = view;
@@ -22,21 +24,25 @@ namespace GemMatch {
                 DestroyImmediate(entityView.gameObject);
             }
             
-            EntityViews.Clear();
+            entityViews.Clear();
             
             foreach (var entity in Tile.Entities.Values) {
-                var entityView = View.CreateEntityView(entity, this);
-                entityView.Initialize(this, entity);
-                EntityViews.Add(entity.Layer, entityView);
+                AddEntityView(View.CreateEntityView(entity));
             }
         }
 
         public void AddEntityView(EntityView entityView) {
-            EntityViews.Add(entityView.Entity.Layer, entityView);
+            entityViews.Add(entityView.Entity.Layer, entityView);
             entityView.transform.SetParent(entitiesRoot);
             entityView.transform.localPosition = Vector3.zero;
             entityView.transform.localScale = Vector3.one;
-            entityView.Initialize(this, entityView.Entity);
+            entityView.Initialize(this);
+        }
+
+        public void RemoveEntityView(EntityView entityView) {
+            entityView.transform.SetParent(guestRoom);
+            entityViews.Remove(entityView.Entity.Layer);
+            entityView.Initialize(null);
         }
 
         public void Redraw() {

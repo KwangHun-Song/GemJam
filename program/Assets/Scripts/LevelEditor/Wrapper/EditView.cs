@@ -42,11 +42,9 @@ namespace GemMatch.LevelEditor {
             board.UpdateTileView(tile);
         }
 
-        internal override EntityView CreateEntityView(Entity entity, TileView tileView) {
+        internal override EntityView CreateEntityView(Entity entity) {
             var prefab = Resources.Load<EntityView>($"Editor_{entity.Index}");
-            var view = Instantiate(prefab, tileView.entitiesRoot, true);
-            view.transform.localPosition = Vector3.zero;
-            view.transform.localScale = Vector3.one;
+            var view = Instantiate(prefab, null, true);
             view.Initialize(null, entity);
 
             return view;

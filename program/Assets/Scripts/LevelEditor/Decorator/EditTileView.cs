@@ -36,7 +36,10 @@ namespace GemMatch.LevelEditor {
             foreach (var entityView in _tileView.EntityViews.Values) {
                 Destroy(entityView.gameObject);
             }
-            _tileView.EntityViews.Clear();
+
+            foreach (var entityView in _tileView.EntityViews.Values) {
+                _tileView.RemoveEntityView(entityView);
+            }
             _tileView.Initialize(view, tile);
             // EntityView의 버튼 인터렉션을 끄고 타일에서 가로챈다
             foreach (EntityView entityView in _tileView.EntityViews.Values) {
@@ -46,7 +49,7 @@ namespace GemMatch.LevelEditor {
                 if (entityView.Entity.Index == EntityIndex.None) continue;
                 entityView.OnCreate().Forget();
                 if (entityView is NormalPieceView normal) {
-                    normal.SetForSlotUI(true);
+                    normal.SetOnMemoryUI(true);
                 } else {
                     // todo: 다른 블럭이 생기면 처리
                 }

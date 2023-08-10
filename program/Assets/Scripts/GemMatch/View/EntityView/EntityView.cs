@@ -6,9 +6,9 @@ namespace GemMatch {
         public Entity Entity { get; private set; }
         public TileView TileView { get; private set; }
 
-        public virtual void Initialize(TileView tileView, Entity entity) {
+        public virtual void Initialize(TileView tileView, Entity entity = null) {
             TileView = tileView;
-            Entity = entity;
+            Entity = entity ?? Entity;
         }
 
         public virtual async UniTask OnCreate() { }
