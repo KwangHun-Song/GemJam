@@ -63,6 +63,7 @@ namespace GemMatch {
             for (int i = 0; i < TileViews.Length; i++) {
                 TileViews[i].Initialize(this, tiles[i]);
             }
+            RedrawEdges();
 
             foreach (var tileView in TileViews) {
                 foreach (var entityView in tileView.EntityViews.Values) {
@@ -79,11 +80,11 @@ namespace GemMatch {
         }
 
         public void OnClearGame(Mission[] missions) {
-            gameStatusText.text = "Completed!";
+            // todo: 성공팝업
         }
 
         public void OnFailGame(Mission[] missions) {
-            gameStatusText.text = "failed!";
+            // todo: 실패팝업
         }
 
         public void OnReplayGame(Mission[] missions) { }
@@ -235,6 +236,12 @@ namespace GemMatch {
 
         public void OnClickEntity(Entity entity) {
             Controller.Input(Controller.GetTile(entity).Index);
+        }
+
+        private void RedrawEdges() {
+            foreach(var tileView in TileViews) {
+                tileView.RedrawByAdjacents(TileUtility.GetAdjacentTiles, Controller.Tiles);
+            }
         }
 
         internal virtual EntityView CreateEntityView(Entity entity) {

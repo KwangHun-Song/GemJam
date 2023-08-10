@@ -37,14 +37,11 @@ namespace GemMatch.LevelEditor {
                 Destroy(entityView.gameObject);
             }
 
-            foreach (var entityView in _tileView.EntityViews.Values) {
-                _tileView.RemoveEntityView(entityView);
-            }
             _tileView.Initialize(view, tile);
             // EntityView의 버튼 인터렉션을 끄고 타일에서 가로챈다
             foreach (EntityView entityView in _tileView.EntityViews.Values) {
                 if (entityView.GetComponent<Button>() is Button btn && btn != null) {
-                    Destroy(entityView.GetComponent<Button>());
+                    entityView.GetComponent<Button>().enabled = false;
                 }
                 if (entityView.Entity.Index == EntityIndex.None) continue;
                 entityView.OnCreate().Forget();
