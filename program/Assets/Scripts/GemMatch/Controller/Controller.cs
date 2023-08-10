@@ -68,21 +68,12 @@ namespace GemMatch {
             if (IsFailed()) FailGame();
         }
 
-        public void InputAbility(IAbility ability, bool triggeredByPrev = false) {
+        public void InputAbility(IAbility ability, bool triggeredByPrev = false, bool isViewFirst = false) {
             if (ability == null) return;
             
-            UndoHandler.Do(new Command(
-                @do: () => {
-                    ability.Run();
-                    foreach (var listener in Listeners) listener.OnRunAbility(ability);
-                }, 
-                undo: () => {
-                    ability.Undo();
-                    foreach (var listener in Listeners) listener.OnRestoreAbility(ability);
-                },
-                triggeredByPrev: triggeredByPrev
-            ));
-
+            UnityEngine.Debug.Log(ability.Index);
+            UndoHandler.Do(new AbilityCommand(this, ability, triggeredByPrev));
+            
             foreach (var subAbility in ability.GetCascadedAbility()) {
                 InputAbility(subAbility, true);
             }

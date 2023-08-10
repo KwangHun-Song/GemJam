@@ -1,7 +1,8 @@
 namespace GemMatch {
     public enum AbilityIndex {
         None = 0,
-        HitRandomAbility,
+        RocketAbility,
+        MagneticAbility,
         ShuffleAbility,
         DestroyEntityOnTileAbility,
         DestroyEntityOnMemoryAbility,

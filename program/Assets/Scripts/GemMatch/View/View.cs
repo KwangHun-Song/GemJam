@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -26,8 +27,32 @@ namespace GemMatch {
 
         private Dictionary<AbilityIndex, IAbilityView> abilityViews;
         private Dictionary<AbilityIndex, IAbilityView> AbilityViews => abilityViews ??= new Dictionary<AbilityIndex, IAbilityView> {
-            { AbilityIndex.ShuffleAbility, shuffleAbilityView }
+            { AbilityIndex.ShuffleAbility, shuffleAbilityView },
+            { AbilityIndex.RocketAbility, new RocketAbilityView() },
         };
+
+        #region 순서대로 실행되어야 하는 연출 관리
+
+        private Queue<Func<UniTask>> AnimationQueue { get; } = new Queue<Func<UniTask>>();
+        private bool OnAnimation { get; set; }
+
+        private void EnqueueAnimation(Func<UniTask> anim) {
+            AnimationQueue.Enqueue(anim);
+            TryTriggerAnimationAsync().Forget();
+        }
+
+        private async UniTask TryTriggerAnimationAsync() {
+            if (OnAnimation) return;
+            OnAnimation = true;
+            
+            while (AnimationQueue.Any()) {
+                await AnimationQueue.Dequeue().Invoke();
+            }
+
+            OnAnimation = false;
+        }
+
+        #endregion
 
         public void OnStartGame(Controller controller) {
             Controller = controller;
@@ -65,9 +90,10 @@ namespace GemMatch {
         }
 
         public void OnMoveToMemory(Tile tile, Entity entity) {
-            AddMemoryAsync().Forget();
-
+            EnqueueAnimation(AddMemoryAsync);
+            
             async UniTask AddMemoryAsync() {
+                Debug.Log(nameof(AddMemoryAsync));
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
@@ -88,9 +114,10 @@ namespace GemMatch {
         }
 
         public void OnMoveFromMemory(Tile tile, Entity entity) {
-            MoveToTileAsync().Forget();
+            EnqueueAnimation(MoveToTileAsync);
 
             async UniTask MoveToTileAsync() {
+                Debug.Log(nameof(MoveToTileAsync));
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var memoryView = MemoryViews.Single(mv => ReferenceEquals(mv.EntityView?.Entity, entity));
                 var entityView = memoryView.EntityView;
@@ -110,9 +137,10 @@ namespace GemMatch {
         }
 
         public void OnCreateMemory(Entity entity) {
-            CreateMemoryAsync().Forget();
+            EnqueueAnimation(CreateMemoryAsync);
             
             async UniTask CreateMemoryAsync() {
+                Debug.Log(nameof(CreateMemoryAsync));
                 var firstEmptyMemoryView = MemoryViews.First(v => v.EntityView == null);
                 var entityView = CreateEntityView(entity);
                 if (entityView is NormalPieceView normalPieceView) normalPieceView.SetOnMemoryUI(true);
@@ -123,9 +151,10 @@ namespace GemMatch {
         }
 
         public void OnDestroyMemory(Entity entity) {
-            RemoveMemoryAsync().Forget();
+            EnqueueAnimation(RemoveMemoryAsync);
 
             async UniTask RemoveMemoryAsync() {
+                Debug.Log(nameof(RemoveMemoryAsync));
                 await MemoryViews
                     .Single(v => v.EntityView != null && ReferenceEquals(v.EntityView.Entity, entity))
                     .RemoveEntityAsync(true);
@@ -135,26 +164,40 @@ namespace GemMatch {
 
         public void OnRunAbility(IAbility ability) {
             if (AbilityViews.ContainsKey(ability.Index) == false) return;
-            AbilityViews[ability.Index].RunAbilityAsync(this, ability, Controller).Forget();
+            EnqueueAnimation(() => AbilityViews[ability.Index].RunAbilityAsync(this, ability, Controller));
         }
 
         public void OnRestoreAbility(IAbility ability) {
             if (AbilityViews.ContainsKey(ability.Index) == false) return;
-            AbilityViews[ability.Index].RestoreAbilityAsync(this, ability, Controller).Forget();
+            EnqueueAnimation(() => AbilityViews[ability.Index].RestoreAbilityAsync(this, ability, Controller));
         }
 
         public void OnCreateEntity(Tile tile, Entity entity) {
-            var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
-            var entityView = CreateEntityView(entity);
-            tileView.AddEntityView(entityView);
+            EnqueueAnimation(CreateEntityAsync);
+
+            UniTask CreateEntityAsync() {
+                Debug.Log(nameof(CreateEntityAsync));
+                var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
+                var entityView = CreateEntityView(entity);
+                tileView.AddEntityView(entityView);
+                
+                return UniTask.CompletedTask;
+            }
         }
 
         public void OnDestroyEntity(Tile tile, Entity entity) {
-            var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
-            var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
+            EnqueueAnimation(DestroyEntityAsync);
 
-            tileView.RemoveEntityView(entityView);
-            DestroyImmediate(entityView.gameObject);
+            UniTask DestroyEntityAsync() {
+                Debug.Log(nameof(DestroyEntityAsync));
+                var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
+                var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
+
+                tileView.RemoveEntityView(entityView);
+                DestroyImmediate(entityView.gameObject);
+                
+                return UniTask.CompletedTask;
+            }
         }
 
         public void OnAddActiveTiles(IEnumerable<Tile> activeTiles) {
