@@ -49,6 +49,14 @@ namespace GemMatch.LevelEditor {
         public void NewLevel() {
             LevelIndex = LevelLoader.GetContainer().levels.Length;
             _contorller.MakeLevel1();
+            var cache = new List<Level>(LevelLoader.GetContainer().levels);
+            cache.Add(_contorller.CurrentLevel);
+            LevelLoader.GetContainer().levels = cache.ToArray();
+#if UNITY_EDITOR
+            SetDirty();
+            EditorUtility.SetDirty(LevelLoader.GetContainer());
+            AssetDatabase.SaveAssets();
+#endif
         }
 
         public void ResetLevel() {
