@@ -38,10 +38,12 @@ namespace GemMatch.LevelEditor {
 
         public void LoadLevel(int levelIndex) {
             var levelsLength = LevelLoader.GetContainer().levels.Length;
-            LevelIndex = Math.Min(levelIndex, levelsLength - 1);
+            var lastIndex = Math.Min(levelIndex, levelsLength - 1);
+            LevelIndex = lastIndex;
             var levelCache = LevelLoader.GetLevel(LevelIndex).Clone();
             _contorller.LoadLevel(levelCache);
             OnLoadLevel?.Invoke(this);
+            LevelIndex = lastIndex;
         }
 
         public void NewLevel() {
@@ -61,6 +63,19 @@ namespace GemMatch.LevelEditor {
                 lvsCache[LevelIndex] = _contorller.CurrentLevel;
             }
             LevelLoader.GetContainer().levels = lvsCache.ToArray();
+#if UNITY_EDITOR
+            SetDirty();
+            EditorUtility.SetDirty(LevelLoader.GetContainer());
+            AssetDatabase.SaveAssets();
+#endif
+        }
+
+        public void DeleteLevel() {
+            var cache = LevelLoader.GetContainer().levels
+                .Select(l => l.Clone())
+                .ToList();
+            cache.RemoveAt(LevelIndex);
+            LevelLoader.GetContainer().levels = cache.ToArray();
 #if UNITY_EDITOR
             SetDirty();
             EditorUtility.SetDirty(LevelLoader.GetContainer());
