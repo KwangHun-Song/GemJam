@@ -747,6 +747,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 235273760019914479}
   entitiesRoot: {fileID: 1438996075219398054}
+  guestRoom: {fileID: 0}
+  BackgroundSprites:
+  - {fileID: 21300000, guid: 94d099686fd0e4117be07fde3dcba084, type: 3}
+  - {fileID: 21300000, guid: 46d1689ac98d849fdbe83bea52f5293a, type: 3}
   edges:
   - {fileID: 5727517615912451058}
   - {fileID: 4845893553649574263}
