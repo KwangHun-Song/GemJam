@@ -11,7 +11,7 @@ namespace GemMatch {
         }
         
         public override void Run() {
-            UndoParam = DestroyEntity.Clone();
+            UndoParam = DestroyEntity;
             Controller.Memory.Remove(DestroyEntity);
             foreach (var listener in Controller.Listeners) listener.OnDestroyMemory(DestroyEntity);
             Controller.CalculateActiveTiles();
