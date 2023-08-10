@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace GemMatch {
     [Serializable]
@@ -8,7 +9,12 @@ namespace GemMatch {
         public int colorCount;
         public ColorIndex[] colorCandidates;
         public Level Clone() {
-            return (Level)MemberwiseClone();
+            return new Level() {
+                tiles = this.tiles.Select(t => t.Clone()).ToArray(),
+                missions = this.missions.Select(m => m.Clone()).ToArray(),
+                colorCount = this.colorCount,
+                colorCandidates = (ColorIndex[])this.colorCandidates.Clone(),
+            };
         }
     }
 }
