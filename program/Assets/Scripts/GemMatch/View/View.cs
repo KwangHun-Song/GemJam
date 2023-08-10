@@ -184,7 +184,7 @@ namespace GemMatch {
 
         private void RedrawEdges() {
             foreach(var tileView in TileViews) {
-                tileView.RedrawEdges(TileUtility.GetAdjacentTiles, Controller.Tiles);
+                tileView.RedrawByAdjacents(TileUtility.GetAdjacentTiles, Controller.Tiles);
             }
         }
 

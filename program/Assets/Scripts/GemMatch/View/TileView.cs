@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace GemMatch {
     public class TileView : MonoBehaviour {
@@ -54,14 +55,12 @@ namespace GemMatch {
 
         public void Redraw() {
             background.sprite = Tile.Model.IsOpened ? backgroundSprites[0] : backgroundSprites[1];
-            var randomNum = UnityEngine.Random.Range(0, 20);
+            var randomNum = Random.Range(0, 200);
             if (Tile.Model.IsOpened == false) {
                 Sprite randomSprite = randomNum switch {
-                    _ when randomNum >= 19 => randomBackgroundSprites[0],
-                    _ when randomNum >= 17 => randomBackgroundSprites[1],
-                    _ when randomNum >= 15 => randomBackgroundSprites[2],
-                    _ when randomNum >= 14 => randomBackgroundSprites[3],
-                    _ when randomNum >= 13 => randomBackgroundSprites[4],
+                    _ when randomNum >= 190 => randomBackgroundSprites[0],
+                    _ when randomNum >= 170 => randomBackgroundSprites[1],
+                    _ when randomNum >= 150 => randomBackgroundSprites[2],
                     _ => null
                 };
                 randomBackground.gameObject.SetActive(randomSprite != null);
@@ -69,11 +68,12 @@ namespace GemMatch {
                 if (randomSprite != null) {
                     randomBackground.sprite = randomSprite;
                     randomBackground.preserveAspect = true;
+                    randomBackground.transform.Rotate(0f, 0f, (randomNum % 5) * (360/5));
                 }
             }
         }
 
-        public void RedrawEdges(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {
+        public void RedrawByAdjacents(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {
             if (this.Tile.IsOpened) {
                 foreach (var edge in edges.Concat(points)) {
                     edge.SetActive(false);
@@ -100,10 +100,20 @@ namespace GemMatch {
             edges[1].SetActive(down);
             edges[2].SetActive(left);
             edges[3].SetActive(right);
-            points[0].SetActive(up && left);
-            points[0].SetActive(down && left);
-            points[0].SetActive(up && right);
-            points[0].SetActive(up && right);
+            points[0].SetActive(left && up);
+            points[1].SetActive(left && down);
+            points[2].SetActive(right && up);
+            points[3].SetActive(right && down);
+
+            if (left && down) {
+                var ranTr = (randomBackground.transform as RectTransform);
+                ranTr.pivot = new Vector2(Random.Range(0f, 0.08f), Random.Range(0f, 0.08f));
+                ranTr.localPosition = Vector3.zero;
+                ranTr.Rotate(0f,0f,(float)Random.Range(0,360));
+                randomBackground.sprite = Random.Range(0, 10) % 2 == 1
+                    ? randomBackgroundSprites[3]
+                    : randomBackgroundSprites[4];
+            }
         }
 
     }
