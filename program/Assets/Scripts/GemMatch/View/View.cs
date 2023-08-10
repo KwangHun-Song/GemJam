@@ -9,8 +9,7 @@ namespace GemMatch {
     public class View : MonoBehaviour, IControllerEvent {
         [SerializeField] private Transform tileViewRoot;
         [SerializeField] private Transform memoryViewRoot;
-        [SerializeField] private TMP_Text gameStatusText;
-        
+
         [Header("MonoBehaviour를 상속한 AbilityView들은 여기에!")]
         [SerializeField] private ShuffleAbilityView shuffleAbilityView;
 
@@ -61,6 +60,7 @@ namespace GemMatch {
             for (int i = 0; i < TileViews.Length; i++) {
                 TileViews[i].Initialize(this, tiles[i]);
             }
+            RedrawEdges();
 
             foreach (var tileView in TileViews) {
                 foreach (var entityView in tileView.EntityViews.Values) {
@@ -71,16 +71,14 @@ namespace GemMatch {
             foreach (var memoryView in MemoryViews) {
                 memoryView.Initialize();
             }
-
-            gameStatusText.text = "";
         }
 
         public void OnClearGame(Mission[] missions) {
-            gameStatusText.text = "Completed!";
+            // todo: 성공팝업
         }
 
         public void OnFailGame(Mission[] missions) {
-            gameStatusText.text = "failed!";
+            // todo: 실패팝업
         }
 
         public void OnReplayGame(Mission[] missions) { }
@@ -219,6 +217,12 @@ namespace GemMatch {
 
         public void OnClickEntity(Entity entity) {
             Controller.Input(Controller.GetTile(entity).Index);
+        }
+
+        private void RedrawEdges() {
+            foreach(var tileView in TileViews) {
+                tileView.RedrawByAdjacents(TileUtility.GetAdjacentTiles, Controller.Tiles);
+            }
         }
 
         internal virtual EntityView CreateEntityView(Entity entity) {
