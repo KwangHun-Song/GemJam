@@ -20,7 +20,7 @@ namespace GemMatch.LevelEditor {
         private EditView _view;
         private readonly List<EditTileView> tilesOnBoard = new List<EditTileView>();
 
-        private void OnEnable() {
+        protected override void OnEnable() {
             gridBoard = GetComponent<GridLayoutGroup>();
         }
 

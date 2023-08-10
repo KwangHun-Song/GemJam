@@ -11,7 +11,7 @@ namespace GemMatch.LevelEditor {
         private Entity[] _entities;
 
         public Tile Tile { get; private set; }
-        public RectTransform transform => gameObject.transform as RectTransform;
+        public new RectTransform transform => gameObject.transform as RectTransform;
         public TileModel TileModel { get; private set; }
 
         private void OnEnable() {
