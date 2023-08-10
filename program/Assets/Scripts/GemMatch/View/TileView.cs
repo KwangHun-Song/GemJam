@@ -7,9 +7,11 @@ using UnityEngine.UI;
 namespace GemMatch {
     public class TileView : MonoBehaviour {
         [SerializeField] private Image background;
+        [SerializeField] private Image randomBackground;
         [SerializeField] public Transform entitiesRoot;
         [SerializeField] public Transform guestRoom;
-        [SerializeField] public Sprite[] BackgroundSprites;
+        [SerializeField] public Sprite[] backgroundSprites; // open(dirt), close(wall)
+        [SerializeField] public Sprite[] randomBackgroundSprites; // open(dirt), close(wall)
         [SerializeField] public GameObject[] edges; // up, down, left, right
         [SerializeField] public GameObject[] points; // LU, LD, RU, RD
         
@@ -51,8 +53,24 @@ namespace GemMatch {
         }
 
         public void Redraw() {
-            // background.color = Tile.Model.IsOpened == false ? Color.gray : Color.white;
-            background.sprite = Tile.Model.IsOpened ? BackgroundSprites[0] : BackgroundSprites[1];
+            background.sprite = Tile.Model.IsOpened ? backgroundSprites[0] : backgroundSprites[1];
+            var randomNum = UnityEngine.Random.Range(0, 20);
+            if (Tile.Model.IsOpened == false) {
+                Sprite randomSprite = randomNum switch {
+                    _ when randomNum >= 19 => randomBackgroundSprites[0],
+                    _ when randomNum >= 17 => randomBackgroundSprites[1],
+                    _ when randomNum >= 15 => randomBackgroundSprites[2],
+                    _ when randomNum >= 14 => randomBackgroundSprites[3],
+                    _ when randomNum >= 13 => randomBackgroundSprites[4],
+                    _ => null
+                };
+                randomBackground.gameObject.SetActive(randomSprite != null);
+
+                if (randomSprite != null) {
+                    randomBackground.sprite = randomSprite;
+                    randomBackground.preserveAspect = true;
+                }
+            }
         }
 
         public void RedrawEdges(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {

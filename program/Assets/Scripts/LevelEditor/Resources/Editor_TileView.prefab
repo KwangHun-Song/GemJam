@@ -91,12 +91,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1487098059910980928, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
+      propertyPath: randomBackground
+      value: 
+      objectReference: {fileID: 2981631483628795071}
     - target: {fileID: 4100170639981198497, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
       propertyPath: m_Name
-      value: TileView Variant
+      value: Editor_TileView
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
+--- !u!114 &2981631483628795071 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2998983189401895922, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
+  m_PrefabInstance: {fileID: 71606086464681805}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4042224903207455724 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4100170639981198497, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
