@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GemMatch;
 using UnityEngine;
@@ -5,6 +6,12 @@ using UnityEngine;
 namespace OverlayStatusSystem {
     public class MissionStatusView : MonoBehaviour {
         [SerializeField] private List<MissionView> missions;
+
+        public void OnEnable() {
+            foreach (var view in missions) {
+                view.gameObject.SetActive(false);
+            }
+        }
 
         public void InitializeMissions(Mission[] targetMissions) {
             for (var i = 0; i < missions.Count; i++) {
