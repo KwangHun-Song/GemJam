@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,8 +32,8 @@ public class UVStreamMain : MonoBehaviour {
 
     void OnEnable()
     {
-//        StartCoroutine(UVStream());
-//        StartCoroutine(CoMapTillingToScale());
+        StartCoroutine(UVStream());
+        StartCoroutine(CoMapTillingToScale());
     }	
 
     IEnumerator UVStream() {        
