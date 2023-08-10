@@ -10,7 +10,7 @@ namespace GemMatch {
         InvisibleCover,
     }
 
-    public class Entity : IComparable<Entity>, ICloneable<Entity> {
+    public class Entity : IComparable<Entity>, ICloneable<Entity>, IEquatable<Entity> {
         public EntityModel Model { get; }
         public EntityIndex Index => Model.index;
         public Layer Layer => Model.layer;
@@ -35,7 +35,7 @@ namespace GemMatch {
             Model = model;
         }
 
-        public virtual Entity Clone() => new Entity(Model);
+        public virtual Entity Clone() => new Entity(Model.Clone());
 
         public int CompareTo(Entity other) => Layer.CompareTo(other.Layer);
 
@@ -44,5 +44,22 @@ namespace GemMatch {
         }
 
         public virtual void OnUpdateEntity() { }
+
+        public bool Equals(Entity other) {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Model.Equals(other.Model);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Entity)obj);
+        }
+
+        public override int GetHashCode() {
+            return (Model != null ? Model.GetHashCode() : 0);
+        }
     }
 }

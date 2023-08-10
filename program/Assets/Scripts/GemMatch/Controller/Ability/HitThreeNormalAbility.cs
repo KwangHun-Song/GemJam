@@ -8,8 +8,8 @@ namespace GemMatch {
     public class MagneticAbility : Ability<bool> {
         public override AbilityIndex Index => AbilityIndex.HitRandomAbility;
         public bool Found { get; set; }
-        public List<Entity> EntitiesInMemory { get; } = new List<Entity>();
-        public List<Tile> TilesToHit { get; } = new List<Tile>();
+        public IEnumerable<Entity> EntitiesInMemory { get; private set; }
+        public IEnumerable<Tile> TilesToHit { get; private set; }
 
         public MagneticAbility(Controller controller) : base(null, controller) { }
     
@@ -23,7 +23,7 @@ namespace GemMatch {
                     if (tile.Entities.TryGetValue(Layer.Cover, out var cover) && cover is InvisibleCover) return false;
     
                     return true;
-                });
+                }).ToArray();
 
             var sortedColors = tiles
                 .Select(t => t.Piece.Color)
@@ -41,8 +41,8 @@ namespace GemMatch {
                 if (memoryCount + tileCount < 3) continue;
                 
                 var memoryEntities = Controller.Memory.Where(me => me.Color == color).ToList();
-                EntitiesInMemory.AddRange(memoryEntities);
-                TilesToHit.AddRange(tiles.Where(t => t.Piece.Color == color).Take(3 - memoryEntities.Count));
+                EntitiesInMemory = memoryEntities;
+                TilesToHit = tiles.Where(t => t.Piece.Color == color).Shuffle().Take(3 - memoryEntities.Count).ToList();
 
                 Found = true;
                 return;
@@ -59,7 +59,7 @@ namespace GemMatch {
             }
 
             foreach (var tile in TilesToHit) {
-                foreach (var entity in tile.Entities.Values) {
+                foreach (var entity in tile.Entities.OrderByDescending(kvp => kvp.Key).Select(kvp => kvp.Value)) {
                     yield return new DestroyEntityOnTileAbility(tile, Controller, entity);
                 }
             }

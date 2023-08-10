@@ -27,7 +27,7 @@ namespace GemMatch.LevelEditor {
             _entityView.Initialize(null, tile.Entities[Layer.Piece]);
             TakeMeOnClick();
             if (entityViewScript is NormalPieceView normalPiece) {
-                normalPiece.SetClickableUI(true);
+                normalPiece.SetCanTouchUI(true);
             } else {
                 //todo: 다른 블록 계열일때 처리
             }

@@ -71,13 +71,13 @@ namespace GemMatch {
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
+
+                // 타일뷰 소속에서 해당 엔티티뷰를 제거한다.
+                tileView.RemoveEntityView(entityView);
                 
                 // 엔티티뷰의 부모를 타일에서 메모리로 바꾼다.
                 entityView.transform.SetParent(memoryView.CellRoot);
                 entityView.transform.localPosition = Vector3.zero;
-
-                // 타일뷰 소속에서 해당 엔티티뷰를 제거한다.
-                tileView.EntityViews.Remove(entity.Layer);
                 
                 // 메모리뷰 소속에서는 엔티티뷰를 추가한다.
                 await memoryView.AddEntityAsync(entityView);
@@ -115,9 +115,7 @@ namespace GemMatch {
             async UniTask CreateMemoryAsync() {
                 var firstEmptyMemoryView = MemoryViews.First(v => v.EntityView == null);
                 var entityView = CreateEntityView(entity);
-                entityView.transform.SetParent(firstEmptyMemoryView.CellRoot);
-                entityView.transform.localPosition = Vector3.zero;
-                if (entityView is NormalPieceView normalPieceView) normalPieceView.SetForSlotUI(true);
+                if (entityView is NormalPieceView normalPieceView) normalPieceView.SetOnMemoryUI(true);
 
                 await firstEmptyMemoryView.AddEntityAsync(entityView);
                 await SortMemoryAsync();
@@ -147,15 +145,15 @@ namespace GemMatch {
 
         public void OnCreateEntity(Tile tile, Entity entity) {
             var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
-            var entityView = CreateEntityView(entity, tileView);
-            tileView.EntityViews.Add(entity.Layer, entityView);
+            var entityView = CreateEntityView(entity);
+            tileView.AddEntityView(entityView);
         }
 
         public void OnDestroyEntity(Tile tile, Entity entity) {
             var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
             var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
 
-            tileView.EntityViews.Remove(entity.Layer);
+            tileView.RemoveEntityView(entityView);
             DestroyImmediate(entityView.gameObject);
         }
 
@@ -186,14 +184,10 @@ namespace GemMatch {
             Controller.Input(Controller.GetTile(entity).Index);
         }
 
-        internal virtual EntityView CreateEntityView(Entity entity, TileView tileView = null) {
+        internal virtual EntityView CreateEntityView(Entity entity) {
             var prefab = Resources.Load<EntityView>(entity.Index.ToString());
-            var parent = tileView == null ? transform : tileView.entitiesRoot;
-            var entityView = Instantiate(prefab, parent, true);
-
-            entityView.transform.localPosition = Vector3.zero;
-            entityView.transform.localScale = Vector3.one;
-            entityView.Initialize(tileView, entity);
+            var entityView = Instantiate(prefab, null, true);
+            entityView.Initialize(null, entity);
             entityView.OnCreate().Forget();
 
             return entityView;

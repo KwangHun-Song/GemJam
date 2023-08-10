@@ -15,23 +15,23 @@ namespace GemMatch {
 
         public async override UniTask OnCreate() {
             Redraw();
-            SetForSlotUI(false);
-            SetClickableUI(false);
+            SetOnMemoryUI(false);
+            SetCanTouchUI(false);
         }
 
         public async override UniTask OnUpdate() {
             Redraw();
         }
 
-        public void SetClickableUI(bool isClickable) {
-            mainImage.gameObject.SetActive(isClickable);
-            dimImage.gameObject.SetActive(!isClickable);
+        public void SetCanTouchUI(bool canTouch) {
+            mainImage.gameObject.SetActive(canTouch);
+            dimImage.gameObject.SetActive(!canTouch);
         }
 
-        public void SetForSlotUI(bool isForSlot) {
-            mainImage.gameObject.SetActive(!isForSlot);
-            dimImage.gameObject.SetActive(!isForSlot);
-            slotImage.gameObject.SetActive(isForSlot);
+        public void SetOnMemoryUI(bool onMemory) {
+            mainImage.gameObject.SetActive(!onMemory);
+            dimImage.gameObject.SetActive(!onMemory);
+            slotImage.gameObject.SetActive(onMemory);
         }
 
         public void Redraw() {
@@ -48,8 +48,8 @@ namespace GemMatch {
         }
 
         public async UniTask OnActive(bool isActive) {
-            SetForSlotUI(false);
-            SetClickableUI(isActive);
+            SetOnMemoryUI(false);
+            SetCanTouchUI(isActive);
         }
     }
 }

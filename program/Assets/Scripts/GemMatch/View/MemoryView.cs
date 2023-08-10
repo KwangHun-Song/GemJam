@@ -24,6 +24,9 @@ namespace GemMatch {
             }
             
             EntityView = entityView;
+            EntityView.transform.SetParent(CellRoot);
+            EntityView.transform.localPosition = Vector3.zero;
+            EntityView.transform.localScale = Vector3.one;
         }
 
         public async UniTask RemoveEntityAsync(bool destroy, bool immediately = false) {

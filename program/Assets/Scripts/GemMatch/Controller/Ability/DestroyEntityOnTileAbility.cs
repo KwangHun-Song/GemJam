@@ -11,8 +11,9 @@ namespace GemMatch {
         }
         
         public override void Run() {
-            UndoParam = DestroyEntity.Clone();
+            UndoParam = DestroyEntity;
             TargetTile.RemoveLayer(DestroyEntity.Layer);
+            if (DestroyEntity.Layer == Layer.Piece) Controller.SplashHit(TargetTile, true);
             foreach (var listener in Controller.Listeners) listener.OnDestroyEntity(TargetTile, DestroyEntity);
             Controller.CalculateActiveTiles();
         }

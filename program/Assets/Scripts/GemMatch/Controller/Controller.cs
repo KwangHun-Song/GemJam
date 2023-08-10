@@ -135,7 +135,7 @@ namespace GemMatch {
             UndoHandler.Do(new Command(null, null));
 
             // 먼저 타일을 SplashHit 처리
-            SplashHit(tile);
+            SplashHit(tile, true);
             
             // 메모리로 이동시킨다.
             MoveToMemory(tile);
@@ -147,19 +147,19 @@ namespace GemMatch {
             TryRemoveFromMemory(piece);
         }
 
-        public void SplashHit(Tile targetTile) {
+        public void SplashHit(Tile targetTile, bool triggeredByPrev = false) {
             foreach (var adjacentTile in TileUtility.GetAdjacentTiles(targetTile, Tiles)) {
-                Hit(adjacentTile);
+                Hit(adjacentTile, triggeredByPrev);
             }
         }
 
-        private void Hit(Tile tile) {
+        private void Hit(Tile tile, bool triggeredByPrev = false) {
             foreach (var entity in tile.Entities.Values) {
                 if (!entity.CanBeHit()) continue;
                 
                 var hitInfo = entity.Hit();
                 if (hitInfo.hitResult == HitResult.Destroyed) {
-                    UndoHandler.Do(new HitCommand(this, tile, entity, true));
+                    UndoHandler.Do(new HitCommand(this, tile, entity, triggeredByPrev));
                 }
                     
                 if (hitInfo.prevent) break;

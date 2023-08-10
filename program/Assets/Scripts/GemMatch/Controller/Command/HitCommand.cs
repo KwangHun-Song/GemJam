@@ -11,7 +11,7 @@ namespace GemMatch {
                 tile.AddEntity(destroyedEntity);
                 foreach (var listener in controller.Listeners) listener.OnCreateEntity(tile, entity);
             }, 
-            param: entity.Clone(), 
+            param: entity, 
             triggeredByPrev) {
         }
     }
