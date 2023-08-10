@@ -1,52 +1,55 @@
+using System;
+using Cysharp.Threading.Tasks;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
-using Popups;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 namespace Pages {
+    public class PlayPageParam {
+        public int levelIndex;
+        public BoosterIndex[] selectedBoosters;
+    }
+    
     public class PlayPage : PageHandler {
         [SerializeField] private View view;
         
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
+        public PlayPageParam Param { get; private set; }
 
-        public async void StartGame(int levelIndex) {
-            Controller = new Controller();
-            Controller.Listeners.Add(view);
+        public override void OnWillEnter(object param) {
+            Assert.IsTrue(param is PlayPageParam);
+            Param = (PlayPageParam)param;
+            
+            Controller = StartGame(Param.levelIndex);
+            
+            foreach (var selectedBooster in Param.selectedBoosters) {
+                switch (selectedBooster) {
+                    case BoosterIndex.ReadyBoosterRocket:
+                        break;
+                    case BoosterIndex.ReadyBoosterExtraSlot:
+                        break;
+                }
+            }
+        }
+
+        public Controller StartGame(int levelIndex) {
+            var controller = new Controller();
+            controller.Listeners.Add(view);
 
             if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
                 levelIndex = indicator.LevelIndex;
             }
             var level = LevelLoader.GetLevel(levelIndex);
             
-            Controller.StartGame(level);
-
-            var result = await Controller.WaitUntilGameEnd();
-            Debug.Log(result);
+            controller.StartGame(level);
+            return controller;
         }
 
-        private async void Update() {
-            if (Input.GetKeyDown(KeyCode.O)) {
-                FadeOutHelper.FadeOut();
-            } else if (Input.GetKeyDown(KeyCode.I)) {
-                FadeOutHelper.FadeIn();
-            }
-
-            if (Input.GetKeyDown(KeyCode.X)) {
-                ChangeTo(Page.MainPage);
-            }
-
-            if (Input.GetKeyDown(KeyCode.P)) {
-                var result =  await PopupManager.ShowAsync<bool>(nameof(ReadyPopup));
-                Debug.Log(result);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Escape)) {
-                GoBackToEditMode();
-            }
-        }
+        #region Booster
 
         public void OnClickUndo() {
             if (Controller != null) {
@@ -64,6 +67,14 @@ namespace Pages {
 
         public void OnClickShuffle() {
             Controller?.InputAbility(new ShuffleAbility(Controller));
+        }
+
+        #endregion
+
+        private void Update() {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                GoBackToEditMode();
+            }
         }
 
         private void GoBackToEditMode() {
