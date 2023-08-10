@@ -64,7 +64,7 @@ namespace PagePopupSystem {
             if (result is T convertedResult) {
                 return convertedResult;
             } else {
-                throw new InvalidCastException($"Expected result of type {typeof(T)}, but got {result?.GetType()}.");    
+                return default;
             }
         }
     }
