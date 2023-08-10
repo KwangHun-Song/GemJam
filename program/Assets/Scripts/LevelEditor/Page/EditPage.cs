@@ -1,6 +1,7 @@
 using System.Collections;
 using Cysharp.Threading.Tasks;
 using Pages;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
@@ -46,17 +47,10 @@ namespace GemMatch.LevelEditor {
                 PlayTestGame();
             }
 
-            // KeyCode[] usableKeys = new[] {
-            //     KeyCode.UpArrow,
-            //     KeyCode.DownArrow,
-            //     KeyCode.LeftArrow,
-            //     KeyCode.RightArrow,
-            // };
-            // foreach (var key in usableKeys) {
-            //     if (Input.GetKeyUp(key)) {
-            //         controller.Input(key);
-            //     }
-            // }
+            if (Input.GetKeyUp(KeyCode.Escape)) {
+                if (playPage != null)
+                    Destroy(playPage);
+            }
         }
 
         private void PlayTestGame() {
@@ -68,12 +62,14 @@ namespace GemMatch.LevelEditor {
             LoadPlayPageAsync().Forget();
         }
 
+        private GameObject playPage = null;
         private async UniTask LoadPlayPageAsync() {
-            await SceneManager.LoadSceneAsync("Play");
+            var obj = await Resources.LoadAsync<GameObject>("Editor_PlayPage");
+            playPage = Instantiate((GameObject)obj, null);
+            playPage.name = "PlayPage";
             await UniTask.DelayFrame(2);
-            var playpage = FindObjectOfType<PlayPage>();
-            Assert.IsNotNull(playpage);
-            playpage.StartGame(0);
+            var script = playPage.GetComponent<PlayPage>();
+            script.StartGame(editInspector.LevelIndex);
         }
     }
 }

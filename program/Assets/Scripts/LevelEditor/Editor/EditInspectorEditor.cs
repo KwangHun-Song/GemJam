@@ -92,7 +92,26 @@ namespace GemMatch.LevelEditor {
                 inspector.ResetLevel();
                 UpdateFields(inspector);
             }
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            // Delete
+            if (CustomButton("Delete", Color.red)) {
+                var isOk = EditorUtility.DisplayDialog(
+                    title: "확인",
+                    message: $"레벨 {inspector.LevelIndex} 이 지워집니다. 정말 지우시겠습니까?",
+                    ok:"Delete",
+                    cancel: "Go Back");
+                if (isOk) {
+                    inspector.DeleteLevel();
+                    var level = LevelLoader.GetLevel(inspector.LevelIndex);
+                    if (level != null)
+                        inspector.LoadLevel(inspector.LevelIndex);
+                    else
+                        inspector.LoadLevel(0);
+                }
+            }
 
+            EditorGUILayout.Space();
             EditorGUILayout.Space();
             EditorGUILayout.Separator();
             // 색상 후보 정하기
