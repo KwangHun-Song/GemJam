@@ -64,10 +64,11 @@ namespace Pages {
             await UniTask.Yield();
             var gameResult = await Controller.WaitUntilGameEnd();
             if (gameResult == GameResult.Clear) {
+                var next = await PopupManager.ShowAsync<bool>(nameof(ClearPopup), Param.levelIndex + 1);
+
                 // 클리어 데이터 저장
                 PlayerInfo.HighestClearedLevelIndex++;
-                
-                var next = await PopupManager.ShowAsync<bool>(nameof(ClearPopup), Param.levelIndex + 1);
+
                 if (next) {
                     Param.levelIndex = Mathf.Clamp(Param.levelIndex + 1, 0, LevelLoader.GetContainer().levels.Length - 1);
                     StartGame(Param.levelIndex);
@@ -126,6 +127,11 @@ namespace Pages {
         }
 
         private void Update() {
+            if (Input.GetKeyUp(KeyCode.N)) {
+                PlayerInfo.HighestClearedLevelIndex = 0;
+                OnClickStartGame();
+            }
+
             if (Input.GetKeyDown(KeyCode.C)) {
                 Controller.ClearGame();
             }

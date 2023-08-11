@@ -1,6 +1,7 @@
 using System.Collections;
 using GemMatch;
 using PagePopupSystem;
+using Record;
 using UnityEngine;
 
 namespace OverlayStatusSystem {
@@ -33,6 +34,10 @@ namespace OverlayStatusSystem {
 
         public void AchieveMissionCount(Mission mission, int changeCount) {
             _missionStatus.AchieveMission(mission, changeCount);
+        }
+
+        public void UpdateLevelStatus(Level currentLevel) {
+            _levelStatus.UpdateLevel(PlayerInfo.HighestClearedLevelIndex + 1);
         }
     }
 }

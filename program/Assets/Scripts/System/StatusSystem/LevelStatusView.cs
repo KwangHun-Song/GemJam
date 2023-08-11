@@ -1,11 +1,14 @@
 using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using GemMatch;
 using Record;
+using TMPro;
 using UnityEngine;
 
 namespace OverlayStatusSystem {
     public class LevelStatusView : OverlayStatusEvent<LevelOverlayStatus> {
+        [SerializeField] private TMP_Text levelNumber;
         [SerializeField] private Animator[] levelIndexers;
         [SerializeField] private GameObject[] levelIndexerRoots;
 
@@ -13,7 +16,6 @@ namespace OverlayStatusSystem {
         private int stageIndex = 0;
 
         public void Start() {
-            stageIndex = PlayerInfoIndex;
             OverlayStatusHelper.Init(new LevelOverlayStatus(this, OnStage));
             foreach (var root in levelIndexerRoots) {
                 root.SetActive(false);
@@ -24,24 +26,30 @@ namespace OverlayStatusSystem {
             }
         }
 
+        private void OnEnable() {
+            // levelNumber.text = $"{PlayerInfo.HighestClearedLevelIndex + 1}";
+            // stageIndex = PlayerInfoIndex;
+        }
+
 
         private int currentStage = 0;
-        public async UniTaskVoid GetStage(int stage) {
+        public async UniTaskVoid UpdateLevel(int stage) {
             currentStage = stage;
+            levelNumber.text = $"{stage}";
             for (var i = 0; i < levelIndexerRoots.Length; i++) {
                 var root = levelIndexerRoots[i];
-                root.SetActive(i == stage - 1);
+                root.SetActive(i == PlayerInfoIndex);
             }
-            await base.Get<int>(stage);
+            await base.Get<int>(PlayerInfoIndex + 1);
         }
 
         public override async UniTask Animate() {
-            var targetAnim = levelIndexers.Where(i => i.name.Equals($"level_map0{currentStage}"));
+            var targetAnim = levelIndexers.Where(i => i.name.Equals($"level_map0{PlayerInfoIndex+1}"));
             foreach (var anim in targetAnim) {
-                await UniTask.DelayFrame(10);
+                await UniTask.DelayFrame(6);
                 anim.SetTrigger("01");
             }
-            await UniTask.DelayFrame(10);
+            await UniTask.DelayFrame(5);
         }
 
         private void OnStage(int stage) { } // Save 뒤 할일이 없을듯

@@ -30,6 +30,7 @@ namespace GemMatch {
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => m.Clone()).ToArray();
             OverlayStatusHelper.InitializeMissionsAsync(Missions).Forget();
+            OverlayStatusHelper.UpdateLevelStatus(CurrentLevel);
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             if (isReplay == false) {
                 PathFinder = new PathFinder(Tiles);
