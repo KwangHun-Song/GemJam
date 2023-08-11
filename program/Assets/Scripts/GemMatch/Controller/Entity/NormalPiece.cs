@@ -4,6 +4,8 @@ namespace GemMatch {
             return new NormalPiece(Model.Clone());
         }
 
+        public override bool CanTouch() => true;
+
         public NormalPiece(EntityModel model) : base(model) { }
     }
 }

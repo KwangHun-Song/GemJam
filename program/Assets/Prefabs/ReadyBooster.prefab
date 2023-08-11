@@ -184,7 +184,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5770109562003439903}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -335,7 +335,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a27e22add84ee4342b0ab6af1e47275e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 15dbfd8c95f7f4a858bf97694de5d0c9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -432,4 +432,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24573b30efde4cb49e23f050a1186ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectObject: {fileID: 5770109562003439903}
+  canvasGroup: {fileID: 0}

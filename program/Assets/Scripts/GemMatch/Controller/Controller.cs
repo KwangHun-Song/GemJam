@@ -120,8 +120,7 @@ namespace GemMatch {
         protected virtual bool IsCleared() {
             if (ActiveTiles.Any(t => t.Piece is GoalPiece)) return true;
             if (Tiles.SelectMany(t => t.Entities.Values).Any(e => e is NormalPiece) == false && Memory.Any() == false) return true;
-            if (!Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any())
-                return true;
+            if (!Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any()) return true;
 
             return false;
         }
@@ -132,6 +131,7 @@ namespace GemMatch {
 
         public virtual bool CanTouch(Tile tile) {
             if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
+            if (tile.Piece.CanTouch() == false) return false;
             if (tile.Entities.Values.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
             if (PathFinder.HasPathToTop(tile) == false) return false;
 
