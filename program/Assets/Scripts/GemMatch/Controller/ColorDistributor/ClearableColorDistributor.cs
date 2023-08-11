@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace GemMatch {
@@ -30,9 +31,15 @@ namespace GemMatch {
             UnityEngine.Debug.Log($"tileIndices: {string.Join(", ", solverResult.tileIndices)}");
 
             // 클릭한 순서에 맞게 색깔들 배치하기
-            foreach (var tileIndex in solverResult.tileIndices) {
-                if (tiles[tileIndex].Piece is not NormalPiece normalPiece) continue;
-                normalPiece.Color = colorsQueue.Dequeue();
+            try {
+                foreach (var tileIndex in solverResult.tileIndices) {
+                    if (tiles[tileIndex].Piece is not NormalPiece normalPiece) continue;
+                    if (tiles[tileIndex].Piece.Color != ColorIndex.Random) continue;
+                    normalPiece.Color = colorsQueue.Dequeue();
+                }
+            } catch (Exception e) {
+                UnityEngine.Debug.LogError($"컬러 배분에 실패했습니다! {e.ToString()}");
+                return false;
             }
 
             return true;

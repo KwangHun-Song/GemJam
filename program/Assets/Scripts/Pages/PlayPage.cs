@@ -1,3 +1,4 @@
+using System;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
@@ -21,13 +22,19 @@ namespace Pages {
         public override void OnWillEnter(object param) {
             Assert.IsTrue(param is PlayPageParam);
             Param = (PlayPageParam)param;
+
+            var levelIndex = Param.levelIndex;
+            if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
+                levelIndex = indicator.LevelIndex;
+            }
             
-            Controller = StartGame(Param.levelIndex);
+            Controller = StartGame(levelIndex);
             
             foreach (var selectedBooster in Param.selectedBoosters) {
                 switch (selectedBooster) {
                     case BoosterIndex.ReadyBoosterRocket:
                         Controller.InputAbility(new RocketAbility(Controller));
+                        Controller.UndoHandler.Reset();
                         break;
                     case BoosterIndex.ReadyBoosterExtraSlot:
                         Controller.AddExtraMemorySlot();
@@ -40,9 +47,6 @@ namespace Pages {
             var controller = new Controller();
             controller.Listeners.Add(view);
 
-            if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
-                levelIndex = indicator.LevelIndex;
-            }
             var level = LevelLoader.GetLevel(levelIndex);
             
             controller.StartGame(level);
@@ -92,18 +96,19 @@ namespace Pages {
         }
 
         #region CHEAT
-
-        private int levelIndexInput;
-        public string LevelIndexInput {
-            set {
-                if (int.TryParse(value, out var levelIndex)) {
-                    levelIndexInput = levelIndex;
-                }
-            }
-        }
         
         public void OnClickStartGame() {
-            StartGame(levelIndexInput);    
+            StartGame(Param.levelIndex);    
+        }
+
+        public void OnClickPrev() {
+            Param.levelIndex = Mathf.Clamp(Param.levelIndex - 1, 0, LevelLoader.GetContainer().levels.Length - 1);
+            StartGame(Param.levelIndex);    
+        }
+
+        public void OnClickNext() {
+            Param.levelIndex = Mathf.Clamp(Param.levelIndex + 1, 0, LevelLoader.GetContainer().levels.Length - 1);
+            StartGame(Param.levelIndex);    
         }
 
         #endregion
