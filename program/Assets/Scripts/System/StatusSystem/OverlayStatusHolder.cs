@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using GemMatch;
 using PagePopupSystem;
 using UnityEngine;
@@ -8,7 +6,7 @@ using UnityEngine;
 namespace OverlayStatusSystem {
     public class OverlayStatusHolder : MonoBehaviour{
         [SerializeField] private CoinStatusView _coinStatus;
-        [SerializeField] private MissionStatusView _missionStatus;
+        [SerializeField] private MissionStatusViewHolder _missionStatus;
         [SerializeField] private LevelStatusView _levelStatus;
 
         public static OverlayStatusHolder Instance = null;
@@ -32,5 +30,9 @@ namespace OverlayStatusSystem {
         }
 
         public void InitializeMission(Mission[] targetMissions) => _missionStatus.InitializeMissions(targetMissions);
+
+        public void AchieveMissionCount(Mission mission, int changeCount) {
+            _missionStatus.AchieveMission(mission, changeCount);
+        }
     }
 }
