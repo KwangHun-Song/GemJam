@@ -8,11 +8,11 @@ namespace GemMatch.LevelEditor {
     public class ToolTileView : MonoBehaviour, IEditToolView {
         private EditTool _tool;
         private TileView _tileView;
-        private Entity[] _entities;
 
         public Tile Tile { get; private set; }
         public new RectTransform transform => gameObject.transform as RectTransform;
         public TileModel TileModel { get; private set; }
+        public EntityModel EntityModel { get; private set; }
 
         private void OnEnable() {
             this._tileView = this.GetComponent<TileView>();
@@ -28,7 +28,8 @@ namespace GemMatch.LevelEditor {
                 entityView.GetComponent<Button>().enabled = false;
                 entityView.GetComponent<Image>().enabled = false;
             }
-            this._entities = _tileView.EntityViews.Values.Select(t=>t.Entity).ToArray();
+            var entities = _tileView.EntityViews.Values.Select(t=>t.Entity).ToArray();
+            EntityModel = entities[0].Model;
             this.Tile = _tileView.Tile;
             this.TileModel = _tileView.Tile.Model;
         }

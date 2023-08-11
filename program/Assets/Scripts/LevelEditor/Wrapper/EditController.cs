@@ -19,7 +19,7 @@ namespace GemMatch.LevelEditor {
     public interface IEditViewEventListener {
         Tile[] Tiles { get; }
         void Input(int index);
-        Tile ChangeTile(TileModel tile);
+        Tile ChangeTile(TileModel editTile);
     }
 
     public class EditController : Controller, IEditViewEventListener, IEditToolEventListener, IEditInspectorEventListener {
@@ -110,13 +110,19 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        public Tile ChangeTile(TileModel tile) {
+        public Tile ChangeTile(TileModel editTile) {
             var tmpLv = CurrentLevel;
-            var newModel = _tool.GetCurrentTile().Model.Clone();
-            newModel.index = tile.index;
-            tmpLv.tiles[tile.index] = newModel;
+            var toolModel = _tool.GetCurrentTile().Model.Clone();
+            toolModel.index = editTile.index;
+            if (toolModel.entityModels[0].layer == Layer.Cover) {
+                // cover일 경우 ToolModel에서 EntityModel만 붙여넣기
+                tmpLv.tiles[editTile.index].entityModels.Add(toolModel.entityModels[0]);
+            } else {
+                // 그 외엔 ToolModel로 바꿔넣기
+                tmpLv.tiles[editTile.index] = toolModel;
+            }
             EditGame(tmpLv);
-            return new Tile(newModel);
+            return new Tile(toolModel);
         }
 
         public void MakeLevel1() {

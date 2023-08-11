@@ -58,7 +58,7 @@ namespace GemMatch.LevelEditor {
 
         // engine은 EntityView만 인터렉션하지만 에디터는 여기서 모두 한다
         public void OnClick() {
-            _view.OnClickTileOnBoard(_tileView);
+            _view.OnClickTileOnBoard(this);
         }
     }
 }

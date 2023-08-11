@@ -37,7 +37,7 @@ namespace GemMatch.LevelEditor {
             targetTile.UpdateEditTile(this, tile);
         }
 
-        public void OnClickTileOnBoard(TileView tileView) {
+        public void OnClickTileOnBoard(EditTileView tileView) {
             var tile = _controller.ChangeTile(tileView.Tile.Model);
             board.UpdateTileView(tile);
         }
