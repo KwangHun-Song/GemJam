@@ -1,13 +1,16 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
+using Object = UnityEngine.Object;
 
 namespace PagePopupSystem {
     public enum Page { None, PlayPage, MainPage }
     public class PageManager {
         private static Dictionary<Page, PageHandler> pages;
         public static Page CurrentPage { get; private set; }
+        public static event Action<Page> OnPageChanged;
 
         private static Dictionary<Page, PageHandler> Pages => pages ??= Object
             .FindObjectsOfType<PageHandler>(true)
@@ -32,6 +35,10 @@ namespace PagePopupSystem {
             nextPage.gameObject.SetActive(true);
             nextPage.OnWillEnter(param);
             CurrentPage = pageType;
+
+            await UniTask.DelayFrame(1);
+            OnPageChanged?.Invoke(CurrentPage);
+
             await FadeOutHelper.FadeIn();
         }
 

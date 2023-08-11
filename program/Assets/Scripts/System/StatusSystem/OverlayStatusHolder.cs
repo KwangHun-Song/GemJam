@@ -15,15 +15,17 @@ namespace OverlayStatusSystem {
 
         private IEnumerator Start() {
             yield return null;
-            GetStable();
+            GetStable(PageManager.CurrentPage);
             yield return null;
             Instance = this;
+            PageManager.OnPageChanged -= GetStable;
+            PageManager.OnPageChanged += GetStable;
         }
 
-        private void GetStable() {
+        private void GetStable(Page currentPage) {
             _coinStatus.gameObject.SetActive(true);
-            _missionStatus.gameObject.SetActive(PageManager.CurrentPage == Page.PlayPage);
-            _levelStatus.gameObject.SetActive(PageManager.CurrentPage == Page.PlayPage);
+            _missionStatus.gameObject.SetActive(currentPage == Page.PlayPage);
+            _levelStatus.gameObject.SetActive(currentPage == Page.PlayPage);
         }
 
         public void InitializeMission(Mission[] targetMissions) => _missionStatus.InitializeMissions(targetMissions);
