@@ -12,7 +12,10 @@ namespace Utility {
 
         public void SetSideBlock(SideCount count) {
             if (count == SideCount.Type7)
-                grid.localPosition = new Vector3(-78 / 2, grid.localPosition.y, grid.localPosition.z);
+                if (leftSidedLevel)
+                    grid.localPosition = new Vector3(+78 / 2, grid.localPosition.y, grid.localPosition.z);
+                else
+                    grid.localPosition = new Vector3(-78 / 2, grid.localPosition.y, grid.localPosition.z);
             else
                 grid.localPosition = new Vector3(0f, grid.localPosition.y, grid.localPosition.z);
 
@@ -23,11 +26,13 @@ namespace Utility {
         private bool isOddNumber = false;
         private bool isLeftSideFilled = false;
         private bool isRightSideFilled = false;
+        private bool leftSidedLevel = false;
 
-        public SideCount CalculateWidth(TileModel[] tileModels) {
+        private SideCount CalculateWidth(TileModel[] tileModels) {
             var tileXs = tileModels.Where(t=>t.IsOpened).Select(t=>t.X).Distinct();
             isLeftSideFilled = tileXs.Min() == 0;
             isRightSideFilled = tileXs.Max() == 7;
+            leftSidedLevel = Mathf.Abs(tileXs.Min() - 0) < Mathf.Abs(tileXs.Max() - 7);
             var substract = tileXs.Max() - tileXs.Min();
             return substract % 2 == 0 ? SideCount.Type7 : SideCount.Type8;
         }
