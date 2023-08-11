@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -6,8 +7,17 @@ namespace Pages {
     public class WaveEffect : MonoBehaviour {
         [SerializeField] private Transform startPoint;
         [SerializeField] private Transform endPoint;
+        [SerializeField] private bool showOnce = false;
+
+        private void Start() {
+            if (showOnce) {
+                ShowOnce();
+            } else {
+                PutBack();
+            }
+        }
+
         public void StartEffect(float duration, float delay, float wait) {
-            PutBack();
             StartEffectAsync().Forget();
 
             async UniTask StartEffectAsync() {
@@ -20,6 +30,11 @@ namespace Pages {
                     .AppendInterval(wait)
                     .SetLoops(-1);
             }
+        }
+
+        private void ShowOnce() {
+            transform.SetParent(endPoint);
+            transform.DOLocalMove(Vector3.zero, 3.5F).SetEase(Ease.InSine);
         }
 
         private void PutBack() {
