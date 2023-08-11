@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using OverlayStatusSystem;
 using TMPro;
 using UnityEngine;
 
@@ -87,7 +88,7 @@ namespace GemMatch {
         public void OnReplayGame(Mission[] missions) { }
 
         public void OnChangeMission(Mission mission, int changeCount) {
-            // TODO : 구현님 투두리스트에서 이곳에 구현 부탁드려요
+            OverlayStatusHelper.UpdateMissionCount(mission, changeCount);
         }
 
         public void OnMoveToMemory(Tile tile, Entity entity) {

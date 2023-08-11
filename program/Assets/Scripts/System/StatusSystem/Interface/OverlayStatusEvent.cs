@@ -13,7 +13,7 @@ namespace OverlayStatusSystem {
         }
 
         public virtual UniTask Animate() {
-            return UniTask.Delay(1000);
+            return UniTask.CompletedTask;
         }
     }
 }
