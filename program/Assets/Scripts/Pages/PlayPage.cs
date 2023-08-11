@@ -99,7 +99,11 @@ namespace Pages {
 
         private void Update() {
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                GoBackToEditMode();
+                if (FindObjectOfType<MainPage>(true) == null)
+                    GoBackToEditMode();
+                else {
+                    ChangeTo(Page.MainPage);
+                }
             }
         }
         

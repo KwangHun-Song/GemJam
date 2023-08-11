@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using GemMatch;
 using PagePopupSystem;
+using Record;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,6 +38,7 @@ namespace Popups {
                 booster.isOn = false;
             }
             selectedBoosters.Clear();
+            titleText.text = $"Level {PlayerInfo.HighestClearedLevelIndex + 2}";
         }
 
         public void OnClickPlay() {

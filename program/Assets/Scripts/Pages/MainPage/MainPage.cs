@@ -2,12 +2,20 @@ using Cysharp.Threading.Tasks;
 using PagePopupSystem;
 using Popups;
 using Record;
+using ToastMessageSystem;
 using UnityEngine;
 using Utility.CustomMouse;
 
 namespace Pages {
     public class MainPage : PageHandler {
         public override Page GetPageType() => Page.MainPage;
+
+        #region EVENT
+
+        public void OnClickSetting() {
+            ToastMessage.Show("It will be implemented soon.");
+        }
+        
         public void OnClickPlay() {
             ClickPlayAsync().Forget();
 
@@ -24,10 +32,14 @@ namespace Pages {
             }
         }
 
+        #endregion
+
+#if UNITY_EDITOR
         private void Update() {
             if (Input.GetKeyDown(KeyCode.F10)) {
                 CustomMouse.Show();
             }
         }
     }
+#endif
 }

@@ -9,7 +9,7 @@ namespace GemMatch {
         public Mission Clone() {
             return new Mission() {
                 entity = this.entity.Clone(),
-                count = count,
+                count = this.count,
             };
         }
     }
