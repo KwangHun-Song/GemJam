@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace GemMatch {
@@ -24,15 +25,17 @@ namespace GemMatch {
             }
             
             EntityView = entityView;
-            EntityView.transform.SetParent(CellRoot);
-            EntityView.transform.localPosition = Vector3.zero;
-            EntityView.transform.localScale = Vector3.one;
+            var tfm = EntityView.transform;
+            tfm.SetParent(CellRoot);
+            tfm.localPosition = Vector3.zero;
+            tfm.localScale = Vector3.zero;
+            tfm.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack);
         }
 
         public async UniTask RemoveEntityAsync(bool destroy, bool immediately = false) {
             if (EntityView == null) return;
             if (destroy) {
-                await EntityView.DestroyAsync();
+                await EntityView.DestroyAsync(immediately);
             }
 
             EntityView = null;

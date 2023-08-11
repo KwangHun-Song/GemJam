@@ -15,8 +15,10 @@ namespace GemMatch {
 
         public virtual async UniTask OnUpdate() { }
 
-        public virtual async UniTask DestroyAsync() {
+        public virtual async UniTask DestroyAsync(bool isImmediately) {
             DestroyImmediate(gameObject);
         }
+        
+        public virtual async UniTask OnMoveMemory() { }
     }
 }

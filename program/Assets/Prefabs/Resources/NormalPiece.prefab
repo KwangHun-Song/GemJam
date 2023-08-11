@@ -88,6 +88,7 @@ MonoBehaviour:
   mainImage: {fileID: 9192351032170399212}
   dimImage: {fileID: 5940224919311629400}
   slotImage: {fileID: 8042171681023600220}
+  animator: {fileID: 5754790641480161955}
 --- !u!114 &1667208727765913495
 MonoBehaviour:
   m_ObjectHideFlags: 0

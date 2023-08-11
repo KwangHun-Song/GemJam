@@ -50,3 +50,6 @@ TagManager:
   - name: Overlay
     uniqueID: 1596874523
     locked: 0
+  - name: Effect
+    uniqueID: 3742125437
+    locked: 0

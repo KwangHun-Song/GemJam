@@ -99,6 +99,8 @@ namespace GemMatch {
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
 
+                await entityView.OnMoveMemory();
+
                 // 타일뷰 소속에서 해당 엔티티뷰를 제거한다.
                 tileView.RemoveEntityView(entityView);
                 

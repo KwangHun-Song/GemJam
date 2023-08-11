@@ -55,7 +55,7 @@ namespace GemMatch {
         }
 
         public void RemoveEntityView(EntityView entityView) {
-            entityView.transform.SetParent(guestRoom);
+            // entityView.transform.SetParent(guestRoom);
             entityViews.Remove(entityView.Entity.Layer);
             entityView.Initialize(null);
         }
