@@ -34,7 +34,6 @@ namespace Pages {
             
             Controller = StartGame(Param.levelIndex);
             ApplyReadyBoosters(Param.selectedBoosters);
-
             WaitAndEndGameAsync().Forget();
         }
 
@@ -76,15 +75,18 @@ namespace Pages {
                     ChangeTo(Page.MainPage);
                 }
             }
+
+            if (gameResult == GameResult.Fail) {
+                var failResult = await PopupManager.ShowAsync<FailPopupResult>(nameof(FailPopup), Param.levelIndex + 1);
+                if (failResult.isPlay) {
+                    Controller.ReplayGame();
+                    ApplyReadyBoosters(failResult.selectedBoosters);
+                    WaitAndEndGameAsync().Forget();
+                } else {
+                    ChangeTo(Page.MainPage);
+                }
+            }
         }
-
-        #region EVENT
-
-        public void OnClickBack() {
-            ChangeTo(Page.MainPage);
-        }
-
-        #endregion
 
         #region PlayBooster
         public void UpdatePlayBooster() {
@@ -124,6 +126,14 @@ namespace Pages {
         }
 
         private void Update() {
+            if (Input.GetKeyDown(KeyCode.C)) {
+                Controller.ClearGame();
+            }
+
+            if (Input.GetKeyDown(KeyCode.F)) {
+                Controller.FailGame();
+            }
+            
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 if (FindObjectOfType<MainPage>(true) == null)
                     GoBackToEditMode();
