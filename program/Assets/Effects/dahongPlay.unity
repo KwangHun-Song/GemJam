@@ -11353,6 +11353,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: logoAni
       objectReference: {fileID: 0}
+    - target: {fileID: 4614261220884109364, guid: ed93c1d44f3aa492b93f8ca96ea1816e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8125954214189153842, guid: ed93c1d44f3aa492b93f8ca96ea1816e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
