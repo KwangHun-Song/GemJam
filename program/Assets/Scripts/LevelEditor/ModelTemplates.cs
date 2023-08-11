@@ -58,6 +58,21 @@ namespace GemMatch.LevelEditor {
             EntityIndex.InvisibleCover,
             EntityIndex.VisibleCover,
         };
+
+        public static List<EntityModel> SpawnerEntityModels =>
+            spawnTypes.Select(type => {
+                var model = new EntityModel() {
+                    index = type,
+                    layer = Layer.Cover,
+                    displayType = 0,
+                    durability = 0,
+                    color = ColorIndex.None,
+                    commonStringParam = string.Empty
+                };
+                // return type;
+                return model;
+            }).ToList();
+
         public static Tile[] SpawnerToolModels {
             get {
                 var tiles = new List<Tile>();
@@ -67,7 +82,7 @@ namespace GemMatch.LevelEditor {
                             entityModels = new List<EntityModel>() {
                                 new EntityModel() {
                                     index = type,
-                                    layer = Layer.Piece,
+                                    layer = Layer.Cover,
                                     displayType = 0,
                                     durability = 0,
                                     color = ColorIndex.None,

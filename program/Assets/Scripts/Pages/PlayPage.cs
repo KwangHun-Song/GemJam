@@ -135,18 +135,14 @@ namespace Pages {
             }
             
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                if (FindObjectOfType<MainPage>(true) == null)
-                    GoBackToEditMode();
-                else {
-                    ChangeTo(Page.MainPage);
-                }
+                if (FindObjectOfType<EditPage>(true) != null) return;
+                ChangeTo(Page.MainPage);
             }
         }
         
 
         private void GoBackToEditMode() {
-            if (FindObjectOfType<EditLevelIndicator>() != null)
-                SceneManager.LoadScene("EditScene");
+            Destroy(this.gameObject);
         }
 
         #region CHEAT

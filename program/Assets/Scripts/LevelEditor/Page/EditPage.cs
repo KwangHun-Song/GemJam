@@ -1,5 +1,6 @@
 using System.Collections;
 using Cysharp.Threading.Tasks;
+using PagePopupSystem;
 using Pages;
 using UnityEditor;
 using UnityEngine;
@@ -44,12 +45,21 @@ namespace GemMatch.LevelEditor {
 
         private void InputKeyboard() {
             if (Input.GetKeyUp(KeyCode.A)) {
+                var playpageObjs = FindObjectsOfType<PlayPage>(true);
+                foreach (var obj in playpageObjs) {
+                    Destroy(obj.gameObject);
+                }
                 PlayTestGame();
             }
 
             if (Input.GetKeyUp(KeyCode.Escape)) {
-                if (playPage != null)
-                    Destroy(playPage);
+                PageManager.RemovePage(Page.PlayPage);
+                var playpageObjs = FindObjectsOfType<PlayPage>(true);
+                foreach (var obj in playpageObjs) {
+                    Destroy(obj.gameObject);
+                }
+
+                playPage = null;
             }
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
@@ -17,9 +18,7 @@ namespace GemMatch.LevelEditor {
     }
 
     public interface IEditViewEventListener {
-        Tile[] Tiles { get; }
-        void Input(int index);
-        Tile ChangeTile(TileModel tile);
+        Tile ChangeTile(TileModel editTile);
     }
 
     public class EditController : Controller, IEditViewEventListener, IEditToolEventListener, IEditInspectorEventListener {
@@ -110,13 +109,29 @@ namespace GemMatch.LevelEditor {
             }
         }
 
-        public Tile ChangeTile(TileModel tile) {
+        public Tile ChangeTile(TileModel editTile) {
             var tmpLv = CurrentLevel;
-            var newModel = _tool.GetCurrentTile().Model.Clone();
-            newModel.index = tile.index;
-            tmpLv.tiles[tile.index] = newModel;
+            var toolModel = _tool.GetCurrentTile().Model.Clone();
+            toolModel.index = editTile.index;
+            Tile result = null;
+            if (toolModel.entityModels.Count > 0 && toolModel.entityModels[0].layer == Layer.Cover) {
+                // cover일 경우 ToolModel에서 EntityModel만 붙여넣기
+                TileModel newTile = tmpLv.tiles[editTile.index].Clone();
+                if (newTile.EntityDict.TryGetValue(Layer.Cover, out var prevCoverEntity)) {
+                    newTile.entityModels.Remove(prevCoverEntity.Model);
+                    newTile.RemoveEntity(prevCoverEntity);
+                }
+                newTile.entityModels.Add(toolModel.EntityDict[Layer.Cover].Model);
+                newTile.AddEntity(toolModel.EntityDict[Layer.Cover]);
+                tmpLv.tiles[editTile.index] = newTile;
+                result = new Tile(newTile);
+            } else {
+                // 그 외엔 ToolModel로 바꿔넣기
+                tmpLv.tiles[editTile.index] = toolModel;
+                result = new Tile(toolModel);
+            }
             EditGame(tmpLv);
-            return new Tile(newModel);
+            return result;
         }
 
         public void MakeLevel1() {

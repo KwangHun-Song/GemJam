@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,7 +25,7 @@ namespace GemMatch.LevelEditor {
             Tile = tile;
             var entityViewScript = _entityView.GetComponent<EntityView>();
             Entity = entityViewScript.Entity;
-            _entityView.Initialize(null, tile.Entities[Layer.Piece]);
+            _entityView.Initialize(null, tile.Entities.Values.ToArray()[0]);
             TakeMeOnClick();
             if (entityViewScript is NormalPieceView normalPiece) {
                 normalPiece.SetCanTouchUI(true);
