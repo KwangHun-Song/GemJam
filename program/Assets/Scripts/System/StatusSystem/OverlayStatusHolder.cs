@@ -13,13 +13,16 @@ namespace OverlayStatusSystem {
 
         public static OverlayStatusHolder Instance = null;
 
+        private void Awake() {
+            PageManager.OnPageChanged -= GetStable;
+            PageManager.OnPageChanged += GetStable;
+        }
+
         private IEnumerator Start() {
             yield return null;
             GetStable(PageManager.CurrentPage);
             yield return null;
             Instance = this;
-            PageManager.OnPageChanged -= GetStable;
-            PageManager.OnPageChanged += GetStable;
         }
 
         private void GetStable(Page currentPage) {

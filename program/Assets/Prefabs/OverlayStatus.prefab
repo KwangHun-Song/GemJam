@@ -2027,6 +2027,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7085742667149560069}
+  - component: {fileID: 6238381191170598559}
   m_Layer: 0
   m_Name: OverlayStatus
   m_TagString: Untagged
@@ -2050,6 +2051,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6238381191170598559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085742667149560068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a8fa312956a41289e3f133e2329ce04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _coinStatus: {fileID: 7085742666562020361}
+  _missionStatus: {fileID: 7085742666767617201}
+  _levelStatus: {fileID: 5870073860065409123}
 --- !u!1 &7241762340812984659
 GameObject:
   m_ObjectHideFlags: 0
@@ -2335,3 +2351,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1889717890636457688, guid: 130ec2b7433fe497b8524d8ccda73762, type: 3}
   m_PrefabInstance: {fileID: 929643930923961210}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5870073860065409123 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6742015266077750041, guid: 130ec2b7433fe497b8524d8ccda73762, type: 3}
+  m_PrefabInstance: {fileID: 929643930923961210}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4919152703834be7981744eee22063fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
