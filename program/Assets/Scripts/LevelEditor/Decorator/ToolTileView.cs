@@ -29,7 +29,8 @@ namespace GemMatch.LevelEditor {
                 entityView.GetComponent<Image>().enabled = false;
             }
             var entities = _tileView.EntityViews.Values.Select(t=>t.Entity).ToArray();
-            EntityModel = entities[0].Model;
+            if (entities.Length > 0 && entities[0] != null && entities[0].Model != null)
+                EntityModel = entities[0].Model;
             this.Tile = _tileView.Tile;
             this.TileModel = _tileView.Tile.Model;
         }
