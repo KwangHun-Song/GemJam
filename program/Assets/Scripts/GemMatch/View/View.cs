@@ -4,7 +4,6 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using OverlayStatusSystem;
-using TMPro;
 using UnityEngine;
 using Utility;
 
@@ -69,6 +68,7 @@ namespace GemMatch {
                 TileViews[i].Initialize(this, tiles[i]);
             }
             RedrawEdges();
+            viewScaler.SetPlayViewPosition(controller.Tiles);
 
             foreach (var tileView in TileViews) {
                 foreach (var entityView in tileView.EntityViews.Values) {

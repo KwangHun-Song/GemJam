@@ -25,7 +25,8 @@ namespace GemMatch {
         public void Initialize(View view, Tile tile) {
             View = view;
             Tile = tile;
-            
+            name = $"TileView({tile.X},{tile.Y})";
+
             Redraw();
 
             foreach (var entityView in EntityViews.Values) {
