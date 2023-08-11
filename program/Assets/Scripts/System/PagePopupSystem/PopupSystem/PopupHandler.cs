@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace PagePopupSystem {
     public abstract class PopupHandler : MonoBehaviour {
+        [SerializeField] private Transform animationTarget;
+        
         public virtual void OnWillEnter(object param) { }
 
         public virtual UniTask OnDidEnter(object param) => UniTask.CompletedTask;
@@ -37,9 +39,9 @@ namespace PagePopupSystem {
             }
 
             gameObject.SetActive(true);
-            transform.localScale = Vector3.zero;
+            animationTarget.localScale = Vector3.zero;
             OnWillEnter(param);
-            await transform.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack).ToUniTask();
+            await animationTarget.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack).ToUniTask();
             OnDidEnter(param).Forget();
 
             popupTask = new UniTaskCompletionSource<object>();
@@ -53,7 +55,7 @@ namespace PagePopupSystem {
             }
 
             OnWillLeave();
-            await transform.DOScale(Vector3.zero, 0.15F).SetEase(Ease.InBack).ToUniTask();
+            await animationTarget.DOScale(Vector3.zero, 0.15F).SetEase(Ease.InBack).ToUniTask();
             OnDidLeave();
 
             gameObject.SetActive(false);
