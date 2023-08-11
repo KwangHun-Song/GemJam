@@ -20,5 +20,9 @@ namespace OverlayStatusSystem {
             await UniTask.WaitUntil(() => OverlayStatusHolder.Instance != null);
             OverlayStatusHolder.Instance.InitializeMission(targetMissions);
         }
+
+        public static void UpdateMissionCount(Mission mission, int changeCount) {
+            OverlayStatusHolder.Instance.AchieveMissionCount(mission, changeCount);
+        }
     }
 }

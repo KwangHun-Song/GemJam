@@ -22,9 +22,18 @@ namespace GemMatch.LevelEditor {
             get => PlayerPrefs.GetString("EDIT_SAVE_PATH", "Assets/Data/text");
             set => PlayerPrefs.SetString("EDIT_SAVE_PATH", value);
         }
+
+        public int GemCount { get; private set; } = 0;
+
 #endregion
         private IEditInspectorEventListener _contorller;
         private EditLevelValidator _validator;
+
+        public void RefreshGemCount() {
+            this.GemCount = _contorller.CurrentLevel.tiles
+                .Where(t => t.EntityDict.ContainsKey(Layer.Piece) || t.EntityDict.ContainsKey(Layer.Cover))
+                .Count();
+        }
 
 #if UNITY_EDITOR
         public void SetDirty() => EditorUtility.SetDirty(this.gameObject);
@@ -44,6 +53,7 @@ namespace GemMatch.LevelEditor {
             _contorller.LoadLevel(levelCache);
             OnLoadLevel?.Invoke(this);
             LevelIndex = lastIndex;
+            RefreshGemCount();
         }
 
         public void NewLevel() {
@@ -51,6 +61,7 @@ namespace GemMatch.LevelEditor {
             _contorller.MakeLevel1();
             var cache = new List<Level>(LevelLoader.GetContainer().levels);
             cache.Add(_contorller.CurrentLevel);
+            RefreshGemCount();
             LevelLoader.GetContainer().levels = cache.ToArray();
 #if UNITY_EDITOR
             SetDirty();

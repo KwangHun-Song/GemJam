@@ -81,6 +81,16 @@ namespace GemMatch.LevelEditor {
                 inspector.LoadLevel(inspector.LevelIndex);
                 UpdateFields(inspector);
             }
+
+            // 보드에 Gem 갯수
+            GUIContent gemCountTitle = new GUIContent("Gem Count");
+            EditorGUILayout.TextField(gemCountTitle, $"{inspector.GemCount}", DarkInputStyle);
+            if (GUILayout.Button("Calculate Gem Count")) {
+                inspector.RefreshGemCount();
+            }
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            
             // New
             if (GUILayout.Button("New")) {
                 GUIUtility.keyboardControl = 0;
@@ -313,9 +323,10 @@ namespace GemMatch.LevelEditor {
         GUIStyle DarkInputStyle {
             get {
                 var style = new GUIStyle(EditorStyles.miniLabel);
-                style.fixedWidth = 20;
+                style.fixedWidth = 50;
                 style.margin = new RectOffset(5,10,1,1);
                 style.normal.textColor = Color.gray;
+                style.fontSize = 20;
                 return style;
             }
         }

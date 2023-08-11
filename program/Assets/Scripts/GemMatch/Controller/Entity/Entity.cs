@@ -24,7 +24,7 @@ namespace GemMatch {
             get => Model.color;
             set => Model.color = value;
         }
-
+        
         public virtual bool PreventTouch() => false;
         public virtual bool CanPassThrough() => Layer != Layer.Piece;
         public virtual bool CanAddMemory() => Index == EntityIndex.NormalPiece || Index == EntityIndex.GoalPiece;

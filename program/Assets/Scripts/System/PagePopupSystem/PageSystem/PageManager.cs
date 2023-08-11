@@ -42,6 +42,8 @@ namespace PagePopupSystem {
             await FadeOutHelper.FadeIn();
         }
 
+        public static void RemovePage(Page pageType) => pages.Remove(pageType);
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void InitializePages() {
             foreach (var kvp in Pages) {

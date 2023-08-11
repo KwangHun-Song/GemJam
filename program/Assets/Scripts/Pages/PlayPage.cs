@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
+using Popups;
+using Record;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
@@ -25,9 +28,27 @@ namespace Pages {
             Assert.IsTrue(param is PlayPageParam);
             Param = (PlayPageParam)param;
             
-            Controller = StartGame(Param.levelIndex);
+            if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
+                Param.levelIndex = indicator.LevelIndex;
+            }
             
-            foreach (var selectedBooster in Param.selectedBoosters) {
+            Controller = StartGame(Param.levelIndex);
+            ApplyReadyBoosters(Param.selectedBoosters);
+            WaitAndEndGameAsync().Forget();
+        }
+
+        public Controller StartGame(int levelIndex) {
+            var controller = new Controller();
+            controller.Listeners.Add(view);
+            var level = LevelLoader.GetLevel(levelIndex);
+            
+            controller.StartGame(level);
+            return controller;
+        }
+
+        private void ApplyReadyBoosters(BoosterIndex[] selectedBoosters) {
+            // Controller.StartGame이 되고난 후 실행해주세요.
+            foreach (var selectedBooster in selectedBoosters) {
                 switch (selectedBooster) {
                     case BoosterIndex.ReadyBoosterRocket:
                         Controller.InputAbility(new RocketAbility(Controller));
@@ -39,26 +60,33 @@ namespace Pages {
             }
         }
 
-        public Controller StartGame(int levelIndex) {
-            var controller = new Controller();
-            controller.Listeners.Add(view);
-
-            if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
-                levelIndex = indicator.LevelIndex;
+        private async UniTask WaitAndEndGameAsync() {
+            await UniTask.Yield();
+            var gameResult = await Controller.WaitUntilGameEnd();
+            if (gameResult == GameResult.Clear) {
+                // 클리어 데이터 저장
+                PlayerInfo.HighestClearedLevelIndex++;
+                
+                var next = await PopupManager.ShowAsync<bool>(nameof(ClearPopup), Param.levelIndex + 1);
+                if (next) {
+                    Param.levelIndex = Mathf.Clamp(Param.levelIndex + 1, 0, LevelLoader.GetContainer().levels.Length - 1);
+                    StartGame(Param.levelIndex);
+                } else {
+                    ChangeTo(Page.MainPage);
+                }
             }
-            var level = LevelLoader.GetLevel(levelIndex);
-            
-            controller.StartGame(level);
-            return controller;
+
+            if (gameResult == GameResult.Fail) {
+                var failResult = await PopupManager.ShowAsync<FailPopupResult>(nameof(FailPopup), Param.levelIndex + 1);
+                if (failResult.isPlay) {
+                    Controller.ReplayGame();
+                    ApplyReadyBoosters(failResult.selectedBoosters);
+                    WaitAndEndGameAsync().Forget();
+                } else {
+                    ChangeTo(Page.MainPage);
+                }
+            }
         }
-
-        #region EVENT
-
-        public void OnClickBack() {
-            ChangeTo(Page.MainPage);
-        }
-
-        #endregion
 
         #region PlayBooster
         public void UpdatePlayBooster() {
@@ -98,15 +126,23 @@ namespace Pages {
         }
 
         private void Update() {
+            if (Input.GetKeyDown(KeyCode.C)) {
+                Controller.ClearGame();
+            }
+
+            if (Input.GetKeyDown(KeyCode.F)) {
+                Controller.FailGame();
+            }
+            
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                GoBackToEditMode();
+                if (FindObjectOfType<EditPage>(true) != null) return;
+                ChangeTo(Page.MainPage);
             }
         }
         
 
         private void GoBackToEditMode() {
-            if (FindObjectOfType<EditLevelIndicator>() != null)
-                SceneManager.LoadScene("EditScene");
+            Destroy(this.gameObject);
         }
 
         #region CHEAT

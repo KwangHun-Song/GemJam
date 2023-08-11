@@ -740,7 +740,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileViewRoot: {fileID: 5602218890681884890}
   memoryViewRoot: {fileID: 0}
-  gameStatusText: {fileID: 0}
+  extraSlot: {fileID: 0}
+  shuffleAbilityView: {fileID: 0}
   board: {fileID: 5602218890681884889}
 --- !u!1 &5602218890452714878
 GameObject:
@@ -1817,15 +1818,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 235273760019914479, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
       propertyPath: m_Color.b
-      value: 0.5849056
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 235273760019914479, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
       propertyPath: m_Color.g
-      value: 0.5849056
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 235273760019914479, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
       propertyPath: m_Color.r
-      value: 0.5849056
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1438996075219398054, guid: fdf1f477925bf4c1ea80933ecd0e6b7f, type: 3}
       propertyPath: m_Pivot.x
