@@ -117,7 +117,12 @@ namespace GemMatch.LevelEditor {
             if (toolModel.entityModels.Count > 0 && toolModel.entityModels[0].layer == Layer.Cover) {
                 // cover일 경우 ToolModel에서 EntityModel만 붙여넣기
                 TileModel newTile = tmpLv.tiles[editTile.index].Clone();
+                if (newTile.EntityDict.TryGetValue(Layer.Cover, out var prevCoverEntity)) {
+                    newTile.entityModels.Remove(prevCoverEntity.Model);
+                    newTile.RemoveEntity(prevCoverEntity);
+                }
                 newTile.entityModels.Add(toolModel.EntityDict[Layer.Cover].Model);
+                newTile.AddEntity(toolModel.EntityDict[Layer.Cover]);
                 tmpLv.tiles[editTile.index] = newTile;
                 result = new Tile(newTile);
             } else {
