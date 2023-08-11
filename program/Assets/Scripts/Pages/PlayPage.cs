@@ -6,6 +6,7 @@ using GemMatch.LevelEditor;
 using PagePopupSystem;
 using Popups;
 using Record;
+using ToastMessageSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
@@ -112,6 +113,10 @@ namespace Pages {
 
         public void OnClickShuffle() {
             Controller?.InputAbility(new ShuffleAbility(Controller));
+        }
+
+        public void OnClickSetting() {
+            ToastMessage.Show("It will be implemented soon.");
         }
 
         #endregion // PlayBooster
