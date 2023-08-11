@@ -110,7 +110,7 @@ namespace GemMatch {
         }
 
         public void ReplayGame() {
-            StartGame(CurrentLevel);
+            StartGame(CurrentLevel, true);
             // 이벤트 전달
             foreach (var listener in Listeners) listener.OnReplayGame(Missions);
         }
@@ -131,7 +131,6 @@ namespace GemMatch {
 
         public virtual bool CanTouch(Tile tile) {
             if (tile.Piece == null || tile.Piece.CanAddMemory() == false) return false;
-            if (tile.Piece.CanTouch() == false) return false;
             if (tile.Entities.Values.Where(e => e.Layer > Layer.Piece).Any(e => e.PreventTouch())) return false;
             if (PathFinder.HasPathToTop(tile) == false) return false;
 
