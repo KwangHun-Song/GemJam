@@ -24,5 +24,9 @@ namespace OverlayStatusSystem {
         public static void UpdateMissionCount(Mission mission, int changeCount) {
             OverlayStatusHolder.Instance.AchieveMissionCount(mission, changeCount);
         }
+
+        public static void UpdateLevelStatus(Level currentLevel) {
+            OverlayStatusHolder.Instance.UpdateLevelStatus(currentLevel);
+        }
     }
 }
