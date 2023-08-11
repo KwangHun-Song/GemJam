@@ -916,6 +916,7 @@ GameObject:
   - component: {fileID: 6307047727344737965}
   - component: {fileID: 324903948047387791}
   - component: {fileID: 6114791026134620716}
+  - component: {fileID: 4450063701915499290}
   m_Layer: 5
   m_Name: PlayBooster
   m_TagString: Untagged
@@ -1057,3 +1058,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4450063701915499290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8163711298504275529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74f130a59c1b409dba5a1f0380251e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goIcon: {fileID: 5129157798206335018}
+  goLock: {fileID: 2576208756260381029}
+  txtUnlockLevel: {fileID: 956802742769891046}
+  txtItemCount: {fileID: 3450041437705257311}
+  txtPrice: {fileID: 2051498551906672769}
+  boosterType: 0

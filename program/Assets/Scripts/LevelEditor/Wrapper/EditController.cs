@@ -43,7 +43,7 @@ namespace GemMatch.LevelEditor {
             Touch(Tiles[tileIndex]);
         }
 
-        private void Touch(Tile tile) {
+        private new void Touch(Tile tile) {
             var indexCache = tile.Index;
             var newTiles = Tiles.ToList();
             newTiles.Remove(tile);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
@@ -14,6 +15,7 @@ namespace Pages {
     
     public class PlayPage : PageHandler {
         [SerializeField] private View view;
+        [SerializeField] private PlayBoosterUI[] playBoosters;
         
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
@@ -22,19 +24,13 @@ namespace Pages {
         public override void OnWillEnter(object param) {
             Assert.IsTrue(param is PlayPageParam);
             Param = (PlayPageParam)param;
-
-            var levelIndex = Param.levelIndex;
-            if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
-                levelIndex = indicator.LevelIndex;
-            }
             
-            Controller = StartGame(levelIndex);
+            Controller = StartGame(Param.levelIndex);
             
             foreach (var selectedBooster in Param.selectedBoosters) {
                 switch (selectedBooster) {
                     case BoosterIndex.ReadyBoosterRocket:
                         Controller.InputAbility(new RocketAbility(Controller));
-                        Controller.UndoHandler.Reset();
                         break;
                     case BoosterIndex.ReadyBoosterExtraSlot:
                         Controller.AddExtraMemorySlot();
@@ -47,6 +43,9 @@ namespace Pages {
             var controller = new Controller();
             controller.Listeners.Add(view);
 
+            if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
+                levelIndex = indicator.LevelIndex;
+            }
             var level = LevelLoader.GetLevel(levelIndex);
             
             controller.StartGame(level);
@@ -61,7 +60,12 @@ namespace Pages {
 
         #endregion
 
-        #region Booster
+        #region PlayBooster
+        public void UpdatePlayBooster() {
+            foreach (var booster in playBoosters) {
+                booster.Refresh();
+            }
+        }
 
         public void OnClickUndo() {
             if (Controller != null) {
@@ -81,7 +85,17 @@ namespace Pages {
             Controller?.InputAbility(new ShuffleAbility(Controller));
         }
 
-        #endregion
+        #endregion // PlayBooster
+
+        private IEnumerator Start() {
+            yield return null;
+            yield return null;
+            GetStable();
+        }
+
+        private void GetStable() {
+            UpdatePlayBooster();
+        }
 
         private void Update() {
             if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -96,19 +110,18 @@ namespace Pages {
         }
 
         #region CHEAT
+
+        private int levelIndexInput;
+        public string LevelIndexInput {
+            set {
+                if (int.TryParse(value, out var levelIndex)) {
+                    levelIndexInput = levelIndex;
+                }
+            }
+        }
         
         public void OnClickStartGame() {
-            StartGame(Param.levelIndex);    
-        }
-
-        public void OnClickPrev() {
-            Param.levelIndex = Mathf.Clamp(Param.levelIndex - 1, 0, LevelLoader.GetContainer().levels.Length - 1);
-            StartGame(Param.levelIndex);    
-        }
-
-        public void OnClickNext() {
-            Param.levelIndex = Mathf.Clamp(Param.levelIndex + 1, 0, LevelLoader.GetContainer().levels.Length - 1);
-            StartGame(Param.levelIndex);    
+            StartGame(levelIndexInput);    
         }
 
         #endregion

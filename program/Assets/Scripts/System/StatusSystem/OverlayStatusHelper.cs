@@ -1,3 +1,6 @@
+using Cysharp.Threading.Tasks;
+using GemMatch;
+
 namespace OverlayStatusSystem {
     public static class OverlayStatusHelper {
         private static readonly OverlayStatusManager manager = new OverlayStatusManager();
@@ -11,6 +14,11 @@ namespace OverlayStatusSystem {
 
         public static void Save(IOverlayStatusEvent keyObject) {
             manager.Save(keyObject);
+        }
+
+        public static async UniTaskVoid InitializeMissionsAsync(Mission[] targetMissions) {
+            await UniTask.WaitUntil(() => OverlayStatusHolder.Instance != null);
+            OverlayStatusHolder.Instance.InitializeMission(targetMissions);
         }
     }
 }

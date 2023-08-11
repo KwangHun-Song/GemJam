@@ -1,39 +1,50 @@
 using System;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Record;
 using UnityEngine;
 
 namespace OverlayStatusSystem {
     public class LevelStatusView : OverlayStatusEvent<LevelOverlayStatus> {
-        [SerializeField] private GameObject[] stageIndexers;
+        [SerializeField] private Animator[] levelIndexers;
+        [SerializeField] private GameObject[] levelIndexerRoots;
+
         private int PlayerInfoIndex => PlayerInfo.HighestClearedLevelIndex % 3;
         private int stageIndex = 0;
 
         public void Start() {
             stageIndex = PlayerInfoIndex;
             OverlayStatusHelper.Init(new LevelOverlayStatus(this, OnStage));
-        }
+            foreach (var root in levelIndexerRoots) {
+                root.SetActive(false);
+            }
 
-        private void OnStage(int count) {
-            stageIndex += count;
-            stageIndex %= 3;
-            TurnOnStageIndex();
-        }
-
-        private void TurnOnStageIndex() {
-            for (int i = 0; i < stageIndexers.Length; i++) {
-                var cursor = stageIndexers[i];
-                cursor.SetActive(i <= stageIndex);
+            foreach (var anim in levelIndexers) {
+                anim.SetTrigger("00idle");
             }
         }
 
-        public async UniTaskVoid GetStage() {
-            await base.Get<int>(1);
+
+        private int currentStage = 0;
+        public async UniTaskVoid GetStage(int stage) {
+            currentStage = stage;
+            for (var i = 0; i < levelIndexerRoots.Length; i++) {
+                var root = levelIndexerRoots[i];
+                root.SetActive(i == stage - 1);
+            }
+            await base.Get<int>(stage);
         }
 
-        public override UniTask Animate() {
-            return base.Animate(); // todo: 연출을 여기 넣는다
+        public override async UniTask Animate() {
+            var targetAnim = levelIndexers.Where(i => i.name.Equals($"level_map0{currentStage}"));
+            foreach (var anim in targetAnim) {
+                await UniTask.DelayFrame(10);
+                anim.SetTrigger("01");
+            }
+            await UniTask.DelayFrame(10);
         }
+
+        private void OnStage(int stage) { } // Save 뒤 할일이 없을듯
     }
 
     public class LevelOverlayStatus : OverlayStatus<int> {
