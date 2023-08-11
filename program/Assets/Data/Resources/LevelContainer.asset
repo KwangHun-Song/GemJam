@@ -4531,7 +4531,15 @@ MonoBehaviour:
       entityModels: []
     - index: 27
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 28
       isOpened: 1
       entityModels: []
@@ -4555,7 +4563,15 @@ MonoBehaviour:
       entityModels: []
     - index: 35
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 36
       isOpened: 1
       entityModels: []
@@ -4579,10 +4595,26 @@ MonoBehaviour:
       entityModels: []
     - index: 43
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 44
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 4
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 45
       isOpened: 1
       entityModels: []
@@ -4603,7 +4635,23 @@ MonoBehaviour:
       entityModels: []
     - index: 51
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 5
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: -1
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 52
       isOpened: 1
       entityModels: []
@@ -4627,10 +4675,42 @@ MonoBehaviour:
       entityModels: []
     - index: 59
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 5
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: -1
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 60
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 4
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: -1
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 61
       isOpened: 1
       entityModels: []
@@ -4651,10 +4731,42 @@ MonoBehaviour:
       entityModels: []
     - index: 67
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 5
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: -1
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 68
       isOpened: 1
-      entityModels: []
+      entityModels:
+      - index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 4
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      - index: 4
+        layer: 20000
+        displayType: 0
+        durability: 0
+        color: -1
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
     - index: 69
       isOpened: 1
       entityModels: []
@@ -4689,5 +4801,5 @@ MonoBehaviour:
       isOpened: 1
       entityModels: []
     missions: []
-    colorCount: 1
+    colorCount: 2
     colorCandidates: 

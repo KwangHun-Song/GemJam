@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using UnityEngine;
 
 namespace GemMatch.LevelEditor {
@@ -17,8 +18,6 @@ namespace GemMatch.LevelEditor {
     }
 
     public interface IEditViewEventListener {
-        Tile[] Tiles { get; }
-        void Input(int index);
         Tile ChangeTile(TileModel editTile);
     }
 
@@ -114,15 +113,20 @@ namespace GemMatch.LevelEditor {
             var tmpLv = CurrentLevel;
             var toolModel = _tool.GetCurrentTile().Model.Clone();
             toolModel.index = editTile.index;
-            if (toolModel.entityModels[0].layer == Layer.Cover) {
+            Tile result = null;
+            if (toolModel.entityModels.Count > 0 && toolModel.entityModels[0].layer == Layer.Cover) {
                 // cover일 경우 ToolModel에서 EntityModel만 붙여넣기
-                tmpLv.tiles[editTile.index].entityModels.Add(toolModel.entityModels[0]);
+                TileModel newTile = tmpLv.tiles[editTile.index].Clone();
+                newTile.entityModels.Add(toolModel.EntityDict[Layer.Cover].Model);
+                tmpLv.tiles[editTile.index] = newTile;
+                result = new Tile(newTile);
             } else {
                 // 그 외엔 ToolModel로 바꿔넣기
                 tmpLv.tiles[editTile.index] = toolModel;
+                result = new Tile(toolModel);
             }
             EditGame(tmpLv);
-            return new Tile(toolModel);
+            return result;
         }
 
         public void MakeLevel1() {
