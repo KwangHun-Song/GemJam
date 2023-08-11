@@ -117,6 +117,7 @@ namespace GemMatch {
         }
 
         public Tile GetTile(Entity entity) => Tiles.SingleOrDefault(t => t.Entities.Values.Any(e => ReferenceEquals(e, entity)));
+        public Tile GetTile(int x, int y) => Tiles[y * Constants.Width + x];
 
         protected virtual bool IsCleared() {
             if (ActiveTiles.Any(t => t.Piece is GoalPiece)) return true;

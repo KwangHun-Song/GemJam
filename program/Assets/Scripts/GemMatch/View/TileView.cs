@@ -8,16 +8,20 @@ using Random = UnityEngine.Random;
 namespace GemMatch {
     public class TileView : MonoBehaviour {
         [SerializeField] private Image background;
-        [SerializeField] private Image randomBackground;
         [SerializeField] public Transform entitiesRoot;
         [SerializeField] public Transform guestRoom;
         [SerializeField] public Sprite[] backgroundSprites; // open(dirt), close(wall)
         [SerializeField] public Sprite[] randomBackgroundSprites; // open(dirt), close(wall)
         [SerializeField] public GameObject[] edges; // up, down, left, right
         [SerializeField] public GameObject[] points; // LU, LD, RU, RD
+
+        [SerializeField] private Image bigDego;
+        [SerializeField] private Image smallDeco;
         
         public Tile Tile { get; private set; }
         public View View { get; private set; }
+        
+        public bool IsShowingDeco { get; private set; }
 
         private Dictionary<Layer, EntityView> entityViews;
         public IReadOnlyDictionary<Layer, EntityView> EntityViews => entityViews ??= new Dictionary<Layer, EntityView>();
@@ -55,26 +59,36 @@ namespace GemMatch {
 
         public void Redraw() {
             background.sprite = Tile.Model.IsOpened ? backgroundSprites[0] : backgroundSprites[1];
-            var randomNum = Random.Range(0, 200);
-            if (Tile.Model.IsOpened == false) {
-                Sprite randomSprite = randomNum switch {
-                    _ when randomNum >= 190 => randomBackgroundSprites[0],
-                    _ when randomNum >= 170 => randomBackgroundSprites[1],
-                    _ when randomNum >= 150 => randomBackgroundSprites[2],
-                    _ => null
-                };
-                randomBackground.gameObject.SetActive(randomSprite != null);
 
-                if (randomSprite != null) {
-                    randomBackground.sprite = randomSprite;
-                    randomBackground.preserveAspect = true;
-                    randomBackground.transform.Rotate(0f, 0f, (randomNum % 5) * (360/5));
-                }
+            DrawDeco();
+        }
+
+        private void DrawDeco() {
+            smallDeco.gameObject.SetActive(false);
+            bigDego.gameObject.SetActive(false);
+            IsShowingDeco = false;
+            
+            if (View.IsRightTopTileOf4ClosedTiles(Tile)) {
+                if (Random.Range(0, 4) != 0) return;
+                smallDeco.gameObject.SetActive(false);
+                bigDego.gameObject.SetActive(true);
+                bigDego.sprite = randomBackgroundSprites[Random.Range(3, 5)];
+                bigDego.transform.localScale = Vector3.one * Random.Range(0.6F, 1F);
+                bigDego.transform.eulerAngles = Vector3.forward * Random.Range(0F, 360F);
+                IsShowingDeco = true;
+            } else if (Tile.IsOpened == false) {
+                if (Random.Range(0, 8) != 0) return;
+                bigDego.gameObject.SetActive(false);
+                smallDeco.gameObject.SetActive(true);
+                smallDeco.sprite = randomBackgroundSprites[Random.Range(0, 3)];
+                smallDeco.transform.localScale = Vector3.one * Random.Range(0.6F, 1F);
+                smallDeco.transform.eulerAngles = Vector3.forward * Random.Range(0F, 360F);
+                IsShowingDeco = true;
             }
         }
 
         public void RedrawByAdjacents(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {
-            if (this.Tile.IsOpened) {
+            if (Tile.IsOpened) {
                 foreach (var edge in edges.Concat(points)) {
                     edge.SetActive(false);
                 }
@@ -104,17 +118,6 @@ namespace GemMatch {
             points[1].SetActive(left && down);
             points[2].SetActive(right && up);
             points[3].SetActive(right && down);
-
-            if (left && down) {
-                randomBackground.gameObject.SetActive(true);
-                var ranTr = (randomBackground.transform as RectTransform);
-                ranTr.pivot = new Vector2(Random.Range(0f, 0.08f), Random.Range(0f, 0.08f));
-                ranTr.localPosition = Vector3.zero;
-                ranTr.Rotate(0f,0f,(float)Random.Range(0,360));
-                randomBackground.sprite = Random.Range(0, 10) % 2 == 1
-                    ? randomBackgroundSprites[3]
-                    : randomBackgroundSprites[4];
-            }
         }
     }
 }

@@ -232,6 +232,27 @@ namespace GemMatch {
             }
         }
 
+        public TileView GetTileView(Tile tile) {
+            return TileViews.FirstOrDefault(tv => tv.Tile == tile);
+        }
+
+        public bool IsRightTopTileOf4ClosedTiles(Tile tile) {
+            if (tile.IsOpened) return false;
+            if (tile.X == 0) return false;
+            if (tile.Y == 0) return false;
+
+            var left = Controller.GetTile(tile.X - 1, tile.Y);
+            var bottomTile = Controller.GetTile(tile.X, tile.Y - 1);
+            var leftBottomTile = Controller.GetTile(tile.X - 1, tile.Y - 1);
+
+            if (left.IsOpened || bottomTile.IsOpened || leftBottomTile.IsOpened) return false;
+            if (GetTileView(left).IsShowingDeco) return false;
+            if (GetTileView(bottomTile).IsShowingDeco) return false;
+            if (GetTileView(leftBottomTile).IsShowingDeco) return false;
+
+            return true;
+        }
+
         public void OnClickEntity(Entity entity) {
             Controller.Input(Controller.GetTile(entity).Index);
         }
