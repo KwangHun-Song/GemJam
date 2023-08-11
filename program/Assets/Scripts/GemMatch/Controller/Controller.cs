@@ -226,7 +226,8 @@ namespace GemMatch {
             }
             
             // 미션 증가
-            var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model));
+            var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model))
+                          ?? Missions.SingleOrDefault(m => m.entity.index == EntityIndex.NormalPiece && m.entity.color == ColorIndex.All);
             if (mission != null) {
                 UndoHandler.Do(new Command<Mission>(
                     @do: () => {

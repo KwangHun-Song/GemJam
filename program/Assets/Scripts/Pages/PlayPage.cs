@@ -28,7 +28,7 @@ namespace Pages {
         public override void OnWillEnter(object param) {
             Assert.IsTrue(param is PlayPageParam);
             Param = (PlayPageParam)param;
-            
+
             if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
                 Param.levelIndex = indicator.LevelIndex;
             }

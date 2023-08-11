@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GemMatch.LevelEditor;
+using PagePopupSystem;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -67,7 +70,10 @@ namespace GemMatch {
             smallDeco.gameObject.SetActive(false);
             bigDego.gameObject.SetActive(false);
             IsShowingDeco = false;
-            
+
+#if UNITY_EDITOR
+            if (SceneManager.GetActiveScene().name.Equals("EditScene")) return;
+#endif
             if (View.IsRightTopTileOf4ClosedTiles(Tile)) {
                 if (Random.Range(0, 4) != 0) return;
                 smallDeco.gameObject.SetActive(false);

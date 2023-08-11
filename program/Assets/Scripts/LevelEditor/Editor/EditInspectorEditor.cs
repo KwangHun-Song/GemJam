@@ -33,6 +33,7 @@ namespace GemMatch.LevelEditor {
             Green = 3,
             Blue = 4,
             Purple = 5,
+            All = 3000,
             // Brown = 6,
             // Pink = 7,
             // Cyan = 8,
