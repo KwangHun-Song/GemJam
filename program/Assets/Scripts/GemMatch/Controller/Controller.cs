@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using GemMatch.UndoSystem;
+using OverlayStatusSystem;
 
 namespace GemMatch {
     public class Controller {
@@ -27,7 +28,8 @@ namespace GemMatch {
             // 초기화
             CurrentLevel = level;
             Memory = new List<Entity>();
-            Missions = level.missions.Select(m => new Mission { entity = m.entity }).ToArray();
+            Missions = level.missions.Select(m => m.Clone()).ToArray();
+            OverlayStatusHelper.InitializeMissionsAsync(Missions).Forget();
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
             if (isReplay == false) {
                 PathFinder = new PathFinder(Tiles);
@@ -152,6 +154,9 @@ namespace GemMatch {
             
             // 메모리에서 같은 색깔 세 개가 있을 경우 파괴한다.
             TryRemoveFromMemory(piece);
+
+            // mission count를 깍는다
+            // CheckAndReduceMissionCount(piece);
         }
 
         public void SplashHit(Tile targetTile, bool triggeredByPrev = false) {
@@ -224,12 +229,12 @@ namespace GemMatch {
             if (mission != null) {
                 UndoHandler.Do(new Command<Mission>(
                     @do: () => {
-                        mission.count += 3;
-                        foreach (var listener in Listeners) listener.OnChangeMission(mission, 3);
+                        mission.count -= 3;
+                        foreach (var listener in Listeners) listener.OnChangeMission(mission, mission.count);
                     }, 
                     undo: addedMission => {
-                        addedMission.count -= 3;
-                        foreach (var listener in Listeners) listener.OnChangeMission(addedMission, -3);
+                        addedMission.count += 3;
+                        foreach (var listener in Listeners) listener.OnChangeMission(addedMission, addedMission.count);
                     }, 
                     param: mission,
                     triggeredByPrev:true
@@ -237,6 +242,29 @@ namespace GemMatch {
             }
 
             return true;
+        }
+
+
+        protected void CheckAndReduceMissionCount(Entity entity) {
+            UndoHandler.Do(new Command<Entity>(
+                @do: () => {
+                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(entity.Model));
+                    if (mission != null) {
+                        mission.count -= 1;
+                        foreach (var listener in Listeners) listener.OnChangeMission(mission, -1); // 봐야뎀
+                    }
+                },
+                undo: movedEntity => {
+                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(entity.Model));
+                    if (mission != null) {
+                        mission.count -= 1;
+                        foreach (var listener in Listeners) listener.OnChangeMission(mission, -1);
+                    }
+                    CalculateActiveTiles();
+                },
+                param: entity,
+                triggeredByPrev: true
+            ));
         }
 
         public void CalculateActiveTiles() {
