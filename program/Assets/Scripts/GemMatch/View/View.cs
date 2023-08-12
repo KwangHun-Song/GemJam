@@ -67,7 +67,8 @@ namespace GemMatch {
             for (int i = 0; i < TileViews.Length; i++) {
                 TileViews[i].Initialize(this, tiles[i]);
             }
-            RedrawEdges();
+            
+            DrawEdges();
             viewScaler.SetPlayViewPosition(controller.Tiles);
 
             foreach (var tileView in TileViews) {
@@ -263,9 +264,9 @@ namespace GemMatch {
             Controller.Input(Controller.GetTile(entity).Index);
         }
 
-        private void RedrawEdges() {
+        private void DrawEdges() {
             foreach(var tileView in TileViews) {
-                tileView.RedrawByAdjacents(TileUtility.GetAdjacentTiles, Controller.Tiles);
+                tileView.DrawEdges(TileUtility.GetAdjacentTiles, Controller.Tiles);
             }
         }
 

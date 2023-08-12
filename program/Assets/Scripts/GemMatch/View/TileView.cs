@@ -94,37 +94,40 @@ namespace GemMatch {
             }
         }
 
-        public void RedrawByAdjacents(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {
+        public void DrawEdges(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {
             if (Tile.IsOpened) {
                 foreach (var edge in edges.Concat(points)) {
                     edge.SetActive(false);
                 }
                 return;
             }
-            var adjacents = adjacentTilesCall.Invoke(Tile, controllerTiles);
+            var adjacentTiles = adjacentTilesCall.Invoke(Tile, controllerTiles);
             var direction = Enumerable.Repeat(false, 4).ToArray(); // up, down, left, right
-            var up = direction[0];
-            var down = direction[1];
-            var left = direction[2];
-            var right = direction[3];
-            foreach (var neighbor in adjacents) {
+            var showUpEdge = direction[0];
+            var showDownEdge = direction[1];
+            var showLeftEdge = direction[2];
+            var showRightEdge = direction[3];
+            
+            showLeftEdge |= Tile.X == 0;
+            showRightEdge |= Tile.X == Constants.Width - 1;
+            foreach (var neighbor in adjacentTiles) {
                 if (neighbor.X == Tile.X) {
-                    up |= neighbor.Y > Tile.Y && neighbor.IsOpened == false;
-                    down |= neighbor.Y < Tile.Y && neighbor.IsOpened == false;
+                    showUpEdge |= neighbor.Y > Tile.Y && neighbor.IsOpened == false;
+                    showDownEdge |= neighbor.Y < Tile.Y && neighbor.IsOpened == false;
                 } else if (neighbor.Y == Tile.Y) {
-                    left |= neighbor.X < Tile.X && neighbor.IsOpened == false;
-                    right |= neighbor.X > Tile.X && neighbor.IsOpened == false;
+                    showLeftEdge |= neighbor.X < Tile.X && neighbor.IsOpened == false;
+                    showRightEdge |= neighbor.X > Tile.X && neighbor.IsOpened == false;
                 }
             }
 
-            edges[0].SetActive(up);
-            edges[1].SetActive(down);
-            edges[2].SetActive(left);
-            edges[3].SetActive(right);
-            points[0].SetActive(left && up);
-            points[1].SetActive(left && down);
-            points[2].SetActive(right && up);
-            points[3].SetActive(right && down);
+            edges[0].SetActive(showUpEdge);
+            edges[1].SetActive(showDownEdge);
+            edges[2].SetActive(showLeftEdge);
+            edges[3].SetActive(showRightEdge);
+            points[0].SetActive(showLeftEdge && showUpEdge);
+            points[1].SetActive(showLeftEdge && showDownEdge);
+            points[2].SetActive(showRightEdge && showUpEdge);
+            points[3].SetActive(showRightEdge && showDownEdge);
         }
     }
 }
