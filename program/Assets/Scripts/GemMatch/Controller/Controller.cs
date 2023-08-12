@@ -127,7 +127,7 @@ namespace GemMatch {
         protected virtual bool IsCleared() {
             if (ActiveTiles.Any(t => t.Piece is GoalPiece)) return true;
             if (Tiles.SelectMany(t => t.Entities.Values).Any(e => e is NormalPiece) == false && Memory.Any() == false) return true;
-            if (!Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any()) return true;
+            if (Missions.All(mission => mission.count <= 0)) return true;
 
             return false;
         }
