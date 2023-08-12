@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using GemMatch;
 using UnityEngine;
 
@@ -15,20 +13,28 @@ namespace OverlayStatusSystem {
         }
 
         private void OnDisable() {
-            foreach (MissionStatusView view in missions) {
-                Destroy(view.gameObject);
-            }
-            missions.Clear();
             Instance = null;
+            ClearMissionViews();
         }
 
         public void InitializeMissions(Mission[] targetMissions) {
+            if (missions.Count > 0) {
+                ClearMissionViews();
+            }
+
             foreach (var m in targetMissions) {
                 var missionView = Instantiate(missionPrefab, missionRoot).GetComponent<MissionStatusView>();
                 missionView.name = $"Mission({m.entity.index},{m.entity.color})";
                 missions.Add(missionView);
                 missionView.InitializeMission(m);
             }
+        }
+
+        private void ClearMissionViews() {
+            foreach (MissionStatusView view in missions) {
+                Destroy(view.gameObject);
+            }
+            missions.Clear();
         }
 
         public void AchieveMission(Mission mission, int changeCount) {
