@@ -37,13 +37,12 @@ namespace Pages {
             WaitAndEndGameAsync().Forget();
         }
 
-        public Controller StartGame(int levelIndex) {
+        public void StartGame(int levelIndex) {
             Controller = new Controller();
             Controller.Listeners.Add(view);
             var level = LevelLoader.GetLevel(levelIndex);
             
             Controller.StartGame(level);
-            return Controller;
         }
 
         private void ApplyReadyBoosters(BoosterIndex[] selectedBoosters) {

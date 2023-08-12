@@ -60,8 +60,6 @@ namespace GemMatch {
         // (주의) 아직 Page GameObject가 만들어지기 전이므로 component 호출은 지양한다
         public void OnStartGame(Controller controller) {
             Controller = controller;
-            // todo: tileScaler가 어떻게 정렬수를 알 수 있을까? 들어있는 타일을 모두 찾아서 x의 최대와 최소를 뺀수가 홀수인지 짝수인지
-            // viewScaler.SetSideBlock(TileViewScaler.SideCount.Type7);
             var tiles = controller.Tiles;
             
             for (int i = 0; i < TileViews.Length; i++) {
@@ -80,6 +78,10 @@ namespace GemMatch {
             foreach (var memoryView in MemoryViews) {
                 memoryView.Initialize();
             }
+
+            var rectTfm = transform as RectTransform;
+            rectTfm!.anchoredPosition = Vector2.right * 700;
+            rectTfm.DOAnchorPos(Vector2.zero, 0.4F).SetEase(Ease.OutBack).SetDelay(0.8F);
         }
 
         public void OnClearGame(Mission[] missions) {
