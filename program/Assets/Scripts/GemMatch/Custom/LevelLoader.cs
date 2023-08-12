@@ -9,6 +9,7 @@ namespace GemMatch {
         }
 
         public static Level GetLevel(int levelIndex) {
+            levelIndex = Mathf.Clamp(levelIndex, 0, GetContainer().levels.Length - 1);
             return GetContainer().levels[levelIndex];
         }
     }

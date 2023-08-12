@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Cysharp.Threading.Tasks;
 using GemMatch;
@@ -9,7 +8,6 @@ using Record;
 using ToastMessageSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.SceneManagement;
 
 namespace Pages {
     public class PlayPageParam {
@@ -33,18 +31,18 @@ namespace Pages {
                 Param.levelIndex = indicator.LevelIndex;
             }
             
-            Controller = StartGame(Param.levelIndex);
+            StartGame(Param.levelIndex);
             ApplyReadyBoosters(Param.selectedBoosters);
             WaitAndEndGameAsync().Forget();
         }
 
         public Controller StartGame(int levelIndex) {
-            var controller = new Controller();
-            controller.Listeners.Add(view);
+            Controller = new Controller();
+            Controller.Listeners.Add(view);
             var level = LevelLoader.GetLevel(levelIndex);
             
-            controller.StartGame(level);
-            return controller;
+            Controller.StartGame(level);
+            return Controller;
         }
 
         private void ApplyReadyBoosters(BoosterIndex[] selectedBoosters) {
@@ -53,6 +51,7 @@ namespace Pages {
                 switch (selectedBooster) {
                     case BoosterIndex.ReadyBoosterRocket:
                         Controller.InputAbility(new RocketAbility(Controller));
+                        Controller.UndoHandler.Reset();
                         break;
                     case BoosterIndex.ReadyBoosterExtraSlot:
                         Controller.AddExtraMemorySlot();
@@ -100,7 +99,7 @@ namespace Pages {
         public void OnClickUndo() {
             if (Controller != null) {
                 if (Controller.UndoHandler.IsEmpty()) {
-                    Debug.Log($"Is Empty");
+                    ToastMessage.Show("There is nothing to undo.");
                     return;
                 }
                 Controller.UndoHandler.Undo();
@@ -116,7 +115,7 @@ namespace Pages {
         }
 
         public void OnClickSetting() {
-            ToastMessage.Show("It will be implemented soon.");
+            ChangeTo(Page.MainPage);
         }
 
         #endregion // PlayBooster
@@ -138,11 +137,11 @@ namespace Pages {
             }
 
             if (Input.GetKeyDown(KeyCode.C)) {
-                Controller.ClearGame();
+                Controller?.ClearGame();
             }
 
             if (Input.GetKeyDown(KeyCode.F)) {
-                Controller.FailGame();
+                Controller?.FailGame();
             }
             
             if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -158,17 +157,16 @@ namespace Pages {
 
         #region CHEAT
 
-        private int levelIndexInput;
-        public string LevelIndexInput {
-            set {
-                if (int.TryParse(value, out var levelIndex)) {
-                    levelIndexInput = levelIndex;
-                }
-            }
+        public void OnClickPrev() {
+            StartGame(--Param.levelIndex);
+        }
+
+        public void OnClickNext() {
+            StartGame(++Param.levelIndex);
         }
         
         public void OnClickStartGame() {
-            StartGame(levelIndexInput);    
+            StartGame(Param.levelIndex);    
         }
 
         #endregion

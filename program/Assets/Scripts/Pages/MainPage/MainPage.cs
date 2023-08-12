@@ -12,6 +12,10 @@ namespace Pages {
 
         #region EVENT
 
+        public void OnClickCoinStatusBar() {
+            ToastMessage.Show("It will be implemented soon.");
+        }
+
         public void OnClickSetting() {
             ToastMessage.Show("It will be implemented soon.");
         }
@@ -40,6 +44,6 @@ namespace Pages {
                 CustomMouse.Show();
             }
         }
-    }
 #endif
+    }
 }
