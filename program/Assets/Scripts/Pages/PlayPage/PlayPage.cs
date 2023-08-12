@@ -1,5 +1,6 @@
 using System.Collections;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using GemMatch;
 using GemMatch.LevelEditor;
 using PagePopupSystem;
@@ -9,6 +10,7 @@ using ToastMessageSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Pages {
     public class PlayPageParam {
@@ -17,12 +19,20 @@ namespace Pages {
     }
     
     public class PlayPage : PageHandler {
-        [SerializeField] private View view;
+        [SerializeField] private View[] views;
         [SerializeField] private PlayBoosterUI[] playBoosters;
         
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
         public PlayPageParam Param { get; private set; }
+        
+        // 이 인덱스를 사용해 두 뷰를 번갈아가며 가져온다.
+        private int currentViewIndex;
+        public int CurrentViewIndex => currentViewIndex % 2;
+        public int OtherViewIndex => (currentViewIndex + 1) % 2;
+
+        public View CurrentView => views[CurrentViewIndex];
+        public View OtherView => views[OtherViewIndex];
 
         public override void OnWillEnter(object param) {
             Assert.IsTrue(param is PlayPageParam);
@@ -31,7 +41,7 @@ namespace Pages {
             if (FindObjectOfType<EditLevelIndicator>() is EditLevelIndicator indicator && indicator != null) {
                 Param.levelIndex = indicator.LevelIndex;
             }
-            
+
             StartGame(Param.levelIndex);
             ApplyReadyBoosters(Param.selectedBoosters);
             WaitAndEndGameAsync().Forget();
@@ -39,10 +49,23 @@ namespace Pages {
 
         public void StartGame(int levelIndex) {
             Controller = new Controller();
-            Controller.Listeners.Add(view);
+            Controller.Listeners.Add(CurrentView);
             var level = LevelLoader.GetLevel(levelIndex);
             
             Controller.StartGame(level);
+            ShowViewMoveAnimation();
+        }
+
+        private void ShowViewMoveAnimation() {
+            var currentViewRectTfm = CurrentView.transform as RectTransform;
+            var moveDistance = Screen.width + (76F * 4); // 대기하는 보드가 이전 보드를 가리지 않도록 패딩을 준다.
+            currentViewRectTfm!.anchoredPosition = Vector2.right * moveDistance;
+            currentViewRectTfm.DOAnchorPos(Vector2.zero, 0.4F).SetEase(Ease.OutBack).SetDelay(0.8F);
+            
+            var otherViewRectTfm = OtherView.transform as RectTransform;
+            if (otherViewRectTfm!.anchoredPosition.x < float.Epsilon) {
+                otherViewRectTfm.DOAnchorPos(Vector2.left * moveDistance, 0.4F).SetEase(Ease.OutBack).SetDelay(0.8F);
+            }
         }
 
         private void ApplyReadyBoosters(BoosterIndex[] selectedBoosters) {
@@ -70,8 +93,10 @@ namespace Pages {
                 PlayerInfo.HighestClearedLevelIndex++;
 
                 if (next) {
+                    currentViewIndex++;
                     Param.levelIndex = Mathf.Clamp(Param.levelIndex + 1, 0, LevelLoader.GetContainer().levels.Length - 1);
                     StartGame(Param.levelIndex);
+                    WaitAndEndGameAsync().Forget();
                 } else {
                     ChangeTo(Page.MainPage);
                 }

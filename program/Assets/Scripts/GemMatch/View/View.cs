@@ -78,10 +78,6 @@ namespace GemMatch {
             foreach (var memoryView in MemoryViews) {
                 memoryView.Initialize();
             }
-
-            var rectTfm = transform as RectTransform;
-            rectTfm!.anchoredPosition = Vector2.right * 700;
-            rectTfm.DOAnchorPos(Vector2.zero, 0.4F).SetEase(Ease.OutBack).SetDelay(0.8F);
         }
 
         public void OnClearGame(Mission[] missions) {

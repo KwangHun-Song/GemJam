@@ -39,16 +39,24 @@ namespace Pages {
 
         #endregion
 
-#if UNITY_EDITOR
         private void Update() {
             if (Input.GetKeyDown(KeyCode.F10)) {
                 CustomMouse.Show();
             }
 
+            if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+                Time.timeScale = Time.timeScale > 1 ? 1 : 0.1F;
+            }
+
+            if (Input.GetKeyDown(KeyCode.RightArrow)) {
+                Time.timeScale = Time.timeScale < 1 ? 1 : 10F;
+            }
+
+#if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.E)) {
                 SceneManager.LoadScene("EditScene");
             }
-        }
 #endif
+        }
     }
 }
