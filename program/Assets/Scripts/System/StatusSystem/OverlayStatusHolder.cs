@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using GemMatch;
 using PagePopupSystem;
@@ -26,7 +27,7 @@ namespace OverlayStatusSystem {
         }
 
         private void GetStable(Page currentPage) {
-            _coinStatus.gameObject.SetActive(true);
+            _coinStatus.gameObject.SetActive(currentPage != Page.EditPage);
             _missionStatus.gameObject.SetActive(currentPage == Page.PlayPage);
             _levelStatus.gameObject.SetActive(currentPage == Page.PlayPage);
         }
@@ -37,12 +38,24 @@ namespace OverlayStatusSystem {
             _missionStatus.AchieveMissionAsync(mission, changeCount).Forget();
         }
 
-        public void CollectMissionViewClones(EntityModel entityModel, GameObject entityViewGameObject) {
-            _missionStatus.CollectMissionViewClones(entityModel, entityViewGameObject);
+        public void CollectMissionByViewClone(EntityModel entityModel, GameObject entityViewGameObject) {
+            _missionStatus.CollectMissionByViewClones(entityModel, entityViewGameObject);
         }
 
         public void UpdateLevelStatus(Level currentLevel) {
             _levelStatus.UpdateLevel(PlayerInfo.HighestClearedLevelIndex + 1);
+        }
+
+        public void CollectCoin(int amount) {
+            _coinStatus.InputCoin(amount);
+        }
+
+        public void UpdateCoinByPlayerInfo() {
+            _coinStatus.GetCoin();
+        }
+
+        public Transform GetCoinStatusRoot() {
+            return _coinStatus.CoinRoot;
         }
     }
 }

@@ -205,8 +205,10 @@ namespace Pages {
             }
             
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                if (FindObjectOfType<EditPage>(true) != null) return;
-                ChangeTo(Page.MainPage);
+                if (FindObjectOfType<EditPage>(true) != null)
+                    ChangeTo(Page.EditPage);
+                else
+                    ChangeTo(Page.MainPage);
             }
         }
 

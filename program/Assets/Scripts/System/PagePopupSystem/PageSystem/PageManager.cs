@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace PagePopupSystem {
-    public enum Page { None, PlayPage, MainPage }
+    public enum Page { None, PlayPage, MainPage, EditPage }
     public class PageManager {
         private static Dictionary<Page, PageHandler> pages;
         public static Page CurrentPage { get; private set; }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using OverlayStatusSystem;
 using UnityEngine;
 
 namespace GemMatch {
@@ -34,12 +35,14 @@ namespace GemMatch {
             await UniTask.Delay(Random.Range(400, 1200));
             // 크래시 이펙트
             coinView.ShowCrashAsync().Forget();
-            
+
+            // 코인 하나당 1월씩 획득
+            OverlayStatusHelper.CollectCoin(1);
             // 날리기
-            coinView.transform.SetParent(coinTarget);
+            coinView.transform.SetParent(OverlayStatusHelper.GetCoinStatusRoot());
             await coinView.transform.DOLocalMove(Vector3.zero, 0.8F).SetEase(Ease.InBack, 2.5F).ToUniTask();
             
-            // TODO : 구현님, 콜백이 있으면 여기에 추가해주세요.
+            OverlayStatusHelper.UpdateCoinStatus();
             Object.DestroyImmediate(coinView.gameObject);
         }
     }

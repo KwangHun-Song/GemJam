@@ -16,6 +16,7 @@ namespace GemMatch {
         
         [Header("MonoBehaviour를 상속한 AbilityView들은 여기에!")]
         [SerializeField] private ShuffleAbilityView shuffleAbilityView;
+        [SerializeField] private MagneticAbilityView magneticAbilityView;
 
         private TileView[] tileViews;
         public TileView[] TileViews => tileViews ??= tileViewRoot.GetComponentsInChildren<TileView>();
@@ -30,6 +31,7 @@ namespace GemMatch {
 
         private Dictionary<AbilityIndex, IAbilityView> abilityViews;
         private Dictionary<AbilityIndex, IAbilityView> AbilityViews => abilityViews ??= new Dictionary<AbilityIndex, IAbilityView> {
+            { AbilityIndex.MagneticAbility, magneticAbilityView },
             { AbilityIndex.ShuffleAbility, shuffleAbilityView },
             { AbilityIndex.RocketAbility, new RocketAbilityView() },
         };

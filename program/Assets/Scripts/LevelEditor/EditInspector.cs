@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using PagePopupSystem;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -41,6 +42,10 @@ namespace GemMatch.LevelEditor {
         public void SetDirty() => EditorUtility.SetDirty(this.gameObject);
         private bool IsDirty() => EditorUtility.IsDirty(this.gameObject);
 #endif
+
+        private void Start() {
+            PageManager.ChangeTo(Page.EditPage);
+        }
 
         public void Initialize(IEditInspectorEventListener gameController) {
             this._contorller = gameController;

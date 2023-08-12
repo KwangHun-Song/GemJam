@@ -6,5 +6,6 @@ namespace GemMatch {
         ShuffleAbility,
         DestroyEntityOnTileAbility,
         DestroyEntityOnMemoryAbility,
+        DiscountMission
     }
 }

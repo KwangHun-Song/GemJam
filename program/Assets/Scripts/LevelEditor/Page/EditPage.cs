@@ -1,14 +1,12 @@
-using System;
 using System.Collections;
-using Cysharp.Threading.Tasks;
 using PagePopupSystem;
 using Pages;
+using Record;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace GemMatch.LevelEditor {
-    public class EditPage : MonoBehaviour {
+    public class EditPage : PageHandler {
         [SerializeField] private EditTool editTool;
         [SerializeField] private EditInspector editInspector;
         [SerializeField] private EditView editView;
@@ -46,18 +44,14 @@ namespace GemMatch.LevelEditor {
 
         private void InputKeyboard() {
             if (Input.GetKeyUp(KeyCode.A)) {
-                GoToPlayPageAsync().Forget();
-
-                async UniTask GoToPlayPageAsync() {
-                    SceneManager.LoadScene("Play");
-                    await UniTask.WaitUntil(() => SceneManager.GetActiveScene().name.Equals("Play"));
-                    await UniTask.DelayFrame(1); // Director에서 MainPage로 이동하는 것 무시
-                    PageManager.ChangeImmediately(Page.PlayPage, new PlayPageParam {
-                        levelIndex = editInspector.LevelIndex,
-                        selectedBoosters = Array.Empty<BoosterIndex>()
-                    });
-                }
+                PlayerInfo.HighestClearedLevelIndex = editInspector.LevelIndex;
+                ChangeTo(Page.PlayPage, new PlayPageParam {
+                    levelIndex = editInspector.LevelIndex,
+                    selectedBoosters = new BoosterIndex[0]{}
+                });
             }
         }
+
+        public override Page GetPageType() => Page.EditPage;
     }
 }

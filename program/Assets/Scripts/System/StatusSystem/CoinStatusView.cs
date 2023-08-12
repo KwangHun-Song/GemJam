@@ -1,30 +1,34 @@
 using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Record;
 using TMPro;
 using UnityEngine;
 
 namespace OverlayStatusSystem {
-    /// <summary>
-    /// canvas에 들어갈 클래스
-    /// </summary>
     public class CoinStatusView : OverlayStatusEvent<CoinOverlayStatus> {
         [SerializeField] private TMP_Text coin;
+        public Transform CoinRoot;
 
         private void Start() {
             OverlayStatusHelper.Init(new CoinOverlayStatus(this, OnCoin));
-            // go를 키로 coinparam을 모아서(list에 저장, input마다) save(go를 키)할때 저장 record에 걸린 값으로 트리거
+            coin.text = $"{Wallet.GetItemCount(Item.Coin)}";
         }
 
-        public async UniTaskVoid GetCoin(int amount) {
-            await Get<int>(amount);
+        public void InputCoin(int amount) {
+            OverlayStatusHelper.Input(this, new OverlayStatusParam(amount));
         }
 
-        public override UniTask Animate() {
-            return base.Animate();  // 몬가 애니메이션 연출을 여기 넣는다
+        public async UniTaskVoid GetCoin() {
+            OverlayStatusHelper.Save(this);
         }
 
         private void OnCoin(int value) {
+            if (int.TryParse(coin.text, out int coinCache)) {
+                DOTween.To(() => coinCache, x => coinCache = x, value, 0.5f).OnUpdate(() => coin.text = $"{coinCache}");
+                return;
+            }
+
             coin.text = $"{value}";
         }
     }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Cysharp.Threading.Tasks;
 
 namespace GemMatch {
     /// <summary>
@@ -10,6 +12,7 @@ namespace GemMatch {
         public bool Found { get; set; }
         public IEnumerable<Entity> EntitiesInMemory { get; private set; }
         public IEnumerable<Tile> TilesToHit { get; private set; }
+        public Mission TargetMission { get; private set; }
 
         public MagneticAbility(Controller controller) : base(null, controller) { }
     
@@ -44,6 +47,15 @@ namespace GemMatch {
                 EntitiesInMemory = memoryEntities;
                 TilesToHit = tiles.Where(t => t.Piece.Color == color).Shuffle().Take(3 - memoryEntities.Count).ToList();
 
+                TargetMission = new Mission() {
+                    entity = new EntityModel() {
+                        color = color,
+                        index = EntityIndex.NormalPiece,
+                        layer = Layer.Piece
+                    },
+                    count = 3,
+                };
+
                 Found = true;
                 return;
             }
@@ -63,6 +75,8 @@ namespace GemMatch {
                     yield return new DestroyEntityOnTileAbility(tile, Controller, entity);
                 }
             }
+
+            yield return new DiscountMissionAbility(Controller, TargetMission);
         }
     }
 }
