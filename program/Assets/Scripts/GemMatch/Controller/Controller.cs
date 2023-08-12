@@ -157,12 +157,11 @@ namespace GemMatch {
             
             // 활성화된 타일들을 다시 계산한다.
             CalculateActiveTiles();
+
+            CheckAndDestroyGoalPiece();
             
             // 메모리에서 같은 색깔 세 개가 있을 경우 파괴한다.
             TryRemoveFromMemory(piece);
-
-            // mission count를 깍는다
-            // CheckAndReduceMissionCount(piece);
         }
 
         public void SplashHit(Tile targetTile, bool triggeredByPrev = false) {
@@ -234,18 +233,7 @@ namespace GemMatch {
             var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model))
                           ?? Missions.SingleOrDefault(m => m.entity.index == EntityIndex.NormalPiece && m.entity.color == ColorIndex.All);
             if (mission != null) {
-                UndoHandler.Do(new Command<Mission>(
-                    @do: () => {
-                        mission.count -= 3;
-                        foreach (var listener in Listeners) listener.OnChangeMission(mission, mission.count);
-                    }, 
-                    undo: addedMission => {
-                        addedMission.count += 3;
-                        foreach (var listener in Listeners) listener.OnChangeMission(addedMission, addedMission.count);
-                    }, 
-                    param: mission,
-                    triggeredByPrev:true
-                ));
+                UndoHandler.Do(new MissionCommand(this, mission, 3, true));
             }
 
             return true;
@@ -254,6 +242,21 @@ namespace GemMatch {
         public void CalculateActiveTiles() {
             ActiveTiles = Tiles.Where(CanTouch).ToList();
             foreach (var listener in Listeners) listener.OnAddActiveTiles(ActiveTiles);
+        }
+
+        private void CheckAndDestroyGoalPiece() {
+            if (ActiveTiles.Any(t => t.Piece is GoalPiece) == false) return;
+            foreach (var entity in ActiveTiles.SelectMany(t => t.Entities.Values).Where(e => e is GoalPiece)) {
+                var goalPiece = (GoalPiece)entity;
+                var tile = GetTile(goalPiece);
+                
+                UndoHandler.Do(new HitCommand(this, tile, goalPiece, true));
+
+                var mission = Missions.SingleOrDefault(m => m.entity.index == EntityIndex.GoalPiece);
+                if (mission == null) return;
+
+                UndoHandler.Do(new MissionCommand(this, mission, 1, true));
+            }
         }
     }
 }
