@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 4855293478958523702}
   - component: {fileID: 7626672321704383868}
   - component: {fileID: 6967440517822625548}
+  - component: {fileID: 6884013741251677197}
   m_Layer: 5
   m_Name: PlayView
   m_TagString: Untagged
@@ -155,6 +156,7 @@ MonoBehaviour:
   extraSlot: {fileID: 5807709478145045064}
   viewScaler: {fileID: 6967440517822625548}
   shuffleAbilityView: {fileID: 7626672321704383868}
+  magneticAbilityView: {fileID: 6884013741251677197}
 --- !u!114 &7626672321704383868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,6 +183,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 3888898928195712540}
+--- !u!114 &6884013741251677197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4855293478958523700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87f124dbcac14d8bb6fa91ef1a72b93c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4855293479190244364
 GameObject:
   m_ObjectHideFlags: 0
