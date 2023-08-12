@@ -57,7 +57,9 @@ namespace OverlayStatusSystem {
             if (missionStatusViews.Count == 0) return;
             var targetView = missionStatusViews.SingleOrDefault(m => m.mission.Equals(targetMission));
             if (targetView == null) return;
-            await UniTask.WaitUntil(()=> collectionPool.ContainsKey(targetView));
+            await UniTask.WhenAny(
+                UniTask.WaitUntil(() => collectionPool.ContainsKey(targetView)),
+                UniTask.DelayFrame(20));
             await AnimateMissionPoolAsync(targetView);
             await targetView.GetMissionAsync(targetMission, changeCount);
         }

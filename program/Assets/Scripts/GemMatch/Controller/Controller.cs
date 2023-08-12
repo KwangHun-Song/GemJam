@@ -248,7 +248,7 @@ namespace GemMatch {
                         ?? Missions.SingleOrDefault(m => m.entity.index == EntityIndex.NormalPiece && m.entity.color == entityModel.color)
                         ?? Missions.SingleOrDefault(m => m.entity.index == EntityIndex.NormalPiece && m.entity.color == ColorIndex.All);
             if (mission != null) {
-                UndoHandler.Do(new MissionCommand(this, mission, 3, true));
+                UndoHandler.Do(new MissionCommand(this, mission, discount, true));
             }
         }
 
