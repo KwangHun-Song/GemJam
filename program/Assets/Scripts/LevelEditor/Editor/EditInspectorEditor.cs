@@ -78,10 +78,20 @@ namespace GemMatch.LevelEditor {
             EditorGUILayout.EndHorizontal();
 
             // Load
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Prev")) {
+                inspector.PrevLevel();
+                UpdateFields(inspector);
+            }
             if (GUILayout.Button("Load")) {
                 inspector.LoadLevel(inspector.LevelIndex);
                 UpdateFields(inspector);
             }
+            if (GUILayout.Button("Next")) {
+                inspector.NextLevel();
+                UpdateFields(inspector);
+            }
+            EditorGUILayout.EndHorizontal();
 
             // 보드에 Gem 갯수
             GUIContent gemCountTitle = new GUIContent("Gem Count");

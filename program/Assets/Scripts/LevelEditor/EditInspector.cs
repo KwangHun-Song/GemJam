@@ -31,7 +31,9 @@ namespace GemMatch.LevelEditor {
 
         public void RefreshGemCount() {
             this.GemCount = _contorller.CurrentLevel.tiles
-                .Where(t => t.EntityDict.ContainsKey(Layer.Piece) || t.EntityDict.ContainsKey(Layer.Cover))
+                .Where(t=>t.entityModels.Count > 0)
+                .Select(t => t.EntityDict[Layer.Piece])
+                .Where(t=>ModelTemplates.AllColors.Contains(t.Color))
                 .Count();
         }
 
@@ -54,6 +56,16 @@ namespace GemMatch.LevelEditor {
             OnLoadLevel?.Invoke(this);
             LevelIndex = lastIndex;
             RefreshGemCount();
+        }
+
+        public void NextLevel() {
+            if (LevelLoader.GetContainer().levels.Length <= LevelIndex) return;
+            LoadLevel(LevelIndex + 1);
+        }
+
+        public void PrevLevel() {
+            if (LevelIndex <= 0) return;
+            LoadLevel(LevelIndex - 1);
         }
 
         public void NewLevel() {
