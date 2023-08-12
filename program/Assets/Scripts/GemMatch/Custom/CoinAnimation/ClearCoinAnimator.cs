@@ -31,13 +31,13 @@ namespace GemMatch {
 
         private async UniTask ShowCrashAndMoveAsync(CoinBonus coinView, Transform coinTarget) {
             // 출발을 랜덤으로 하도록 랜덤 딜레이를 추가
-            await UniTask.Delay(Random.Range(0, 800));
+            await UniTask.Delay(Random.Range(400, 1200));
             // 크래시 이펙트
-            await coinView.ShowCrashAsync();
+            coinView.ShowCrashAsync().Forget();
             
             // 날리기
             coinView.transform.SetParent(coinTarget);
-            await coinView.transform.DOLocalMove(Vector3.zero, 1F).SetEase(Ease.InBack, 2).ToUniTask();
+            await coinView.transform.DOLocalMove(Vector3.zero, 0.8F).SetEase(Ease.InBack, 2.5F).ToUniTask();
             
             // TODO : 구현님, 콜백이 있으면 여기에 추가해주세요.
             Object.DestroyImmediate(coinView.gameObject);
