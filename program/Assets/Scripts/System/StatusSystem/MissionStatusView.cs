@@ -11,27 +11,35 @@ namespace OverlayStatusSystem {
         [SerializeField] private TMP_Text txtCount;
         [SerializeField] private Image imgMission;
         [SerializeField] private Sprite[] sprites;
+        [SerializeField] private ParticleSystem crashParticle;
+        public Transform collectionRoot;
 
-        private Mission mission;
+        public Mission mission;
         private EntityModel targetEntityModel;
 
-        public async UniTaskVoid GetMissionAsync(Mission mission, int changeCount) {
-            if (IsMyModel(mission.entity) == false) return;
-            // input 되는 대상을 나중에 OnSave 시 OnMission 매개변수로 넘긴다
+        public void InputMission(EntityModel targetEntity, GameObject targetMold) {
+            if (IsMyModel(targetEntity) == false) return;
+
+            // input
             object param = new ArrayList(){
-                mission.entity.Clone(),
-                changeCount
+                targetEntity.Clone(),
+                1
             };
             OverlayStatusHelper.Input(this, new OverlayStatusParam(param));
-            await UniTask.Delay(1000); // / 몬가 애니메이션 연출을 여기 넣는다
+        }
+
+        public async UniTask GetMissionAsync(Mission targetMission, int changeCount) {
+            if (IsMyModel(targetMission.entity) == false) return;
+            crashParticle.Play();
             OverlayStatusHelper.Save(this);
+            txtCount.text = $"{changeCount}";
         }
 
         public void OnMission(ArrayList missionParam) {
             var entityModel = (EntityModel)missionParam[0];
-            var changeCount = (int)missionParam[1];
+            var reduceCount = (int)missionParam[1]; // 1이 들어온다
             if (IsMyModel(entityModel) == false) return;
-            this.mission.count = changeCount;
+            this.mission.count -= reduceCount;
             txtCount.text = $"{this.mission.count}";
         }
 
@@ -59,7 +67,9 @@ namespace OverlayStatusSystem {
         }
 
         public class MissionOverlayStatus : OverlayStatus<ArrayList> {
+            private MissionStatusView missionStatusView;
             public MissionOverlayStatus(IOverlayStatusEvent missionStatusView, Action<ArrayList> onMission) : base(missionStatusView, onMission) {
+                this.missionStatusView = (MissionStatusView)missionStatusView;
             }
 
             public override void Save() {
