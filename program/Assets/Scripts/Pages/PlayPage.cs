@@ -8,6 +8,7 @@ using Record;
 using ToastMessageSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 
 namespace Pages {
     public class PlayPageParam {
@@ -142,6 +143,10 @@ namespace Pages {
 
             if (Input.GetKeyDown(KeyCode.F)) {
                 Controller?.FailGame();
+            }
+
+            if (Input.GetKeyDown(KeyCode.E)) {
+                SceneManager.LoadScene("EditScene");
             }
             
             if (Input.GetKeyDown(KeyCode.Escape)) {

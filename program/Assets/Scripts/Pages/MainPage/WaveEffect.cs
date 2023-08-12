@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -38,6 +37,7 @@ namespace Pages {
         }
 
         private void PutBack() {
+            if (!transform) return;
             transform.SetParent(startPoint);
             transform.localPosition = Vector3.zero;
             transform.SetParent(endPoint);
@@ -46,7 +46,6 @@ namespace Pages {
 
         public void StopEffect() {
             DOTween.Kill(GetInstanceID());
-            PutBack();
         }
     }
 }

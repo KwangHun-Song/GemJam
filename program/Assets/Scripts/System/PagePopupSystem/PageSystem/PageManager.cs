@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace PagePopupSystem {
@@ -17,6 +18,7 @@ namespace PagePopupSystem {
             .ToDictionary(page => page.GetPageType());
 
         public static void ChangeImmediately(Page pageType, object param = null) {
+            if (CurrentPage != Page.None) Pages[CurrentPage].gameObject.SetActive(false);
             var nextPage = Pages[pageType];
             nextPage.gameObject.SetActive(true);
             nextPage.OnWillEnter(param);
@@ -28,7 +30,7 @@ namespace PagePopupSystem {
             
             if (CurrentPage != Page.None) {
                 await FadeOutHelper.FadeOut();
-                pages[CurrentPage].gameObject.SetActive(false);
+                Pages[CurrentPage].gameObject.SetActive(false);
             }
             
             var nextPage = Pages[pageType];
@@ -42,13 +44,15 @@ namespace PagePopupSystem {
             await FadeOutHelper.FadeIn();
         }
 
-        public static void RemovePage(Page pageType) => pages.Remove(pageType);
+        public static void RemovePage(Page pageType) => Pages.Remove(pageType);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void InitializePages() {
             foreach (var kvp in Pages) {
                 kvp.Value.gameObject.SetActive(false);
             }
+
+            SceneManager.activeSceneChanged += (_, _) => { pages = null; };
         }
     }
 }

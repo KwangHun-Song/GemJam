@@ -5,6 +5,7 @@ using Record;
 using ToastMessageSystem;
 using UnityEngine;
 using Utility.CustomMouse;
+using UnityEngine.SceneManagement;
 
 namespace Pages {
     public class MainPage : PageHandler {
@@ -42,6 +43,10 @@ namespace Pages {
         private void Update() {
             if (Input.GetKeyDown(KeyCode.F10)) {
                 CustomMouse.Show();
+            }
+
+            if (Input.GetKeyDown(KeyCode.E)) {
+                SceneManager.LoadScene("EditScene");
             }
         }
 #endif

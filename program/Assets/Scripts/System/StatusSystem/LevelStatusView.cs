@@ -38,7 +38,7 @@ namespace OverlayStatusSystem {
             levelNumber.text = $"{stage}";
             for (var i = 0; i < levelIndexerRoots.Length; i++) {
                 var root = levelIndexerRoots[i];
-                root.SetActive(i == PlayerInfoIndex);
+                if (root) root.SetActive(i == PlayerInfoIndex);
             }
             await base.Get<int>(PlayerInfoIndex + 1);
         }
