@@ -91,11 +91,11 @@ namespace GemMatch {
             var crashEffect = Instantiate(Resources.Load<GameObject>(effectName), transform.parent);
             crashEffect.transform.position = transform.position;
             DestroyImmediate(gameObject);
-            await DestroyEffectAsync();
+            DestroyEffectAsync().Forget();
 
             async UniTask DestroyEffectAsync() {
-                Destroy(crashEffect.gameObject, 2000);
-                await UniTask.Delay(200);
+                await UniTask.Delay(2000);
+                DestroyImmediate(crashEffect.gameObject);
             }
         }
     }

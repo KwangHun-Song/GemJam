@@ -1,4 +1,5 @@
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using GemMatch;
 using PagePopupSystem;
 using Record;
@@ -32,8 +33,12 @@ namespace OverlayStatusSystem {
 
         public void InitializeMission(Mission[] targetMissions) => _missionStatus.InitializeMissions(targetMissions);
 
-        public void AchieveMissionCount(Mission mission, int changeCount) {
-            _missionStatus.AchieveMission(mission, changeCount);
+        public void UpdateMissionCount(Mission mission, int changeCount) {
+            _missionStatus.AchieveMissionAsync(mission, changeCount).Forget();
+        }
+
+        public void CollectMissionViewClones(EntityModel entityModel, GameObject entityViewGameObject) {
+            _missionStatus.CollectMissionViewClones(entityModel, entityViewGameObject);
         }
 
         public void UpdateLevelStatus(Level currentLevel) {

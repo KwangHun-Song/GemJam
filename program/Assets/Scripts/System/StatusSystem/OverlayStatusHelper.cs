@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using GemMatch;
+using UnityEngine;
 
 namespace OverlayStatusSystem {
     public static class OverlayStatusHelper {
@@ -21,8 +22,12 @@ namespace OverlayStatusSystem {
             OverlayStatusHolder.Instance.InitializeMission(targetMissions);
         }
 
+        public static void CollectMissionViewClones(EntityModel entityModel, GameObject entityViewGameObject) {
+            OverlayStatusHolder.Instance.CollectMissionViewClones(entityModel, entityViewGameObject);
+        }
+
         public static void UpdateMissionCount(Mission mission, int changeCount) {
-            OverlayStatusHolder.Instance.AchieveMissionCount(mission, changeCount);
+            OverlayStatusHolder.Instance.UpdateMissionCount(mission, changeCount);
         }
 
         public static void UpdateLevelStatus(Level currentLevel) {
