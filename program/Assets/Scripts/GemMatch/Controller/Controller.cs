@@ -32,13 +32,13 @@ namespace GemMatch {
             OverlayStatusHelper.InitializeMissionsAsync(Missions).Forget();
             OverlayStatusHelper.UpdateLevelStatus(CurrentLevel);
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
-            if (isReplay == false) {
+            if (isReplay) {
+                UndoHandler.Reset();
+                RemoveExtraMemorySlot();
+            } else {
                 PathFinder = new PathFinder(Tiles);
                 ColorDistributor = new ClearableColorDistributor();
                 UndoHandler = new UndoHandler();
-            } else {
-                UndoHandler.Reset();
-                RemoveExtraMemorySlot();
             }
 
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.

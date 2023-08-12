@@ -94,40 +94,49 @@ namespace GemMatch {
             }
         }
 
-        public void DrawEdges(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {
+        public void DrawEdges(Tile[] controllerTiles) {
             if (Tile.IsOpened) {
                 foreach (var edge in edges.Concat(points)) {
                     edge.SetActive(false);
                 }
                 return;
             }
-            var adjacentTiles = adjacentTilesCall.Invoke(Tile, controllerTiles);
-            var direction = Enumerable.Repeat(false, 4).ToArray(); // up, down, left, right
-            var showUpEdge = direction[0];
-            var showDownEdge = direction[1];
-            var showLeftEdge = direction[2];
-            var showRightEdge = direction[3];
+            
+            var adjTiles = TileUtility.GetAdjacentWithDiagonalTiles(Tile, controllerTiles);
+
+            var showUpEdge = adjTiles.Up?.IsOpened == false;
+            var showDownEdge = adjTiles.Down?.IsOpened == false;
+            var showLeftEdge = adjTiles.Left?.IsOpened == false;
+            var showRightEdge = adjTiles.Right?.IsOpened == false;
             
             showLeftEdge |= Tile.X == 0;
             showRightEdge |= Tile.X == Constants.Width - 1;
-            foreach (var neighbor in adjacentTiles) {
-                if (neighbor.X == Tile.X) {
-                    showUpEdge |= neighbor.Y > Tile.Y && neighbor.IsOpened == false;
-                    showDownEdge |= neighbor.Y < Tile.Y && neighbor.IsOpened == false;
-                } else if (neighbor.Y == Tile.Y) {
-                    showLeftEdge |= neighbor.X < Tile.X && neighbor.IsOpened == false;
-                    showRightEdge |= neighbor.X > Tile.X && neighbor.IsOpened == false;
-                }
-            }
 
             edges[0].SetActive(showUpEdge);
             edges[1].SetActive(showDownEdge);
             edges[2].SetActive(showLeftEdge);
             edges[3].SetActive(showRightEdge);
-            points[0].SetActive(showLeftEdge && showUpEdge);
-            points[1].SetActive(showLeftEdge && showDownEdge);
-            points[2].SetActive(showRightEdge && showUpEdge);
-            points[3].SetActive(showRightEdge && showDownEdge);
+
+            var showLUPoint = adjTiles.Left?.IsOpened == false && 
+                              adjTiles.Up?.IsOpened == false &&
+                              adjTiles.LeftUp?.IsOpened == false;
+            var showLDPoint = adjTiles.Left?.IsOpened == false && 
+                              adjTiles.Down?.IsOpened == false &&
+                              adjTiles.LeftDown?.IsOpened == false;
+            var showRUPoint = adjTiles.Right?.IsOpened == false && 
+                              adjTiles.Up?.IsOpened == false &&
+                              adjTiles.RightUp?.IsOpened == false;
+            var showRDPoint = adjTiles.Right?.IsOpened == false && 
+                              adjTiles.Down?.IsOpened == false &&
+                              adjTiles.RightDown?.IsOpened == false;
+
+            showLDPoint |= Tile.X == 0 && Tile.Y > 0;
+            showRDPoint |= Tile.X == Constants.Width - 1 && Tile.Y > 0;
+            
+            points[0].SetActive(showLUPoint);
+            points[1].SetActive(showLDPoint);
+            points[2].SetActive(showRUPoint);
+            points[3].SetActive(showRDPoint);
         }
     }
 }

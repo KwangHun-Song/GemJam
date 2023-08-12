@@ -264,7 +264,7 @@ namespace GemMatch {
 
         private void DrawEdges() {
             foreach(var tileView in TileViews) {
-                tileView.DrawEdges(TileUtility.GetAdjacentTiles, Controller.Tiles);
+                tileView.DrawEdges(Controller.Tiles);
             }
         }
 
