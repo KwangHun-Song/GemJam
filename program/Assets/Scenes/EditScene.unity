@@ -140,6 +140,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 893152601481527872, guid: 05b2b06ebf99e44ffbab8c0c4c9dea39, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 14.999977
+      objectReference: {fileID: 0}
     - target: {fileID: 1010272404303404097, guid: 05b2b06ebf99e44ffbab8c0c4c9dea39, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -3047,6 +3051,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7945987127238696326, guid: ab6b0e4e0f58a482fba087394c8b77a8, type: 3}
+      propertyPath: coinAnimationTarget
+      value: 
+      objectReference: {fileID: 883616788}
     - target: {fileID: 7945987127540113237, guid: ab6b0e4e0f58a482fba087394c8b77a8, type: 3}
       propertyPath: m_Camera
       value: 
@@ -5094,6 +5102,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 748289681}
   m_CullTransparentMesh: 1
+--- !u!224 &883616788 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7085742666562020360, guid: 05b2b06ebf99e44ffbab8c0c4c9dea39, type: 3}
+  m_PrefabInstance: {fileID: 77836126}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1334378755 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3067594976411479797, guid: 37bcf212a07ca462ba4fe56c9b0775b2, type: 3}
