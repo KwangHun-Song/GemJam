@@ -38,7 +38,7 @@ namespace Popups {
                 booster.isOn = false;
             }
             selectedBoosters.Clear();
-            titleText.text = $"Level {PlayerInfo.HighestClearedLevelIndex + 2}";
+            titleText.text = $"Level {PlayerInfo.HighestClearedLevelIndex + 1}";
         }
 
         public void OnClickPlay() {
