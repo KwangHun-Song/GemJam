@@ -76,15 +76,20 @@ namespace GemMatch {
             if (SceneManager.GetActiveScene().name.Equals("EditScene")) return;
 #endif
             if (View.IsRightTopTileOf4ClosedTiles(Tile)) {
-                if (Random.Range(0, 4) != 0) return;
+                if (Random.Range(0, 10) != 0) return;
                 smallDeco.gameObject.SetActive(false);
                 bigDego.gameObject.SetActive(true);
-                bigDego.sprite = randomBackgroundSprites[Random.Range(3, 5)];
+                if (Random.Range(0, 5) != 0) {
+                    bigDego.sprite = randomBackgroundSprites[4];
+                } else {
+                    // 뼈다귀는 나올 확률을 더 낮춘다. 극한의 확률
+                    bigDego.sprite = randomBackgroundSprites[3];
+                }
                 bigDego.transform.localScale = Vector3.one * Random.Range(0.6F, 1F);
                 bigDego.transform.eulerAngles = Vector3.forward * Random.Range(0F, 360F);
                 IsShowingDeco = true;
             } else if (Tile.IsOpened == false) {
-                if (Random.Range(0, 8) != 0) return;
+                if (Random.Range(0, 6) != 0) return;
                 bigDego.gameObject.SetActive(false);
                 smallDeco.gameObject.SetActive(true);
                 smallDeco.sprite = randomBackgroundSprites[Random.Range(0, 3)];
