@@ -54,13 +54,22 @@ namespace Pages {
             clearRibbonAnimator.gameObject.SetActive(false);
         }
 
-        public void StartGame(int levelIndex) {
+        public void StartGame(int levelIndex, bool ignoreAnimation = false) {
             Controller = new Controller();
             Controller.Listeners.Add(CurrentView);
             var level = LevelLoader.GetLevel(levelIndex);
             
             Controller.StartGame(level);
-            ShowViewMoveAnimation();
+            if (ignoreAnimation) {
+                ShowViewImmediately();
+            } else {
+                ShowViewMoveAnimation();
+            }
+        }
+
+        private void ShowViewImmediately() {
+            (CurrentView.transform as RectTransform)!.anchoredPosition = Vector2.zero;
+            (OtherView.transform as RectTransform)!.anchoredPosition = Vector2.left * (Screen.width + (76F * 4));
         }
 
         private void ShowViewMoveAnimation() {
@@ -200,24 +209,19 @@ namespace Pages {
                 ChangeTo(Page.MainPage);
             }
         }
-        
-
-        private void GoBackToEditMode() {
-            Destroy(this.gameObject);
-        }
 
         #region CHEAT
 
         public void OnClickPrev() {
-            StartGame(--Param.levelIndex);
+            StartGame(--Param.levelIndex, true);
         }
 
         public void OnClickNext() {
-            StartGame(++Param.levelIndex);
+            StartGame(++Param.levelIndex, true);
         }
         
         public void OnClickStartGame() {
-            StartGame(Param.levelIndex);    
+            StartGame(Param.levelIndex, true);    
         }
 
         #endregion
