@@ -10,7 +10,6 @@ using ToastMessageSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace Pages {
     public class PlayPageParam {
@@ -21,6 +20,7 @@ namespace Pages {
     public class PlayPage : PageHandler {
         [SerializeField] private View[] views;
         [SerializeField] private PlayBoosterUI[] playBoosters;
+        [SerializeField] private Transform coinAnimationTarget;
         
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
@@ -87,6 +87,9 @@ namespace Pages {
             await UniTask.Yield();
             var gameResult = await Controller.WaitUntilGameEnd();
             if (gameResult == GameResult.Clear) {
+                // 코인 생성 후 날아가는 연출을 대기한다. 그 후 클리어팝업을 띄운다.
+                await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews, coinAnimationTarget);
+                
                 var next = await PopupManager.ShowAsync<bool>(nameof(ClearPopup), Param.levelIndex + 1);
 
                 // 클리어 데이터 저장
