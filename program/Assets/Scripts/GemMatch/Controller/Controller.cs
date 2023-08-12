@@ -32,11 +32,12 @@ namespace GemMatch {
             OverlayStatusHelper.InitializeMissionsAsync(Missions).Forget();
             OverlayStatusHelper.UpdateLevelStatus(CurrentLevel);
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
+            PathFinder = new PathFinder(Tiles);
+            
             if (isReplay) {
                 UndoHandler.Reset();
                 RemoveExtraMemorySlot();
             } else {
-                PathFinder = new PathFinder(Tiles);
                 ColorDistributor = new ClearableColorDistributor();
                 UndoHandler = new UndoHandler();
             }

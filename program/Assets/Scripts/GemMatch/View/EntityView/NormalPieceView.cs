@@ -24,6 +24,7 @@ namespace GemMatch {
         private static readonly int Crash = Animator.StringToHash("crash");
         
         public bool OnCrashAnimation { get; private set; }
+        private bool OnShowingActive { get; set; }
 
         public async override UniTask OnCreate() {
             Redraw();
@@ -68,11 +69,13 @@ namespace GemMatch {
         }
 
         public async UniTask OnActive(bool isActive) {
+            OnShowingActive = isActive;
             SetOnMemoryUI(false);
             SetCanTouchUI(isActive || OnCrashAnimation);
         }
 
         public void OnPointerEnter(PointerEventData eventData) {
+            if (OnShowingActive == false) return;
             animator.SetTrigger(On);
         }
 
