@@ -26,12 +26,6 @@ namespace OverlayStatusSystem {
             }
         }
 
-        private void OnEnable() {
-            // levelNumber.text = $"{PlayerInfo.HighestClearedLevelIndex + 1}";
-            // stageIndex = PlayerInfoIndex;
-        }
-
-
         private int currentStage = 0;
         public async UniTaskVoid UpdateLevel(int stage) {
             currentStage = stage;

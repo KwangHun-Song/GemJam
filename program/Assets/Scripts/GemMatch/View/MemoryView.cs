@@ -44,7 +44,7 @@ namespace GemMatch {
             if (EntityView == null) return;
 
             if (destroy) {
-                OverlayStatusHelper.CollectMissionViewClones(EntityModel, EntityView.gameObject);
+                OverlayStatusHelper.CollectMissionByViewClone(EntityModel, EntityView.gameObject);
                 await EntityView.DestroyAsync(immediately);
             }
 

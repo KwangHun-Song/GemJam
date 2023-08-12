@@ -12,21 +12,11 @@ namespace OverlayStatusSystem {
         [SerializeField] private Image imgMission;
         [SerializeField] private Sprite[] sprites;
         [SerializeField] private ParticleSystem crashParticle;
+        [SerializeField] private GameObject normalPiecePrefab;
         public Transform collectionRoot;
 
         public Mission mission;
         private EntityModel targetEntityModel;
-
-        public void InputMission(EntityModel targetEntity, GameObject targetMold) {
-            if (IsMyModel(targetEntity) == false) return;
-
-            // input
-            object param = new ArrayList(){
-                targetEntity.Clone(),
-                1
-            };
-            OverlayStatusHelper.Input(this, new OverlayStatusParam(param));
-        }
 
         public async UniTask GetMissionAsync(Mission targetMission, int changeCount) {
             if (IsMyModel(targetMission.entity) == false) return;

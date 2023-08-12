@@ -38,8 +38,7 @@ namespace OverlayStatusSystem {
             missionStatusViews.Clear();
         }
 
-
-        public void CollectMissionViewClones(EntityModel targetEntity, GameObject targetMold) {
+        public void CollectMissionByViewClones(EntityModel targetEntity, GameObject targetMold) {
             if (missionStatusViews.Count == 0) return;
             var statusView = missionStatusViews!.SingleOrDefault(m=>m.mission.entity.index == targetEntity.index && m.mission.entity.color == targetEntity.color);
             if (statusView != null) {
@@ -75,6 +74,7 @@ namespace OverlayStatusSystem {
                 task[i] = AnimateAsync(clone, clone.transform.position, statusView.collectionRoot.position);
             }
             await UniTask.WhenAll(task);
+            if (collectionPool.ContainsKey(statusView) == false) return;
             foreach (var clone in collectionPool[statusView]) {
                 DestroyImmediate(clone);
             }
