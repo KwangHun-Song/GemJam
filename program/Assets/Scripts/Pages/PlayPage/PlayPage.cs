@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using GemMatch;
@@ -10,6 +11,7 @@ using ToastMessageSystem;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using Utility;
 
 namespace Pages {
     public class PlayPageParam {
@@ -21,6 +23,7 @@ namespace Pages {
         [SerializeField] private View[] views;
         [SerializeField] private PlayBoosterUI[] playBoosters;
         [SerializeField] private Transform coinAnimationTarget;
+        [SerializeField] private Animator clearRibbonAnimator;
         
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
@@ -28,6 +31,8 @@ namespace Pages {
         
         // 이 인덱스를 사용해 두 뷰를 번갈아가며 가져온다.
         private int currentViewIndex;
+        private static readonly int On = Animator.StringToHash("on");
+        private static readonly int Off = Animator.StringToHash("off");
         public int CurrentViewIndex => currentViewIndex % 2;
         public int OtherViewIndex => (currentViewIndex + 1) % 2;
 
@@ -45,6 +50,8 @@ namespace Pages {
             StartGame(Param.levelIndex);
             ApplyReadyBoosters(Param.selectedBoosters);
             WaitAndEndGameAsync().Forget();
+            
+            clearRibbonAnimator.gameObject.SetActive(false);
         }
 
         public void StartGame(int levelIndex) {
@@ -87,6 +94,9 @@ namespace Pages {
             await UniTask.Yield();
             var gameResult = await Controller.WaitUntilGameEnd();
             if (gameResult == GameResult.Clear) {
+                // 먼저 클리어리본을 보여준다.
+                await ShowClearRibbonAsync();
+                
                 // 코인 생성 후 날아가는 연출을 대기한다. 그 후 클리어팝업을 띄운다.
                 await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews, coinAnimationTarget);
                 
@@ -115,6 +125,15 @@ namespace Pages {
                     ChangeTo(Page.MainPage);
                 }
             }
+        }
+
+        private async UniTask ShowClearRibbonAsync() {
+            clearRibbonAnimator.gameObject.SetActive(true);
+            clearRibbonAnimator.SetTrigger(On);
+            await clearRibbonAnimator.WaitForCurrentClip();
+            clearRibbonAnimator.SetTrigger(Off);
+            await clearRibbonAnimator.WaitForCurrentClip();
+            clearRibbonAnimator.gameObject.SetActive(false);
         }
 
         #region PlayBooster
