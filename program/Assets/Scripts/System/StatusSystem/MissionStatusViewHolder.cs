@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using GemMatch;
 using UnityEngine;
 
@@ -8,11 +10,16 @@ namespace OverlayStatusSystem {
         [SerializeField] private GameObject missionPrefab;
         [SerializeField] private List<MissionStatusView> missions;
 
+        private void OnEnable() {
+            Instance = this;
+        }
+
         private void OnDisable() {
             foreach (MissionStatusView view in missions) {
                 Destroy(view.gameObject);
             }
             missions.Clear();
+            Instance = null;
         }
 
         public void InitializeMissions(Mission[] targetMissions) {
@@ -28,6 +35,16 @@ namespace OverlayStatusSystem {
             foreach (var view in missions) {
                 view.GetMissionAsync(mission, changeCount).Forget();
             }
+        }
+
+        private static MissionStatusViewHolder Instance = null;
+        public static Transform GetMissionStatusViewPosition(EntityModel targetEntity) {
+            if (Instance == null || Instance.missions.Count == 0) return null;
+
+            var statusView = Instance!.missions!.SingleOrDefault(m=>m.mission.entity.index == targetEntity.index && m.mission.entity.color == targetEntity.color);
+
+            if (statusView == null) return null;
+            return statusView.transform;
         }
     }
 }

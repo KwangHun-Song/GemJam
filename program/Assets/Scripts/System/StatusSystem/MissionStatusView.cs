@@ -12,7 +12,7 @@ namespace OverlayStatusSystem {
         [SerializeField] private Image imgMission;
         [SerializeField] private Sprite[] sprites;
 
-        private Mission mission;
+        public Mission mission;
         private EntityModel targetEntityModel;
 
         public async UniTaskVoid GetMissionAsync(Mission mission, int changeCount) {

@@ -246,29 +246,6 @@ namespace GemMatch {
             return true;
         }
 
-
-        protected void CheckAndReduceMissionCount(Entity entity) {
-            UndoHandler.Do(new Command<Entity>(
-                @do: () => {
-                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(entity.Model));
-                    if (mission != null) {
-                        mission.count -= 1;
-                        foreach (var listener in Listeners) listener.OnChangeMission(mission, -1); // 봐야뎀
-                    }
-                },
-                undo: movedEntity => {
-                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(entity.Model));
-                    if (mission != null) {
-                        mission.count -= 1;
-                        foreach (var listener in Listeners) listener.OnChangeMission(mission, -1);
-                    }
-                    CalculateActiveTiles();
-                },
-                param: entity,
-                triggeredByPrev: true
-            ));
-        }
-
         public void CalculateActiveTiles() {
             ActiveTiles = Tiles.Where(CanTouch).ToList();
             foreach (var listener in Listeners) listener.OnAddActiveTiles(ActiveTiles);
