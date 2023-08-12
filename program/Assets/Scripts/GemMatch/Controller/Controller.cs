@@ -83,6 +83,10 @@ namespace GemMatch {
             foreach (var subAbility in ability.GetCascadedAbility()) {
                 InputAbility(subAbility, true);
             }
+            
+            // 게임 종료조건 검사
+            if (IsCleared()) ClearGame();
+            if (IsFailed()) FailGame();
         }
 
         public void AddExtraMemorySlot() {
