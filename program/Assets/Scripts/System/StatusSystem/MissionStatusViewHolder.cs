@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using GemMatch;
@@ -56,14 +55,10 @@ namespace OverlayStatusSystem {
         }
 
         public async UniTask AchieveMissionAsync(Mission targetMission, int changeCount) {
-            var statusView = missionStatusViews!
-                .SingleOrDefault(m=>
-                    m.mission.entity.index == targetMission.entity.index
-                    && m.mission.entity.color == targetMission.entity.color);
-            if (statusView == null) return;
-            await UniTask.WaitUntil(()=> collectionPool.ContainsKey(statusView));
+            if (missionStatusViews.Count == 0) return;
             var targetView = missionStatusViews.SingleOrDefault(m => m.mission.Equals(targetMission));
             if (targetView == null) return;
+            await UniTask.WaitUntil(()=> collectionPool.ContainsKey(targetView));
             await AnimateMissionPoolAsync(targetView);
             await targetView.GetMissionAsync(targetMission, changeCount);
         }
@@ -73,9 +68,10 @@ namespace OverlayStatusSystem {
             if (collectionPool.ContainsKey(statusView) == false) return;
 
             var task = new UniTask[collectionPool[statusView].Count];
-            for (var i = 0; i < collectionPool.Count; i++) {
+            for (var i = 0; i < collectionPool[statusView].Count; i++) {
                 var clone = collectionPool[statusView][i];
                 clone.SetActive(true);
+                clone.transform.localScale = Vector3.one;
                 task[i] = AnimateAsync(clone, clone.transform.position, statusView.collectionRoot.position);
             }
             await UniTask.WhenAll(task);
@@ -90,8 +86,8 @@ namespace OverlayStatusSystem {
             new Dictionary<MissionStatusView, List<GameObject>>();
 
 
-        public float threshold = 1.5f;
-        public float collectionDuration = 0.8f;
+        private float threshold = 1.5f;
+        private float collectionDuration = 1.1f;
         public Transform curvePoint;
         private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to) {
             if (to != null) {
@@ -101,7 +97,7 @@ namespace OverlayStatusSystem {
                     from,
                 };
                 collectingObject.transform.DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
-                    .SetEase(Ease.InBack, overshoot: 2.5f);
+                    .SetEase(Ease.InOutQuad);
             }
 
             await UniTask.Delay(TimeSpan.FromSeconds(collectionDuration));
