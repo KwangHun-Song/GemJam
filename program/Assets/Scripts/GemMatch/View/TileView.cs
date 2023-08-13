@@ -125,9 +125,6 @@ namespace GemMatch {
             var showLUPoint = adjTiles.Left?.IsOpened == false && 
                               adjTiles.Up?.IsOpened == false &&
                               adjTiles.LeftUp?.IsOpened == false;
-            if (Tile.X == 0 && Tile.Y == 8) {
-                UnityEngine.Debug.Log("잠깐 스탑");
-            }
             var showLDPoint = adjTiles.Left?.IsOpened == false && 
                               adjTiles.Down?.IsOpened == false &&
                               adjTiles.LeftDown?.IsOpened == false;
