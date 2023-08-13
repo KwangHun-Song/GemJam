@@ -1,23 +1,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GemMatch.LevelEditor;
+using PagePopupSystem;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace GemMatch {
     public class TileView : MonoBehaviour {
         [SerializeField] private Image background;
-        [SerializeField] private Image randomBackground;
         [SerializeField] public Transform entitiesRoot;
         [SerializeField] public Transform guestRoom;
         [SerializeField] public Sprite[] backgroundSprites; // open(dirt), close(wall)
         [SerializeField] public Sprite[] randomBackgroundSprites; // open(dirt), close(wall)
         [SerializeField] public GameObject[] edges; // up, down, left, right
         [SerializeField] public GameObject[] points; // LU, LD, RU, RD
+
+        [SerializeField] private Image bigDego;
+        [SerializeField] private Image smallDeco;
         
         public Tile Tile { get; private set; }
         public View View { get; private set; }
+        
+        public bool IsShowingDeco { get; private set; }
 
         private Dictionary<Layer, EntityView> entityViews;
         public IReadOnlyDictionary<Layer, EntityView> EntityViews => entityViews ??= new Dictionary<Layer, EntityView>();
@@ -25,7 +32,8 @@ namespace GemMatch {
         public void Initialize(View view, Tile tile) {
             View = view;
             Tile = tile;
-            
+            name = $"TileView({tile.X},{tile.Y})";
+
             Redraw();
 
             foreach (var entityView in EntityViews.Values) {
@@ -48,73 +56,92 @@ namespace GemMatch {
         }
 
         public void RemoveEntityView(EntityView entityView) {
-            entityView.transform.SetParent(guestRoom);
+            // entityView.transform.SetParent(guestRoom);
             entityViews.Remove(entityView.Entity.Layer);
             entityView.Initialize(null);
         }
 
         public void Redraw() {
             background.sprite = Tile.Model.IsOpened ? backgroundSprites[0] : backgroundSprites[1];
-            var randomNum = Random.Range(0, 200);
-            if (Tile.Model.IsOpened == false) {
-                Sprite randomSprite = randomNum switch {
-                    _ when randomNum >= 190 => randomBackgroundSprites[0],
-                    _ when randomNum >= 170 => randomBackgroundSprites[1],
-                    _ when randomNum >= 150 => randomBackgroundSprites[2],
-                    _ => null
-                };
-                randomBackground.gameObject.SetActive(randomSprite != null);
 
-                if (randomSprite != null) {
-                    randomBackground.sprite = randomSprite;
-                    randomBackground.preserveAspect = true;
-                    randomBackground.transform.Rotate(0f, 0f, (randomNum % 5) * (360/5));
+            DrawDeco();
+        }
+
+        private void DrawDeco() {
+            smallDeco.gameObject.SetActive(false);
+            bigDego.gameObject.SetActive(false);
+            IsShowingDeco = false;
+
+#if UNITY_EDITOR
+            if (SceneManager.GetActiveScene().name.Equals("EditScene")) return;
+#endif
+            if (View.IsRightTopTileOf4ClosedTiles(Tile)) {
+                if (Random.Range(0, 10) != 0) return;
+                smallDeco.gameObject.SetActive(false);
+                bigDego.gameObject.SetActive(true);
+                if (Random.Range(0, 5) != 0) {
+                    bigDego.sprite = randomBackgroundSprites[4];
+                } else {
+                    // 뼈다귀는 나올 확률을 더 낮춘다. 극한의 확률
+                    bigDego.sprite = randomBackgroundSprites[3];
                 }
+                bigDego.transform.localScale = Vector3.one * Random.Range(0.6F, 1F);
+                bigDego.transform.eulerAngles = Vector3.forward * Random.Range(0F, 360F);
+                IsShowingDeco = true;
+            } else if (Tile.IsOpened == false) {
+                if (Random.Range(0, 6) != 0) return;
+                bigDego.gameObject.SetActive(false);
+                smallDeco.gameObject.SetActive(true);
+                smallDeco.sprite = randomBackgroundSprites[Random.Range(0, 3)];
+                smallDeco.transform.localScale = Vector3.one * Random.Range(0.6F, 1F);
+                smallDeco.transform.eulerAngles = Vector3.forward * Random.Range(0F, 360F);
+                IsShowingDeco = true;
             }
         }
 
-        public void RedrawByAdjacents(Func<Tile, Tile[], IEnumerable<Tile>> adjacentTilesCall, Tile[] controllerTiles) {
-            if (this.Tile.IsOpened) {
+        public void DrawEdges(Tile[] controllerTiles) {
+            if (Tile.IsOpened) {
                 foreach (var edge in edges.Concat(points)) {
                     edge.SetActive(false);
                 }
                 return;
             }
-            var adjacents = adjacentTilesCall.Invoke(Tile, controllerTiles);
-            var direction = Enumerable.Repeat(false, 4).ToArray(); // up, down, left, right
-            var up = direction[0];
-            var down = direction[1];
-            var left = direction[2];
-            var right = direction[3];
-            foreach (var neighbor in adjacents) {
-                if (neighbor.X == Tile.X) {
-                    up |= neighbor.Y > Tile.Y && neighbor.IsOpened == false;
-                    down |= neighbor.Y < Tile.Y && neighbor.IsOpened == false;
-                } else if (neighbor.Y == Tile.Y) {
-                    left |= neighbor.X < Tile.X && neighbor.IsOpened == false;
-                    right |= neighbor.X > Tile.X && neighbor.IsOpened == false;
-                }
-            }
+            
+            var adjTiles = TileUtility.GetAdjacentWithDiagonalTiles(Tile, controllerTiles);
 
-            edges[0].SetActive(up);
-            edges[1].SetActive(down);
-            edges[2].SetActive(left);
-            edges[3].SetActive(right);
-            points[0].SetActive(left && up);
-            points[1].SetActive(left && down);
-            points[2].SetActive(right && up);
-            points[3].SetActive(right && down);
+            var showUpEdge = adjTiles.Up?.IsOpened == false;
+            var showDownEdge = adjTiles.Down?.IsOpened == false;
+            var showLeftEdge = adjTiles.Left?.IsOpened == false;
+            var showRightEdge = adjTiles.Right?.IsOpened == false;
+            
+            showLeftEdge |= Tile.X == 0;
+            showRightEdge |= Tile.X == Constants.Width - 1;
 
-            if (left && down) {
-                randomBackground.gameObject.SetActive(true);
-                var ranTr = (randomBackground.transform as RectTransform);
-                ranTr.pivot = new Vector2(Random.Range(0f, 0.08f), Random.Range(0f, 0.08f));
-                ranTr.localPosition = Vector3.zero;
-                ranTr.Rotate(0f,0f,(float)Random.Range(0,360));
-                randomBackground.sprite = Random.Range(0, 10) % 2 == 1
-                    ? randomBackgroundSprites[3]
-                    : randomBackgroundSprites[4];
-            }
+            edges[0].SetActive(showUpEdge);
+            edges[1].SetActive(showDownEdge);
+            edges[2].SetActive(showLeftEdge);
+            edges[3].SetActive(showRightEdge);
+
+            var showLUPoint = adjTiles.Left?.IsOpened == false && 
+                              adjTiles.Up?.IsOpened == false &&
+                              adjTiles.LeftUp?.IsOpened == false;
+            var showLDPoint = adjTiles.Left?.IsOpened == false && 
+                              adjTiles.Down?.IsOpened == false &&
+                              adjTiles.LeftDown?.IsOpened == false;
+            var showRUPoint = adjTiles.Right?.IsOpened == false && 
+                              adjTiles.Up?.IsOpened == false &&
+                              adjTiles.RightUp?.IsOpened == false;
+            var showRDPoint = adjTiles.Right?.IsOpened == false && 
+                              adjTiles.Down?.IsOpened == false &&
+                              adjTiles.RightDown?.IsOpened == false;
+
+            showLDPoint |= Tile.X == 0 && Tile.Y > 0 && adjTiles.Down?.IsOpened == false;
+            showRDPoint |= Tile.X == Constants.Width - 1 && Tile.Y > 0 && adjTiles.Down?.IsOpened == false;
+            
+            points[0].SetActive(showLUPoint);
+            points[1].SetActive(showLDPoint);
+            points[2].SetActive(showRUPoint);
+            points[3].SetActive(showRDPoint);
         }
     }
 }

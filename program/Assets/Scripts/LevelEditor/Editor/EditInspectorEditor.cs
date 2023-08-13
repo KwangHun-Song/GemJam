@@ -33,6 +33,7 @@ namespace GemMatch.LevelEditor {
             Green = 3,
             Blue = 4,
             Purple = 5,
+            All = 3000,
             // Brown = 6,
             // Pink = 7,
             // Cyan = 8,
@@ -77,10 +78,20 @@ namespace GemMatch.LevelEditor {
             EditorGUILayout.EndHorizontal();
 
             // Load
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Prev")) {
+                inspector.PrevLevel();
+                UpdateFields(inspector);
+            }
             if (GUILayout.Button("Load")) {
                 inspector.LoadLevel(inspector.LevelIndex);
                 UpdateFields(inspector);
             }
+            if (GUILayout.Button("Next")) {
+                inspector.NextLevel();
+                UpdateFields(inspector);
+            }
+            EditorGUILayout.EndHorizontal();
 
             // 보드에 Gem 갯수
             GUIContent gemCountTitle = new GUIContent("Gem Count");

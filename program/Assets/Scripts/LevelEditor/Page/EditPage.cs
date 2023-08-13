@@ -1,14 +1,12 @@
 using System.Collections;
-using Cysharp.Threading.Tasks;
 using PagePopupSystem;
 using Pages;
+using Record;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.SceneManagement;
 
 namespace GemMatch.LevelEditor {
-    public class EditPage : MonoBehaviour {
+    public class EditPage : PageHandler {
         [SerializeField] private EditTool editTool;
         [SerializeField] private EditInspector editInspector;
         [SerializeField] private EditView editView;
@@ -29,9 +27,10 @@ namespace GemMatch.LevelEditor {
             editTool.Initialize(editCtrl, editView);
             editInspector.Initialize(editCtrl);
             yield return null;
-            editInspector.LoadLevel(0);
+            editInspector.LoadLevel(editInspector.LevelIndex);
 #if UNITY_EDITOR
             editInspector.SetDirty();
+            Selection.activeObject = editInspector;
 #endif
             IsLoaded = true;
         }
@@ -45,41 +44,15 @@ namespace GemMatch.LevelEditor {
 
         private void InputKeyboard() {
             if (Input.GetKeyUp(KeyCode.A)) {
-                var playpageObjs = FindObjectsOfType<PlayPage>(true);
-                foreach (var obj in playpageObjs) {
-                    Destroy(obj.gameObject);
-                }
-                PlayTestGame();
-            }
-
-            if (Input.GetKeyUp(KeyCode.Escape)) {
-                PageManager.RemovePage(Page.PlayPage);
-                var playpageObjs = FindObjectsOfType<PlayPage>(true);
-                foreach (var obj in playpageObjs) {
-                    Destroy(obj.gameObject);
-                }
-
-                playPage = null;
+                PlayerInfo.HighestClearedLevelIndex = editInspector.LevelIndex;
+                ChangeTo(Page.PlayPage, new PlayPageParam {
+                    levelIndex = editInspector.LevelIndex,
+                    selectedBoosters = new BoosterIndex[0]{}
+                });
             }
         }
 
-        private void PlayTestGame() {
-            if (FindObjectOfType<EditLevelIndicator>() == null) {
-                var indicator = new GameObject();
-                indicator.AddComponent<EditLevelIndicator>();
-                DontDestroyOnLoad(indicator);
-            }
-            LoadPlayPageAsync().Forget();
-        }
-
-        private GameObject playPage = null;
-        private async UniTask LoadPlayPageAsync() {
-            var obj = await Resources.LoadAsync<GameObject>("Editor_PlayPage");
-            playPage = Instantiate((GameObject)obj, null);
-            playPage.name = "PlayPage";
-            await UniTask.DelayFrame(2);
-            var script = playPage.GetComponent<PlayPage>();
-            script.StartGame(editInspector.LevelIndex);
-        }
+        public override SoundName BgmName => SoundName.None;
+        public override Page GetPageType() => Page.EditPage;
     }
 }

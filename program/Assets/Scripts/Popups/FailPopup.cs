@@ -5,6 +5,7 @@ using Record;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utility;
 
 namespace Popups {
     public class FailPopupResult {
@@ -39,9 +40,11 @@ namespace Popups {
             }
             selectedBoosters.Clear();
             titleText.text = $"Level {(int)param}";
+            SimpleSound.Play(SoundName.failpopup);
         }
 
         public void OnClickPlay() {
+            SimpleSound.Play(SoundName.button_click);
             Close(new FailPopupResult { selectedBoosters = selectedBoosters.ToArray(), isPlay = true });
         }
     }

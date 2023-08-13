@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using GemMatch;
 using UnityEngine;
+using Utility;
 
 namespace PagePopupSystem {
     public abstract class PopupHandler : MonoBehaviour {
@@ -15,10 +16,12 @@ namespace PagePopupSystem {
         public virtual void OnDidLeave() { }
 
         public virtual void OnClickOk() {
+            SimpleSound.Play(SoundName.button_click);
             HideWithAnimation(true).Forget();
         }
 
         public virtual void OnClickClose() {
+            SimpleSound.Play(SoundName.button_click);
             HideWithAnimation(false).Forget();
         }
 
@@ -55,6 +58,7 @@ namespace PagePopupSystem {
             }
 
             OnWillLeave();
+            SimpleSound.Play(SoundName.popup_out);
             await animationTarget.DOScale(Vector3.zero, 0.15F).SetEase(Ease.InBack).ToUniTask();
             OnDidLeave();
 

@@ -1,6 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using GemMatch;
 using PagePopupSystem;
+using Record;
 using UnityEngine;
 
 namespace OverlayStatusSystem {
@@ -24,15 +27,35 @@ namespace OverlayStatusSystem {
         }
 
         private void GetStable(Page currentPage) {
-            _coinStatus.gameObject.SetActive(true);
+            _coinStatus.gameObject.SetActive(currentPage != Page.EditPage);
             _missionStatus.gameObject.SetActive(currentPage == Page.PlayPage);
             _levelStatus.gameObject.SetActive(currentPage == Page.PlayPage);
         }
 
         public void InitializeMission(Mission[] targetMissions) => _missionStatus.InitializeMissions(targetMissions);
 
-        public void AchieveMissionCount(Mission mission, int changeCount) {
-            _missionStatus.AchieveMission(mission, changeCount);
+        public void UpdateMissionCount(Mission mission, int changeCount, bool isUndo) {
+            _missionStatus.AchieveMissionAsync(mission, changeCount, isUndo).Forget();
+        }
+
+        public void CollectMissionByViewClone(EntityModel entityModel, GameObject entityViewGameObject) {
+            _missionStatus.CollectMissionByViewClones(entityModel, entityViewGameObject);
+        }
+
+        public void UpdateLevelStatus(Level currentLevel) {
+            _levelStatus.UpdateLevel(PlayerInfo.HighestClearedLevelIndex + 1);
+        }
+
+        public void CollectCoin(int amount) {
+            _coinStatus.InputCoin(amount);
+        }
+
+        public void UpdateCoinByPlayerInfo() {
+            _coinStatus.GetCoin();
+        }
+
+        public Transform GetCoinStatusRoot() {
+            return _coinStatus.CoinRoot;
         }
     }
 }

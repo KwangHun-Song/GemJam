@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using GemMatch;
+using UnityEngine;
 
 namespace OverlayStatusSystem {
     public static class OverlayStatusHelper {
@@ -21,8 +23,28 @@ namespace OverlayStatusSystem {
             OverlayStatusHolder.Instance.InitializeMission(targetMissions);
         }
 
-        public static void UpdateMissionCount(Mission mission, int changeCount) {
-            OverlayStatusHolder.Instance.AchieveMissionCount(mission, changeCount);
+        public static void CollectMissionByViewClone(EntityModel entityModel, GameObject entityViewGameObject) {
+            OverlayStatusHolder.Instance.CollectMissionByViewClone(entityModel, entityViewGameObject);
+        }
+
+        public static void UpdateMissionCount(Mission mission, int changeCount, bool isUndo) {
+            OverlayStatusHolder.Instance.UpdateMissionCount(mission, changeCount, isUndo);
+        }
+
+        public static void UpdateLevelStatus(Level currentLevel) {
+            OverlayStatusHolder.Instance.UpdateLevelStatus(currentLevel);
+        }
+
+        public static void CollectCoin(int amount) {
+            OverlayStatusHolder.Instance.CollectCoin(amount);
+        }
+
+        public static void UpdateCoinStatus() {
+            OverlayStatusHolder.Instance.UpdateCoinByPlayerInfo();
+        }
+
+        public static Transform GetCoinStatusRoot() {
+            return OverlayStatusHolder.Instance.GetCoinStatusRoot();
         }
     }
 }

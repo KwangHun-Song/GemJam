@@ -14,7 +14,6 @@ namespace GemMatch {
         public Level CurrentLevel { get; protected set; }
         public Tile[] Tiles { get; protected set; }
         public Mission[] Missions { get; protected set; }
-        
         public List<Entity> Memory { get; protected set; }
         public List<Tile> ActiveTiles { get; protected set; } = new List<Tile>();
 
@@ -30,14 +29,16 @@ namespace GemMatch {
             Memory = new List<Entity>();
             Missions = level.missions.Select(m => m.Clone()).ToArray();
             OverlayStatusHelper.InitializeMissionsAsync(Missions).Forget();
+            OverlayStatusHelper.UpdateLevelStatus(CurrentLevel);
             Tiles = level.tiles.Select(tileModel => new Tile(tileModel.Clone())).ToArray();
-            if (isReplay == false) {
-                PathFinder = new PathFinder(Tiles);
-                ColorDistributor = new ClearableColorDistributor();
-                UndoHandler = new UndoHandler();
-            } else {
+            PathFinder = new PathFinder(Tiles);
+            
+            if (isReplay) {
                 UndoHandler.Reset();
                 RemoveExtraMemorySlot();
+            } else {
+                ColorDistributor = new ClearableColorDistributor();
+                UndoHandler = new UndoHandler();
             }
 
             // 랜덤 컬러인 노멀 피스들의 컬러들을 배치해준다.
@@ -77,18 +78,24 @@ namespace GemMatch {
             if (ability == null) return;
             
             UnityEngine.Debug.Log(ability.Index);
-            UndoHandler.Do(new AbilityCommand(this, ability, triggeredByPrev));
+            if (ability is DiscountMissionAbility discountMission)
+                InputChangeMission(discountMission.TargetMission.entity, discountMission.TargetMission.count);
+            else
+                UndoHandler.Do(new AbilityCommand(this, ability, triggeredByPrev));
             
             foreach (var subAbility in ability.GetCascadedAbility()) {
                 InputAbility(subAbility, true);
             }
+            
+            // 게임 종료조건 검사
+            if (IsCleared()) ClearGame();
+            if (IsFailed()) FailGame();
         }
 
         public void AddExtraMemorySlot() {
             ExtraMemorySlot = true;
             // 이벤트 전달
             foreach (var listener in Listeners) listener.OnAddExtraSlot();
-            
         }
 
         public void RemoveExtraMemorySlot() {
@@ -116,11 +123,16 @@ namespace GemMatch {
         }
 
         public Tile GetTile(Entity entity) => Tiles.SingleOrDefault(t => t.Entities.Values.Any(e => ReferenceEquals(e, entity)));
+        public Tile GetTile(int x, int y) => Tiles[y * Constants.Width + x];
+
+
+        private bool IsMissionChanged() {
+            return !Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any();
+        }
 
         protected virtual bool IsCleared() {
-            if (ActiveTiles.Any(t => t.Piece is GoalPiece)) return true;
             if (Tiles.SelectMany(t => t.Entities.Values).Any(e => e is NormalPiece) == false && Memory.Any() == false) return true;
-            if (!Missions.Where((mission, index) => CurrentLevel.missions[index].count >= mission.count).Any()) return true;
+            if (Missions.All(mission => mission.count <= 0)) return true;
 
             return false;
         }
@@ -150,12 +162,11 @@ namespace GemMatch {
             
             // 활성화된 타일들을 다시 계산한다.
             CalculateActiveTiles();
+
+            CheckAndAchieveGoalPiece();
             
             // 메모리에서 같은 색깔 세 개가 있을 경우 파괴한다.
             TryRemoveFromMemory(piece);
-
-            // mission count를 깍는다
-            // CheckAndReduceMissionCount(piece);
         }
 
         public void SplashHit(Tile targetTile, bool triggeredByPrev = false) {
@@ -224,51 +235,45 @@ namespace GemMatch {
             }
             
             // 미션 증가
-            var mission = Missions.SingleOrDefault(m => m.entity.Equals(piece.Model));
-            if (mission != null) {
-                UndoHandler.Do(new Command<Mission>(
-                    @do: () => {
-                        mission.count -= 3;
-                        foreach (var listener in Listeners) listener.OnChangeMission(mission, mission.count);
-                    }, 
-                    undo: addedMission => {
-                        addedMission.count += 3;
-                        foreach (var listener in Listeners) listener.OnChangeMission(addedMission, addedMission.count);
-                    }, 
-                    param: mission,
-                    triggeredByPrev:true
-                ));
-            }
+            InputChangeMission(piece.Model, 3);
 
             return true;
         }
 
-
-        protected void CheckAndReduceMissionCount(Entity entity) {
-            UndoHandler.Do(new Command<Entity>(
-                @do: () => {
-                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(entity.Model));
-                    if (mission != null) {
-                        mission.count -= 1;
-                        foreach (var listener in Listeners) listener.OnChangeMission(mission, -1); // 봐야뎀
-                    }
-                },
-                undo: movedEntity => {
-                    var mission = Missions.SingleOrDefault(m => m.entity.Equals(entity.Model));
-                    if (mission != null) {
-                        mission.count -= 1;
-                        foreach (var listener in Listeners) listener.OnChangeMission(mission, -1);
-                    }
-                    CalculateActiveTiles();
-                },
-                param: entity,
-                triggeredByPrev: true
-            ));
+        private void InputChangeMission(EntityModel entityModel, int discount) {
+            var mission = Missions.SingleOrDefault(m => m.entity.Equals(entityModel))
+                        ?? Missions.SingleOrDefault(m => 
+                            entityModel.index == EntityIndex.NormalPiece 
+                            && m.entity.index == EntityIndex.NormalPiece 
+                            && m.entity.color == entityModel.color) // TODO : 의미없는 조건문이므로(위 조건에 걸림) 지울 것.
+                        ?? Missions.SingleOrDefault(m => 
+                            entityModel.index == EntityIndex.NormalPiece 
+                            && m.entity.index == EntityIndex.NormalPiece 
+                            && m.entity.color == ColorIndex.All);
+            if (mission != null) {
+                UndoHandler.Do(new MissionCommand(this, mission, discount, true));
+            }
         }
 
         public void CalculateActiveTiles() {
             ActiveTiles = Tiles.Where(CanTouch).ToList();
             foreach (var listener in Listeners) listener.OnAddActiveTiles(ActiveTiles);
+        }
+
+        private void CheckAndAchieveGoalPiece() {
+            if (ActiveTiles.Any(t => t.Piece is GoalPiece) == false) return;
+            
+            var mission = Missions.SingleOrDefault(m => m.entity.index == EntityIndex.GoalPiece);
+            if (mission == null) return;
+
+            var originMissionCount = CurrentLevel.missions.Single(m => m.entity.index == EntityIndex.GoalPiece).count;
+            var activeGoalCount = ActiveTiles.SelectMany(t => t.Entities.Values).Count(e => e is GoalPiece);
+            var remainMissionCount = originMissionCount - activeGoalCount;
+
+            if (mission.count > remainMissionCount) {
+                var earnCount = mission.count - remainMissionCount;
+                UndoHandler.Do(new MissionCommand(this, mission, earnCount, true));
+            }
         }
     }
 }

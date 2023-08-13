@@ -4,17 +4,19 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using OverlayStatusSystem;
-using TMPro;
 using UnityEngine;
+using Utility;
 
 namespace GemMatch {
     public class View : MonoBehaviour, IControllerEvent {
         [SerializeField] private Transform tileViewRoot;
         [SerializeField] private Transform memoryViewRoot;
         [SerializeField] private Transform extraSlot;
+        [SerializeField] private TileViewScaler viewScaler;
         
         [Header("MonoBehaviour를 상속한 AbilityView들은 여기에!")]
         [SerializeField] private ShuffleAbilityView shuffleAbilityView;
+        [SerializeField] private MagneticAbilityView magneticAbilityView;
 
         private TileView[] tileViews;
         public TileView[] TileViews => tileViews ??= tileViewRoot.GetComponentsInChildren<TileView>();
@@ -29,8 +31,15 @@ namespace GemMatch {
 
         private Dictionary<AbilityIndex, IAbilityView> abilityViews;
         private Dictionary<AbilityIndex, IAbilityView> AbilityViews => abilityViews ??= new Dictionary<AbilityIndex, IAbilityView> {
+            { AbilityIndex.MagneticAbility, magneticAbilityView },
             { AbilityIndex.ShuffleAbility, shuffleAbilityView },
             { AbilityIndex.RocketAbility, new RocketAbilityView() },
+        };
+
+        private SoundName[] characterVoices = new[] {
+            SoundName.huhu,
+            SoundName.yeah,
+            SoundName.yeah_huh
         };
 
         #region 순서대로 실행되어야 하는 연출 관리
@@ -64,7 +73,10 @@ namespace GemMatch {
             for (int i = 0; i < TileViews.Length; i++) {
                 TileViews[i].Initialize(this, tiles[i]);
             }
-            RedrawEdges();
+            
+            DrawEdges();
+            extraSlot.localScale = Vector3.one;
+            viewScaler.SetPlayViewPosition(controller.Tiles);
 
             foreach (var tileView in TileViews) {
                 foreach (var entityView in tileView.EntityViews.Values) {
@@ -87,8 +99,9 @@ namespace GemMatch {
 
         public void OnReplayGame(Mission[] missions) { }
 
-        public void OnChangeMission(Mission mission, int changeCount) {
-            OverlayStatusHelper.UpdateMissionCount(mission, changeCount);
+        public void OnChangeMission(Mission mission, int changeCount, bool isUndo) {
+            if (isUndo == false) SimpleSound.Play(characterVoices.PickRandom());
+            OverlayStatusHelper.UpdateMissionCount(mission, changeCount, isUndo);
         }
 
         public void OnMoveToMemory(Tile tile, Entity entity) {
@@ -98,6 +111,8 @@ namespace GemMatch {
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
                 var memoryView = MemoryViews.First(v => v.IsEmpty());
+
+                await entityView.OnMoveMemory();
 
                 // 타일뷰 소속에서 해당 엔티티뷰를 제거한다.
                 tileView.RemoveEntityView(entityView);
@@ -153,6 +168,7 @@ namespace GemMatch {
             EnqueueAnimation(RemoveMemoryAsync);
 
             async UniTask RemoveMemoryAsync() {
+                SimpleSound.Play(SoundName.get_ascending);
                 await MemoryViews
                     .Single(v => v.EntityView != null && ReferenceEquals(v.EntityView.Entity, entity))
                     .RemoveEntityAsync(true);
@@ -185,14 +201,13 @@ namespace GemMatch {
         public void OnDestroyEntity(Tile tile, Entity entity) {
             EnqueueAnimation(DestroyEntityAsync);
 
-            UniTask DestroyEntityAsync() {
+            async UniTask DestroyEntityAsync() {
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
 
                 tileView.RemoveEntityView(entityView);
-                DestroyImmediate(entityView.gameObject);
-                
-                return UniTask.CompletedTask;
+                await entityView.DestroyAsync(false);
+                // DestroyImmediate(entityView.gameObject);
             }
         }
 
@@ -211,7 +226,7 @@ namespace GemMatch {
             AddExtraSlotAsync().Forget();
 
             async UniTask AddExtraSlotAsync() {
-                await UniTask.Delay(1000);
+                await UniTask.Delay(1500);
                 extraSlot.DOScale(Vector3.zero, 0.3F).SetEase(Ease.InBack, 3);
             }
         }
@@ -232,13 +247,34 @@ namespace GemMatch {
             }
         }
 
+        public TileView GetTileView(Tile tile) {
+            return TileViews.FirstOrDefault(tv => tv.Tile == tile);
+        }
+
+        public bool IsRightTopTileOf4ClosedTiles(Tile tile) {
+            if (tile.IsOpened) return false;
+            if (tile.X == 0) return false;
+            if (tile.Y == 0) return false;
+
+            var left = Controller.GetTile(tile.X - 1, tile.Y);
+            var bottomTile = Controller.GetTile(tile.X, tile.Y - 1);
+            var leftBottomTile = Controller.GetTile(tile.X - 1, tile.Y - 1);
+
+            if (left.IsOpened || bottomTile.IsOpened || leftBottomTile.IsOpened) return false;
+            if (GetTileView(left).IsShowingDeco) return false;
+            if (GetTileView(bottomTile).IsShowingDeco) return false;
+            if (GetTileView(leftBottomTile).IsShowingDeco) return false;
+
+            return true;
+        }
+
         public void OnClickEntity(Entity entity) {
             Controller.Input(Controller.GetTile(entity).Index);
         }
 
-        private void RedrawEdges() {
+        private void DrawEdges() {
             foreach(var tileView in TileViews) {
-                tileView.RedrawByAdjacents(TileUtility.GetAdjacentTiles, Controller.Tiles);
+                tileView.DrawEdges(Controller.Tiles);
             }
         }
 

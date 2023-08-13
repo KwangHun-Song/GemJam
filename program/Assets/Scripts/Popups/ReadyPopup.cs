@@ -4,7 +4,9 @@ using PagePopupSystem;
 using Record;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
+using Utility;
 
 namespace Popups {
     public class ReadyPopupResult {
@@ -33,15 +35,17 @@ namespace Popups {
         }
 
         public override void OnWillEnter(object param) {
+            Assert.IsTrue(param is int);
             // UI 초기화시 토글은 해제되어 있음
             foreach (var booster in boosters) {
                 booster.isOn = false;
             }
             selectedBoosters.Clear();
-            titleText.text = $"Level {PlayerInfo.HighestClearedLevelIndex + 2}";
+            titleText.text = $"Level {(int)param + 1}";
         }
 
         public void OnClickPlay() {
+            SimpleSound.Play(SoundName.button_click);
             Close(new ReadyPopupResult { selectedBoosters = selectedBoosters.ToArray(), isPlay = true });
         }
     }

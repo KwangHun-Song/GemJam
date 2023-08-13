@@ -44,9 +44,15 @@ TagManager:
   - name: Page
     uniqueID: 3920992143
     locked: 0
-  - name: Popup
-    uniqueID: 2521286085
+  - name: Game
+    uniqueID: 2168483057
     locked: 0
   - name: Overlay
     uniqueID: 1596874523
+    locked: 0
+  - name: Popup
+    uniqueID: 2521286085
+    locked: 0
+  - name: Effect
+    uniqueID: 3742125437
     locked: 0
