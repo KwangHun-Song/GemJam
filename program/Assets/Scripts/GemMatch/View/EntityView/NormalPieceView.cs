@@ -59,11 +59,11 @@ namespace GemMatch {
         }
 
         public void OnClick() {
-            SimpleSound.Play(SoundName.piece_touch);
             TileView.View.OnClickEntity(Entity);
         }
 
         public override async UniTask OnMoveMemory() {
+            SimpleSound.Play(SoundName.piece_touch);
             OnCrashAnimation = true;
             await transform.DOScale(Vector3.zero, 0.15F).SetEase(Ease.OutQuad).ToUniTask();
             SetOnMemoryUI(true);
@@ -81,6 +81,7 @@ namespace GemMatch {
         }
 
         public void OnPointerExit(PointerEventData eventData) {
+            if (OnShowingActive == false) return;
             animator.SetTrigger(Off);
         }
 
