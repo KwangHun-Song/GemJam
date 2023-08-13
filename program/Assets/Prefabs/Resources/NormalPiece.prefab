@@ -78,12 +78,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b44af068bd20541b480767bee389e841, type: 3}
   - {fileID: 21300000, guid: 9c728cc1e201946aab907bd9762a2673, type: 3}
   slotSprites:
-  - {fileID: 21300000, guid: 4060a50fff36f4d70a62eac5f3a9f293, type: 3}
-  - {fileID: 21300000, guid: d96e8f1dbb5034f629dba7e522156bda, type: 3}
-  - {fileID: 21300000, guid: 3190a5b036b204c499b6a14d336db6c9, type: 3}
-  - {fileID: 21300000, guid: 68328e529db9b48faa68759655429f71, type: 3}
-  - {fileID: 21300000, guid: c4e5494aad4d645c0bbf9dcc241541f8, type: 3}
-  - {fileID: 21300000, guid: 8c12230de1aa44fcc89e22474d7f4fdf, type: 3}
+  - {fileID: 21300000, guid: 7378c938a282945baaf630434f0c7762, type: 3}
+  - {fileID: 21300000, guid: 8df09073400a24994962ea7464af1d41, type: 3}
+  - {fileID: 21300000, guid: b956f8b93cbbf44208d8b6c6b05e90a9, type: 3}
+  - {fileID: 21300000, guid: 6c7e6947fb1ef467f920f72236e613c2, type: 3}
+  - {fileID: 21300000, guid: f6ffc3c036694420db1163c266923b1d, type: 3}
+  - {fileID: 21300000, guid: dafc36a5393224ca296a15995fa0b047, type: 3}
   - {fileID: 21300000, guid: 9c728cc1e201946aab907bd9762a2673, type: 3}
   mainImage: {fileID: 9192351032170399212}
   dimImage: {fileID: 5940224919311629400}
