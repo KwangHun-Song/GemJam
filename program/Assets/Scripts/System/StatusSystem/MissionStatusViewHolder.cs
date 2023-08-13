@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Triggers;
 using DG.Tweening;
 using GemMatch;
 using UnityEngine;
@@ -63,6 +64,7 @@ namespace OverlayStatusSystem {
 
             await AnimateMissionPoolAsync(targetView);
             await targetView.GetMissionAsync(targetMission, changeCount);
+            if (collectionPool[targetView].Count == 0) collectionPool.Remove(targetView);
         }
 
         private async UniTask AnimateMissionPoolAsync(MissionStatusView statusView) {
@@ -72,19 +74,18 @@ namespace OverlayStatusSystem {
             }
 
             var targetPool = collectionPool[statusView];
-            var task = new UniTask[targetPool.Count];
+            var animationTask = new List<UniTask>();
+            var destroyTask = new List<UniTask>();
             for (var i = 0; i < targetPool.Count; i++) {
                 var clone = targetPool[i];
                 if (clone.gameObject.activeSelf) continue;
                 clone.SetActive(true);
                 clone.transform.localScale = Vector3.one;
-                task[i] = AnimateAsync(clone, clone.transform.position, statusView.CollectionRoot.position, targetPool);
+                animationTask.Add(AnimateAsync(clone, clone.transform.position, statusView.CollectionRoot.position, targetPool));
+                destroyTask.Add(clone.OnDestroyAsync());
             }
-            UniTask.WhenAll(task).Forget();
-
-            await UniTask.WaitUntil(() => targetPool.Count == 0);
-            if (collectionPool.ContainsKey(statusView) == false) return;
-            collectionPool.Remove(statusView);
+            UniTask.WhenAll(animationTask).Forget();
+            await UniTask.WhenAll(destroyTask);
         }
 
         private static readonly Dictionary<MissionStatusView, List<GameObject>> collectionPool =
