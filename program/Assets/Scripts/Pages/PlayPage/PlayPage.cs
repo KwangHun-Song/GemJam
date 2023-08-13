@@ -49,7 +49,6 @@ namespace Pages {
 
             StartGame(Param.levelIndex);
             ApplyReadyBoosters(Param.selectedBoosters);
-            WaitAndEndGameAsync().Forget();
             
             clearRibbonAnimator.gameObject.SetActive(false);
         }
@@ -65,7 +64,15 @@ namespace Pages {
             } else {
                 ShowViewMoveAnimation();
             }
+            
+            WaitAndEndGameAsync().Forget();
         }
+
+        public void ReplayGame() {
+            Controller.ReplayGame();
+            WaitAndEndGameAsync().Forget();
+        }
+
 
         private void ShowViewImmediately() {
             (CurrentView.transform as RectTransform)!.anchoredPosition = Vector2.zero;
@@ -103,22 +110,20 @@ namespace Pages {
             await UniTask.Yield();
             var gameResult = await Controller.WaitUntilGameEnd();
             if (gameResult == GameResult.Clear) {
+                // 클리어 데이터 저장
+                PlayerInfo.HighestClearedLevelIndex++;
+                
                 // 먼저 클리어리본을 보여준다.
                 await ShowClearRibbonAsync();
                 
                 // 코인 생성 후 날아가는 연출을 대기한다. 그 후 클리어팝업을 띄운다.
                 await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews, coinAnimationTarget);
-                
                 var next = await PopupManager.ShowAsync<bool>(nameof(ClearPopup), Param.levelIndex + 1);
-
-                // 클리어 데이터 저장
-                PlayerInfo.HighestClearedLevelIndex++;
 
                 if (next) {
                     currentViewIndex++;
                     Param.levelIndex = Mathf.Clamp(Param.levelIndex + 1, 0, LevelLoader.GetContainer().levels.Length - 1);
                     StartGame(Param.levelIndex);
-                    WaitAndEndGameAsync().Forget();
                 } else {
                     ChangeTo(Page.MainPage);
                 }
@@ -126,10 +131,9 @@ namespace Pages {
 
             if (gameResult == GameResult.Fail) {
                 var failResult = await PopupManager.ShowAsync<FailPopupResult>(nameof(FailPopup), Param.levelIndex + 1);
-                if (failResult.isPlay) {
-                    Controller.ReplayGame();
+                if (failResult?.isPlay ?? false) {
+                    ReplayGame();
                     ApplyReadyBoosters(failResult.selectedBoosters);
-                    WaitAndEndGameAsync().Forget();
                 } else {
                     ChangeTo(Page.MainPage);
                 }
