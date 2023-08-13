@@ -58,6 +58,10 @@ namespace Pages {
                 Time.timeScale = Time.timeScale < 1 ? 1 : 10F;
             }
 
+            if (Input.GetKeyUp(KeyCode.Escape)) {
+                Application.Quit();
+            }
+
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.E)) {
                 SceneManager.LoadScene("EditScene");
