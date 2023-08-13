@@ -91,16 +91,25 @@ namespace GemMatch {
             }
             
             animator.SetTrigger(Crash);
+            
             var effectName = $"CrashNormalPiece{Entity.Color.ToString().Substring(0, 1)}";
             var crashEffect = Instantiate(Resources.Load<GameObject>(effectName), transform.parent);
             crashEffect.transform.position = transform.position;
-            DestroyImmediate(gameObject);
+            
+            DestroyAfterAnimation().Forget();
             DestroyEffectAsync().Forget();
+
+            async UniTask DestroyAfterAnimation() {
+                await animator.WaitForCurrentClip();
+                DestroyImmediate(gameObject);
+            }
 
             async UniTask DestroyEffectAsync() {
                 await UniTask.Delay(2000);
                 DestroyImmediate(crashEffect.gameObject);
             }
         }
+
+        public void SetCrashAnimationEnd() { }
     }
 }
