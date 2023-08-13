@@ -24,6 +24,8 @@ namespace Pages {
         [SerializeField] private PlayBoosterUI[] playBoosters;
         [SerializeField] private Transform coinAnimationTarget;
         [SerializeField] private Animator clearRibbonAnimator;
+
+        [SerializeField] private CharacterUI CharacterUI;
         
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
@@ -62,7 +64,8 @@ namespace Pages {
             if (ignoreAnimation) {
                 ShowViewImmediately();
             } else {
-                ShowViewMoveAnimationAsync().Forget();
+                CharacterUI.WalkIn();
+                ShowViewMoveAnimationAsync();
             }
             
             WaitAndEndGameAsync().Forget();
@@ -93,6 +96,10 @@ namespace Pages {
             if (otherViewRectTfm!.anchoredPosition.x < float.Epsilon) {
                 otherViewRectTfm.DOAnchorPos(Vector2.left * moveDistance, 0.4F).SetEase(Ease.OutBack).SetDelay(0.2F);
             }
+
+            await UniTask.Delay(550);
+
+            CharacterUI.StopWalking();
         }
 
         private void ApplyReadyBoosters(BoosterIndex[] selectedBoosters) {
@@ -147,6 +154,7 @@ namespace Pages {
         private async UniTask ShowClearRibbonAsync() {
             clearRibbonAnimator.gameObject.SetActive(true);
             clearRibbonAnimator.SetTrigger(On);
+            CharacterUI.ClearPopup();
             await clearRibbonAnimator.WaitForCurrentClip();
             clearRibbonAnimator.SetTrigger(Off);
             await clearRibbonAnimator.WaitForCurrentClip();
