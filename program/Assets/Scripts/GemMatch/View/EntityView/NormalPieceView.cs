@@ -81,7 +81,6 @@ namespace GemMatch {
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            if (OnShowingActive == false) return;
             animator.SetTrigger(Off);
         }
 
