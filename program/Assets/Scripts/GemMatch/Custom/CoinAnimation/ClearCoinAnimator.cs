@@ -8,7 +8,7 @@ using Utility;
 
 namespace GemMatch {
     public class ClearCoinAnimator {
-        public async UniTask ShowCoinAnimation(TileView[] tileViews, Transform coinTarget) {
+        public async UniTask ShowCoinAnimation(TileView[] tileViews) {
             // 빈 타일뷰들 선정. 랜덤 순서로 만들어줄 거라고 한 번 섞어준다.
             var targetTileViews = tileViews
                 .Where(tv => tv.Tile.Entities.Any() == false && tv.Tile.IsOpened)

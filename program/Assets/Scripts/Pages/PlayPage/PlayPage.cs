@@ -24,7 +24,6 @@ namespace Pages {
     public class PlayPage : PageHandler {
         [SerializeField] private View[] views;
         [SerializeField] private PlayBoosterUI[] playBoosters;
-        [SerializeField] private Transform coinAnimationTarget;
         [SerializeField] private Animator clearRibbonAnimator;
         [SerializeField] private CharacterUI characterUi;
 
@@ -141,7 +140,7 @@ namespace Pages {
                     characterUi.ShowGoal();
                 
                     // 코인 생성 후 날아가는 연출을 대기한다. 그 후 클리어팝업을 띄운다.
-                    await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews, coinAnimationTarget);
+                    await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews);
                 }
                 
                 var next = await PopupManager.ShowAsync<bool>(nameof(ClearPopup), Param.levelIndex + 1);
