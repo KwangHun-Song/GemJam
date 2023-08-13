@@ -46,7 +46,7 @@ namespace OverlayStatusSystem {
                     collectionPool[statusView] = new List<GameObject>();
                 }
 
-                var cacheView = Instantiate(targetMold, statusView.collectionRoot);
+                var cacheView = Instantiate(targetMold, statusView.CollectionRoot);
                 cacheView.transform.position = targetMold.transform.position;
                 cacheView.SetActive(false);
                 collectionPool[statusView].Add(cacheView);
@@ -73,7 +73,7 @@ namespace OverlayStatusSystem {
                 var clone = collectionPool[statusView][i];
                 clone.SetActive(true);
                 clone.transform.localScale = Vector3.one;
-                task[i] = AnimateAsync(clone, clone.transform.position, statusView.collectionRoot.position);
+                task[i] = AnimateAsync(clone, clone.transform.position, statusView.CollectionRoot.position);
             }
             await UniTask.WhenAll(task);
             if (collectionPool.ContainsKey(statusView) == false) return;
