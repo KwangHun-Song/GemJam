@@ -12,6 +12,8 @@ namespace PagePopupSystem {
         private static Dictionary<Page, PageHandler> pages;
         public static Page CurrentPage { get; private set; }
         public static event Action<Page> OnPageChanged;
+        
+        public static bool OnTransitionAnimation { get; private set; }
 
         private static Dictionary<Page, PageHandler> Pages => pages ??= Object
             .FindObjectsOfType<PageHandler>(true)
@@ -29,6 +31,7 @@ namespace PagePopupSystem {
             if (pageType == Page.None) return;
             
             if (CurrentPage != Page.None) {
+                OnTransitionAnimation = true;
                 await FadeOutHelper.FadeOut();
                 Pages[CurrentPage].gameObject.SetActive(false);
             }
@@ -42,6 +45,8 @@ namespace PagePopupSystem {
             OnPageChanged?.Invoke(CurrentPage);
 
             await FadeOutHelper.FadeIn();
+            OnTransitionAnimation = false;
+            nextPage.OnDidEnter(param);
         }
 
         public static void RemovePage(Page pageType) => Pages.Remove(pageType);

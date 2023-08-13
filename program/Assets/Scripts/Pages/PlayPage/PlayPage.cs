@@ -62,7 +62,7 @@ namespace Pages {
             if (ignoreAnimation) {
                 ShowViewImmediately();
             } else {
-                ShowViewMoveAnimation();
+                ShowViewMoveAnimationAsync().Forget();
             }
             
             WaitAndEndGameAsync().Forget();
@@ -79,15 +79,19 @@ namespace Pages {
             (OtherView.transform as RectTransform)!.anchoredPosition = Vector2.left * (Screen.width + (76F * 4));
         }
 
-        private void ShowViewMoveAnimation() {
+        private async UniTask ShowViewMoveAnimationAsync() {
             var currentViewRectTfm = CurrentView.transform as RectTransform;
-            var moveDistance = Screen.width + (76F * 4); // 대기하는 보드가 이전 보드를 가리지 않도록 패딩을 준다.
+            var moveDistance = Screen.width + (76F * 4); // 대기하는 보드가 이전 보드를 가리지 않도록 패딩을 준다. 타일width x 4
             currentViewRectTfm!.anchoredPosition = Vector2.right * moveDistance;
-            currentViewRectTfm.DOAnchorPos(Vector2.zero, 0.4F).SetEase(Ease.OutBack).SetDelay(0.8F);
+            
+            // 페이지 트랜지션 애니메이션이 진행중이면 잠시 대기한다.
+            await UniTask.WaitUntil(() => PageManager.OnTransitionAnimation == false);
+            
+            currentViewRectTfm.DOAnchorPos(Vector2.zero, 0.4F).SetEase(Ease.OutBack).SetDelay(0.2F);
             
             var otherViewRectTfm = OtherView.transform as RectTransform;
             if (otherViewRectTfm!.anchoredPosition.x < float.Epsilon) {
-                otherViewRectTfm.DOAnchorPos(Vector2.left * moveDistance, 0.4F).SetEase(Ease.OutBack).SetDelay(0.8F);
+                otherViewRectTfm.DOAnchorPos(Vector2.left * moveDistance, 0.4F).SetEase(Ease.OutBack).SetDelay(0.2F);
             }
         }
 

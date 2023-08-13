@@ -13,14 +13,14 @@ namespace PagePopupSystem {
         
         public async UniTask FadeOut() {
             OnAnimation = true;
-            await curtain.DOFade(1, 0.66F).SetEase(Ease.OutSine).ToUniTask();
+            await curtain.DOFade(1, 0.5F).SetEase(Ease.OutSine).ToUniTask();
             OnAnimation = false;
             IsFadeOut = true;
         }
         
         public async UniTask FadeIn() {
             OnAnimation = true;
-            await curtain.DOFade(0, 1F).SetEase(Ease.OutSine).ToUniTask();
+            await curtain.DOFade(0, 0.66F).SetEase(Ease.OutSine).ToUniTask();
             OnAnimation = false;
             IsFadeOut = false;
         }

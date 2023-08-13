@@ -3,6 +3,7 @@ using UnityEngine;
 namespace PagePopupSystem {
     public abstract class PageHandler : MonoBehaviour {
         public virtual void OnWillEnter(object param) { }
+        public virtual void OnDidEnter(object param) { }
 
         public abstract Page GetPageType();
 
