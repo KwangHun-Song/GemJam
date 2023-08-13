@@ -5,6 +5,7 @@ using Record;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utility;
 
 namespace Popups {
     public class ReadyPopupResult {
@@ -42,6 +43,7 @@ namespace Popups {
         }
 
         public void OnClickPlay() {
+            SimpleSound.Play(SoundName.button_click);
             Close(new ReadyPopupResult { selectedBoosters = selectedBoosters.ToArray(), isPlay = true });
         }
     }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Utility;
@@ -11,6 +10,7 @@ namespace GemMatch {
         private static readonly int Crash = Animator.StringToHash("crash");
 
         public void ShowStart() {
+            SimpleSound.Play(SoundName.coin_appear);
             animator.SetTrigger(Start);
         }
 

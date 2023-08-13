@@ -59,6 +59,7 @@ namespace GemMatch {
         }
 
         public void OnClick() {
+            SimpleSound.Play(SoundName.piece_touch);
             TileView.View.OnClickEntity(Entity);
         }
 

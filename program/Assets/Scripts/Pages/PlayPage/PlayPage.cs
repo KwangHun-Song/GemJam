@@ -25,8 +25,7 @@ namespace Pages {
         [SerializeField] private Transform coinAnimationTarget;
         [SerializeField] private Animator clearRibbonAnimator;
 
-        [SerializeField] private CharacterUI CharacterUI;
-        
+        public override SoundName BgmName => SoundName.bgm_play;
         public override Page GetPageType() => Page.PlayPage;
         public Controller Controller { get; private set; }
         public PlayPageParam Param { get; private set; }
@@ -56,6 +55,7 @@ namespace Pages {
         }
 
         public void StartGame(int levelIndex, bool ignoreAnimation = false) {
+            SimpleSound.PlayBGM(SoundName.bgm_play);
             Controller = new Controller();
             Controller.Listeners.Add(CurrentView);
             var level = LevelLoader.GetLevel(levelIndex);
@@ -64,8 +64,7 @@ namespace Pages {
             if (ignoreAnimation) {
                 ShowViewImmediately();
             } else {
-                CharacterUI.WalkIn();
-                ShowViewMoveAnimationAsync();
+                ShowViewMoveAnimationAsync().Forget();
             }
             
             WaitAndEndGameAsync().Forget();
@@ -89,17 +88,15 @@ namespace Pages {
             
             // 페이지 트랜지션 애니메이션이 진행중이면 잠시 대기한다.
             await UniTask.WaitUntil(() => PageManager.OnTransitionAnimation == false);
-            
-            currentViewRectTfm.DOAnchorPos(Vector2.zero, 0.4F).SetEase(Ease.OutBack).SetDelay(0.2F);
+            await UniTask.Delay(200);
+
+            SimpleSound.Play(SoundName.line);
+            currentViewRectTfm.DOAnchorPos(Vector2.zero, 0.4F).SetEase(Ease.OutBack);
             
             var otherViewRectTfm = OtherView.transform as RectTransform;
             if (otherViewRectTfm!.anchoredPosition.x < float.Epsilon) {
-                otherViewRectTfm.DOAnchorPos(Vector2.left * moveDistance, 0.4F).SetEase(Ease.OutBack).SetDelay(0.2F);
+                otherViewRectTfm.DOAnchorPos(Vector2.left * moveDistance, 0.4F).SetEase(Ease.OutBack);
             }
-
-            await UniTask.Delay(550);
-
-            CharacterUI.StopWalking();
         }
 
         private void ApplyReadyBoosters(BoosterIndex[] selectedBoosters) {
@@ -144,6 +141,7 @@ namespace Pages {
             }
 
             if (gameResult == GameResult.Fail) {
+                SimpleSound.StopBGM(0.5F);
                 var failResult = await PopupManager.ShowAsync<FailPopupResult>(nameof(FailPopup), Param.levelIndex + 1);
                 if (failResult?.isPlay ?? false) {
                     ReplayGame();
@@ -155,9 +153,12 @@ namespace Pages {
         }
 
         private async UniTask ShowClearRibbonAsync() {
+            SimpleSound.StopBGM();
+            SimpleSound.Play(SoundName.clear_ribbon);
+            SimpleSound.Play(SoundName.clear_ribbon_firework);
+            SimpleSound.Play(SoundName.uh_wow);
             clearRibbonAnimator.gameObject.SetActive(true);
             clearRibbonAnimator.SetTrigger(On);
-            CharacterUI.ClearPopup();
             await clearRibbonAnimator.WaitForCurrentClip();
             clearRibbonAnimator.SetTrigger(Off);
             await clearRibbonAnimator.WaitForCurrentClip();
@@ -172,8 +173,10 @@ namespace Pages {
         }
 
         public void OnClickUndo() {
+            SimpleSound.Play(SoundName.button_click);
             if (Controller != null) {
                 if (Controller.UndoHandler.IsEmpty()) {
+                    SimpleSound.Play(SoundName.a_ha);
                     ToastMessage.Show("There is nothing to undo.");
                     return;
                 }
@@ -182,14 +185,18 @@ namespace Pages {
         }
 
         public void OnClickMagnet() {
+            SimpleSound.Play(SoundName.button_click);
             Controller?.InputAbility(new MagneticAbility(Controller));
         }
 
         public void OnClickShuffle() {
+            SimpleSound.Play(SoundName.button_click);
+            SimpleSound.Play(SoundName.shuffle);
             Controller?.InputAbility(new ShuffleAbility(Controller));
         }
 
         public void OnClickSetting() {
+            SimpleSound.Play(SoundName.button_click);
             ChangeTo(Page.MainPage);
         }
 

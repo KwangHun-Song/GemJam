@@ -36,6 +36,12 @@ namespace GemMatch {
             { AbilityIndex.RocketAbility, new RocketAbilityView() },
         };
 
+        private SoundName[] characterVoices = new[] {
+            SoundName.huhu,
+            SoundName.yeah,
+            SoundName.yeah_huh
+        };
+
         #region 순서대로 실행되어야 하는 연출 관리
 
         private Queue<Func<UniTask>> AnimationQueue { get; } = new Queue<Func<UniTask>>();
@@ -93,6 +99,7 @@ namespace GemMatch {
         public void OnReplayGame(Mission[] missions) { }
 
         public void OnChangeMission(Mission mission, int changeCount) {
+            SimpleSound.Play(characterVoices.PickRandom());
             OverlayStatusHelper.UpdateMissionCount(mission, changeCount);
         }
 
@@ -160,6 +167,7 @@ namespace GemMatch {
             EnqueueAnimation(RemoveMemoryAsync);
 
             async UniTask RemoveMemoryAsync() {
+                SimpleSound.Play(SoundName.get_ascending);
                 await MemoryViews
                     .Single(v => v.EntityView != null && ReferenceEquals(v.EntityView.Entity, entity))
                     .RemoveEntityAsync(true);

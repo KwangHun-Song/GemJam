@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using Utility;
 using Object = UnityEngine.Object;
 
 namespace PagePopupSystem {
@@ -24,6 +25,7 @@ namespace PagePopupSystem {
             var nextPage = Pages[pageType];
             nextPage.gameObject.SetActive(true);
             nextPage.OnWillEnter(param);
+            SimpleSound.PlayBGM(nextPage.BgmName);
             CurrentPage = pageType;
         }
         
@@ -32,6 +34,7 @@ namespace PagePopupSystem {
             
             if (CurrentPage != Page.None) {
                 OnTransitionAnimation = true;
+                SimpleSound.StopBGM(0.5F);
                 await FadeOutHelper.FadeOut();
                 Pages[CurrentPage].gameObject.SetActive(false);
             }
@@ -44,6 +47,7 @@ namespace PagePopupSystem {
             await UniTask.DelayFrame(1);
             OnPageChanged?.Invoke(CurrentPage);
 
+            SimpleSound.PlayBGM(nextPage.BgmName);
             await FadeOutHelper.FadeIn();
             OnTransitionAnimation = false;
             nextPage.OnDidEnter(param);

@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using OverlayStatusSystem;
 using UnityEngine;
+using Utility;
 
 namespace GemMatch {
     public class ClearCoinAnimator {
@@ -43,6 +44,7 @@ namespace GemMatch {
             await coinView.transform.DOLocalMove(Vector3.zero, 0.8F).SetEase(Ease.InBack, 2.5F).ToUniTask();
             
             OverlayStatusHelper.UpdateCoinStatus();
+            SimpleSound.Play(SoundName.coin_get);
             Object.DestroyImmediate(coinView.gameObject);
         }
     }

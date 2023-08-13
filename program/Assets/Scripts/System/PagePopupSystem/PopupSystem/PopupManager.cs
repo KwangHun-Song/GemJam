@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Utility;
 using Object = UnityEngine.Object;
 
 namespace PagePopupSystem {
@@ -51,6 +52,7 @@ namespace PagePopupSystem {
 
             popupStack.Push(popup);
             
+            SimpleSound.Play(SoundName.popup_in);
             await popup.ShowWithAnimation(param);
 
             var result = await popup.popupTask.Task;

@@ -52,6 +52,7 @@ namespace GemMatch.LevelEditor {
             }
         }
 
+        public override SoundName BgmName => SoundName.None;
         public override Page GetPageType() => Page.EditPage;
     }
 }
