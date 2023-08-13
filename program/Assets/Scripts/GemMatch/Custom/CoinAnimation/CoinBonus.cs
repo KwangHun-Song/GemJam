@@ -9,8 +9,15 @@ namespace GemMatch {
         private static readonly int Start = Animator.StringToHash("start");
         private static readonly int Crash = Animator.StringToHash("crash");
 
+        private static bool PlayNextSound { get; set; } = true;
+
         public void ShowStart() {
-            SimpleSound.Play(SoundName.coin_appear);
+            // 사운드는 플립 형식으로 두 번 중 한 번만 적용한다.
+            if (PlayNextSound) {
+                SimpleSound.Play(SoundName.coin_appear);
+            }
+            PlayNextSound = !PlayNextSound;
+            
             animator.SetTrigger(Start);
         }
 
