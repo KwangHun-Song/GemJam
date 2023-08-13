@@ -116,6 +116,9 @@ namespace Pages {
             if (gameResult == GameResult.Clear) {
                 // 클리어 데이터 저장
                 PlayerInfo.HighestClearedLevelIndex++;
+
+                // 마지막 미션이 들어갈 때까지 잠시 딜레이
+                await UniTask.Delay(1500);
                 
                 // 먼저 클리어리본을 보여준다.
                 await ShowClearRibbonAsync();

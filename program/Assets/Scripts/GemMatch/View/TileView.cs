@@ -125,6 +125,9 @@ namespace GemMatch {
             var showLUPoint = adjTiles.Left?.IsOpened == false && 
                               adjTiles.Up?.IsOpened == false &&
                               adjTiles.LeftUp?.IsOpened == false;
+            if (Tile.X == 0 && Tile.Y == 8) {
+                UnityEngine.Debug.Log("잠깐 스탑");
+            }
             var showLDPoint = adjTiles.Left?.IsOpened == false && 
                               adjTiles.Down?.IsOpened == false &&
                               adjTiles.LeftDown?.IsOpened == false;
@@ -135,8 +138,8 @@ namespace GemMatch {
                               adjTiles.Down?.IsOpened == false &&
                               adjTiles.RightDown?.IsOpened == false;
 
-            showLDPoint |= Tile.X == 0 && Tile.Y > 0;
-            showRDPoint |= Tile.X == Constants.Width - 1 && Tile.Y > 0;
+            showLDPoint |= Tile.X == 0 && Tile.Y > 0 && adjTiles.Down?.IsOpened == false;
+            showRDPoint |= Tile.X == Constants.Width - 1 && Tile.Y > 0 && adjTiles.Down?.IsOpened == false;
             
             points[0].SetActive(showLUPoint);
             points[1].SetActive(showLDPoint);
