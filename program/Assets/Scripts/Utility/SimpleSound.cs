@@ -30,9 +30,8 @@ namespace Utility {
         private static List<AudioSource> bgmAudios = new List<AudioSource>();
         private static List<AudioSource> sfxAudios = new List<AudioSource>();
 
-        // [RuntimeInitializeOnLoadMethod]
+        [RuntimeInitializeOnLoadMethod]
         private static void Initialize() {
-            return;
             _instance = Resources.Load<SimpleSound>(nameof(SimpleSound));
             BGMSource = new GameObject("BGM Audio");
             SFXSource = new GameObject("SFX Audio");
@@ -51,7 +50,6 @@ namespace Utility {
             float volume = 1f,
             float pitch = 1f) //파일이름 / 반복여부 / 최소 재생 간격
         {
-            return;
             if (soundName == SoundName.None) return;
             var name = soundName.ToString();
             if (Instance.sfxDict.TryGetValue(name, out var sfx)) {
@@ -73,7 +71,6 @@ namespace Utility {
         }
 
         public static void PlayBGM(SoundName soundName, bool loop = true, float volume = 1f) {
-            return;
             if (soundName == SoundName.None) return;
             var name = soundName.ToString();
             if (!Instance.bgmDict.TryGetValue(name, out var bgm)) {
@@ -128,7 +125,6 @@ namespace Utility {
         }
 
         public static void StopBGM(float fadeSec = 0f) {
-            return;
             fadeSec = Mathf.Abs(fadeSec);
             foreach (var a in bgmAudios) {
                 DOTween.Kill(a.GetInstanceID());
