@@ -14,8 +14,6 @@ namespace GemMatch {
         public Level CurrentLevel { get; protected set; }
         public Tile[] Tiles { get; protected set; }
         public Mission[] Missions { get; protected set; }
-        public Mission GetMission(EntityIndex entityIndex, ColorIndex colorIndex)
-            => Missions.SingleOrDefault(m => m.entity.index == entityIndex && m.entity.color == colorIndex);
         public List<Entity> Memory { get; protected set; }
         public List<Tile> ActiveTiles { get; protected set; } = new List<Tile>();
 
@@ -244,8 +242,14 @@ namespace GemMatch {
 
         private void InputChangeMission(EntityModel entityModel, int discount) {
             var mission = Missions.SingleOrDefault(m => m.entity.Equals(entityModel))
-                        ?? Missions.SingleOrDefault(m => m.entity.index == EntityIndex.NormalPiece && m.entity.color == entityModel.color)
-                        ?? Missions.SingleOrDefault(m => m.entity.index == EntityIndex.NormalPiece && m.entity.color == ColorIndex.All);
+                        ?? Missions.SingleOrDefault(m => 
+                            entityModel.index == EntityIndex.NormalPiece 
+                            && m.entity.index == EntityIndex.NormalPiece 
+                            && m.entity.color == entityModel.color) // TODO : 의미없는 조건문이므로(위 조건에 걸림) 지울 것.
+                        ?? Missions.SingleOrDefault(m => 
+                            entityModel.index == EntityIndex.NormalPiece 
+                            && m.entity.index == EntityIndex.NormalPiece 
+                            && m.entity.color == ColorIndex.All);
             if (mission != null) {
                 UndoHandler.Do(new MissionCommand(this, mission, discount, true));
             }

@@ -916,21 +916,11 @@ MonoBehaviour:
         layer: 10000
         displayType: 0
         durability: 0
-        color: 3
+        color: 3000
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-      count: 6
-    - entity:
-        index: 1
-        layer: 10000
-        displayType: 0
-        durability: 0
-        color: 5
-        commonBoolParam: 0
-        commonIntParam: 0
-        commonStringParam: 
-      count: 6
+      count: 12
     colorCount: 5
     colorCandidates: 000000000200000004000000
   - tiles:
@@ -1938,21 +1928,11 @@ MonoBehaviour:
         layer: 10000
         displayType: 0
         durability: 0
-        color: 0
+        color: 3000
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-      count: 9
-    - entity:
-        index: 1
-        layer: 10000
-        displayType: 0
-        durability: 0
-        color: 2
-        commonBoolParam: 0
-        commonIntParam: 0
-        commonStringParam: 
-      count: 9
+      count: 18
     colorCount: 3
     colorCandidates: 000000000400000002000000
   - tiles:
@@ -2346,21 +2326,11 @@ MonoBehaviour:
         layer: 10000
         displayType: 0
         durability: 0
-        color: 0
+        color: 3000
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-      count: 6
-    - entity:
-        index: 1
-        layer: 10000
-        displayType: 0
-        durability: 0
-        color: 4
-        commonBoolParam: 0
-        commonIntParam: 0
-        commonStringParam: 
-      count: 6
+      count: 12
     colorCount: 3
     colorCandidates: 
   - tiles:

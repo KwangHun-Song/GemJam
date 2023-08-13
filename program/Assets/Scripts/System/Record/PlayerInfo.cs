@@ -13,7 +13,7 @@ namespace Record {
         }
         
         public static int HighestClearedLevelIndex {
-            get => PlayerPrefs.GetInt(nameof(HighestClearedLevelIndex), 0);
+            get => PlayerPrefs.GetInt(nameof(HighestClearedLevelIndex), -1);
             set => PlayerPrefs.SetInt(nameof(HighestClearedLevelIndex), value);
         }
     }

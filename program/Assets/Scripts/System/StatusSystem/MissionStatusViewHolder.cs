@@ -41,7 +41,9 @@ namespace OverlayStatusSystem {
 
         public void CollectMissionByViewClones(EntityModel targetEntity, GameObject targetMold) {
             if (missionStatusViews.Count == 0) return;
-            var statusView = missionStatusViews!.SingleOrDefault(m=>m.mission.entity.index == targetEntity.index && m.mission.entity.color == targetEntity.color);
+            var statusView = missionStatusViews!.SingleOrDefault(m=>
+                m.mission.entity.index == targetEntity.index 
+                && (m.mission.entity.color == targetEntity.color || m.mission.entity.color == ColorIndex.All));
             if (statusView != null) {
                 if (collectionPool.ContainsKey(statusView) == false) {
                     collectionPool[statusView] = new List<GameObject>();

@@ -16,7 +16,8 @@ namespace GemMatch {
                 var mission = Controller.Missions[i];
                 if (mission.entity == null) continue;
                 if (mission.entity.index != TargetMission.entity.index) continue;
-                if (mission.entity.color != TargetMission.entity.color) continue;
+                if (mission.entity.color != ColorIndex.All && 
+                    mission.entity.color != TargetMission.entity.color) continue;
                 if (mission.entity.layer != TargetMission.entity.layer) continue;
                 Controller.Missions[i].count -= TargetMission.count;
             }
@@ -28,7 +29,8 @@ namespace GemMatch {
                 var mission = Controller.Missions[i];
                 if (mission.entity == null) continue;
                 if (mission.entity.index != TargetMission.entity.index) continue;
-                if (mission.entity.color != TargetMission.entity.color) continue;
+                if (mission.entity.color != ColorIndex.All && 
+                    mission.entity.color != TargetMission.entity.color) continue;
                 if (mission.entity.layer != TargetMission.entity.layer) continue;
                 Controller.Missions[i].count += TargetMission.count;
             }

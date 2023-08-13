@@ -29,7 +29,7 @@ namespace OverlayStatusSystem {
         private int currentStage = 0;
         public async UniTaskVoid UpdateLevel(int stage) {
             currentStage = stage;
-            levelNumber.text = $"{stage}";
+            levelNumber.text = $"{stage + 1}";
             for (var i = 0; i < levelIndexerRoots.Length; i++) {
                 var root = levelIndexerRoots[i];
                 if (root) root.SetActive(i == PlayerInfoIndex);

@@ -11,6 +11,7 @@ namespace OverlayStatusSystem {
         [SerializeField] private TMP_Text txtCount;
         [SerializeField] private Image imgMission;
         [SerializeField] private Sprite[] sprites;
+        [SerializeField] private Sprite allColorNormalPieceSprite;
         [SerializeField] private GameObject normalPiecePrefab;
         [SerializeField] private GameObject crashPrefab;
 
@@ -43,7 +44,8 @@ namespace OverlayStatusSystem {
         private bool IsMyModel(EntityModel entityModel) {
             if (this.targetEntityModel == null) return false;
             if (entityModel.index != this.targetEntityModel.index) return false;
-            if (entityModel.color != this.targetEntityModel.color) return false;
+            if (entityModel.color != ColorIndex.All && 
+                entityModel.color != this.targetEntityModel.color) return false;
             return true;
         }
 
@@ -55,8 +57,12 @@ namespace OverlayStatusSystem {
             this.targetEntityModel = mission.entity;
             OverlayStatusHelper.Init(new MissionOverlayStatus(this, OnMission));
             if (targetEntityModel.index == EntityIndex.NormalPiece) {
-                var index = targetEntityModel.color == ColorIndex.Random ? sprites.Length-1 : (int)targetEntityModel.color;
-                imgMission.sprite = sprites[index];
+                if (targetEntityModel.color == ColorIndex.All) {
+                    imgMission.sprite = allColorNormalPieceSprite;
+                } else {
+                    var index = targetEntityModel.color == ColorIndex.Random ? sprites.Length-1 : (int)targetEntityModel.color;
+                    imgMission.sprite = sprites[index];
+                }
             } else if (targetEntityModel.index == EntityIndex.GoalPiece) {
                 imgMission.sprite = sprites[sprites.Length-1];
             }
