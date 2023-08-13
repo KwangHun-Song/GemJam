@@ -10,6 +10,7 @@ namespace OverlayStatusSystem {
     public class MissionStatusView : MonoBehaviour, IOverlayStatusEvent {
         [SerializeField] private TMP_Text txtCount;
         [SerializeField] private Image imgMission;
+        [SerializeField] private Image imgCheck;
         [SerializeField] private Sprite[] sprites;
         [SerializeField] private GameObject normalPiecePrefab;
         [SerializeField] private GameObject crashPrefab;
@@ -24,6 +25,7 @@ namespace OverlayStatusSystem {
             ShowCrashFXAsync().Forget();
             OverlayStatusHelper.Save(this);
             txtCount.text = $"{changeCount}";
+            EnableMissionCount();
         }
 
         public void OnMission(ArrayList missionParam) {
@@ -32,6 +34,7 @@ namespace OverlayStatusSystem {
             if (IsMyModel(entityModel) == false) return;
             this.mission.count -= reduceCount;
             txtCount.text = $"{this.mission.count}";
+            EnableMissionCount();
         }
 
         private async UniTaskVoid ShowCrashFXAsync() {
@@ -49,10 +52,16 @@ namespace OverlayStatusSystem {
 
         public Type GetKeyType() => typeof(MissionOverlayStatus);
 
+        private void EnableMissionCount() {
+            txtCount.gameObject.SetActive(mission.count > 0);
+            imgCheck.gameObject.SetActive(mission.count <= 0);
+        }
+
         // mission 정보를 초기화
         public void InitializeMission(Mission mission) {
             this.mission = mission;
             this.targetEntityModel = mission.entity;
+            EnableMissionCount();
             OverlayStatusHelper.Init(new MissionOverlayStatus(this, OnMission));
             if (targetEntityModel.index == EntityIndex.NormalPiece) {
                 var index = targetEntityModel.color == ColorIndex.Random ? sprites.Length-1 : (int)targetEntityModel.color;
