@@ -14878,7 +14878,17 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 36
     colorCount: 5
     colorCandidates: 0000000005000000020000000300000004000000
   - tiles:
@@ -16384,7 +16394,17 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 48
     colorCount: 6
     colorCandidates: 000000000100000002000000030000000400000005000000
   - tiles:
@@ -16964,7 +16984,17 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 42
     colorCount: 4
     colorCandidates: 00000000040000000200000003000000
   - tiles:
@@ -18362,7 +18392,17 @@ MonoBehaviour:
     - index: 79
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 36
     colorCount: 6
     colorCandidates: 0100000002000000030000000400000005000000
   - tiles:
@@ -19900,7 +19940,17 @@ MonoBehaviour:
     - index: 79
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 36
     colorCount: 6
     colorCandidates: 0000000001000000020000000300000004000000
   - tiles:
@@ -22012,7 +22062,17 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 48
     colorCount: 4
     colorCandidates: 00000000040000000200000003000000
   - tiles:
@@ -23710,7 +23770,17 @@ MonoBehaviour:
     - index: 79
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 48
     colorCount: 5
     colorCandidates: 0000000005000000020000000300000004000000
   - tiles:
@@ -24818,7 +24888,17 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 72
     colorCount: 6
     colorCandidates: 000000000100000002000000030000000400000005000000
   - tiles:
@@ -26206,7 +26286,17 @@ MonoBehaviour:
     - index: 79
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 36
     colorCount: 5
     colorCandidates: 0000000001000000020000000300000004000000
   - tiles:
@@ -27154,7 +27244,17 @@ MonoBehaviour:
     - index: 79
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 60
     colorCount: 6
     colorCandidates: 000000000100000002000000030000000400000005000000
   - tiles:
@@ -28812,7 +28912,17 @@ MonoBehaviour:
     - index: 79
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 45
     colorCount: 6
     colorCandidates: 000000000100000002000000030000000400000005000000
   - tiles:
@@ -29416,7 +29526,17 @@ MonoBehaviour:
     - index: 79
       isOpened: 0
       entityModels: []
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 45
     colorCount: 6
     colorCandidates: 000000000100000002000000030000000400000005000000
   - tiles:
@@ -31116,7 +31236,17 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-    missions: []
+    missions:
+    - entity:
+        index: 1
+        layer: 10000
+        displayType: 0
+        durability: 0
+        color: 3000
+        commonBoolParam: 0
+        commonIntParam: 0
+        commonStringParam: 
+      count: 36
     colorCount: 5
     colorCandidates: 0000000005000000020000000300000004000000
   - tiles:
