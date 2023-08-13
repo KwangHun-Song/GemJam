@@ -75,6 +75,7 @@ namespace GemMatch {
             }
             
             DrawEdges();
+            extraSlot.localScale = Vector3.one;
             viewScaler.SetPlayViewPosition(controller.Tiles);
 
             foreach (var tileView in TileViews) {
@@ -225,7 +226,7 @@ namespace GemMatch {
             AddExtraSlotAsync().Forget();
 
             async UniTask AddExtraSlotAsync() {
-                await UniTask.Delay(1000);
+                await UniTask.Delay(1500);
                 extraSlot.DOScale(Vector3.zero, 0.3F).SetEase(Ease.InBack, 3);
             }
         }
