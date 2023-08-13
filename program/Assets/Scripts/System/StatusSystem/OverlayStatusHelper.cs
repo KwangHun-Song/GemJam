@@ -27,8 +27,8 @@ namespace OverlayStatusSystem {
             OverlayStatusHolder.Instance.CollectMissionByViewClone(entityModel, entityViewGameObject);
         }
 
-        public static void UpdateMissionCount(Mission mission, int changeCount) {
-            OverlayStatusHolder.Instance.UpdateMissionCount(mission, changeCount);
+        public static void UpdateMissionCount(Mission mission, int changeCount, bool isUndo) {
+            OverlayStatusHolder.Instance.UpdateMissionCount(mission, changeCount, isUndo);
         }
 
         public static void UpdateLevelStatus(Level currentLevel) {

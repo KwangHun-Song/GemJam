@@ -6,7 +6,7 @@ namespace GemMatch {
         void OnClearGame(Mission[] missions);
         void OnFailGame(Mission[] missions);
         void OnReplayGame(Mission[] missions);
-        void OnChangeMission(Mission mission, int changeCount);
+        void OnChangeMission(Mission mission, int changeCount, bool isUndo);
         
         void OnMoveToMemory(Tile tile, Entity entity);
         void OnMoveFromMemory(Tile tile, Entity entity);

@@ -99,9 +99,9 @@ namespace GemMatch {
 
         public void OnReplayGame(Mission[] missions) { }
 
-        public void OnChangeMission(Mission mission, int changeCount) {
-            SimpleSound.Play(characterVoices.PickRandom());
-            OverlayStatusHelper.UpdateMissionCount(mission, changeCount);
+        public void OnChangeMission(Mission mission, int changeCount, bool isUndo) {
+            if (isUndo == false) SimpleSound.Play(characterVoices.PickRandom());
+            OverlayStatusHelper.UpdateMissionCount(mission, changeCount, isUndo);
         }
 
         public void OnMoveToMemory(Tile tile, Entity entity) {

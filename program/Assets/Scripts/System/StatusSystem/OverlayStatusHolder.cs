@@ -34,8 +34,8 @@ namespace OverlayStatusSystem {
 
         public void InitializeMission(Mission[] targetMissions) => _missionStatus.InitializeMissions(targetMissions);
 
-        public void UpdateMissionCount(Mission mission, int changeCount) {
-            _missionStatus.AchieveMissionAsync(mission, changeCount).Forget();
+        public void UpdateMissionCount(Mission mission, int changeCount, bool isUndo) {
+            _missionStatus.AchieveMissionAsync(mission, changeCount, isUndo).Forget();
         }
 
         public void CollectMissionByViewClone(EntityModel entityModel, GameObject entityViewGameObject) {

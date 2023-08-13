@@ -57,12 +57,12 @@ namespace OverlayStatusSystem {
             }
         }
 
-        public async UniTask AchieveMissionAsync(Mission targetMission, int changeCount) {
+        public async UniTask AchieveMissionAsync(Mission targetMission, int changeCount, bool isUndo) {
             if (missionStatusViews.Count == 0) return;
             var targetView = missionStatusViews.SingleOrDefault(m => m.mission.Equals(targetMission));
             if (targetView == null) return;
 
-            await AnimateMissionPoolAsync(targetView);
+            if (isUndo == false) await AnimateMissionPoolAsync(targetView);
             await targetView.GetMissionAsync(targetMission, changeCount);
             if (collectionPool[targetView].Count == 0) collectionPool.Remove(targetView);
         }
