@@ -29,5 +29,10 @@ namespace Pages {
             doggyAni.SetTrigger(DoggyStopMoving);
             gnomeAni.SetTrigger(GnomeStopMoving);
         }
+        
+        public void ShowGoal() {
+            doggyAni.SetTrigger(DoggyGoal);
+            gnomeAni.SetTrigger(GnomeGoal);
+        }
     }
 }

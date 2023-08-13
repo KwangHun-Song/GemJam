@@ -6,6 +6,7 @@ public enum SoundName
     bbock,
     block_crash,
     button_click,
+    chest_open,
     clear_ribbon_firework,
     clear_ribbon,
     clear_character,

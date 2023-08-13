@@ -133,7 +133,6 @@ namespace GemMatch {
         }
 
         protected virtual bool IsCleared() {
-            if (ActiveTiles.Any(t => t.Piece is GoalPiece)) return true;
             if (Tiles.SelectMany(t => t.Entities.Values).Any(e => e is NormalPiece) == false && Memory.Any() == false) return true;
             if (Missions.All(mission => mission.count <= 0)) return true;
 
@@ -166,7 +165,7 @@ namespace GemMatch {
             // 활성화된 타일들을 다시 계산한다.
             CalculateActiveTiles();
 
-            CheckAndDestroyGoalPiece();
+            CheckAndAchieveGoalPiece();
             
             // 메모리에서 같은 색깔 세 개가 있을 경우 파괴한다.
             TryRemoveFromMemory(piece);
@@ -257,18 +256,19 @@ namespace GemMatch {
             foreach (var listener in Listeners) listener.OnAddActiveTiles(ActiveTiles);
         }
 
-        private void CheckAndDestroyGoalPiece() {
+        private void CheckAndAchieveGoalPiece() {
             if (ActiveTiles.Any(t => t.Piece is GoalPiece) == false) return;
-            foreach (var entity in ActiveTiles.SelectMany(t => t.Entities.Values).Where(e => e is GoalPiece)) {
-                var goalPiece = (GoalPiece)entity;
-                var tile = GetTile(goalPiece);
-                
-                UndoHandler.Do(new HitCommand(this, tile, goalPiece, true));
+            
+            var mission = Missions.SingleOrDefault(m => m.entity.index == EntityIndex.GoalPiece);
+            if (mission == null) return;
 
-                var mission = Missions.SingleOrDefault(m => m.entity.index == EntityIndex.GoalPiece);
-                if (mission == null) return;
+            var originMissionCount = CurrentLevel.missions.Single(m => m.entity.index == EntityIndex.GoalPiece).count;
+            var activeGoalCount = ActiveTiles.SelectMany(t => t.Entities.Values).Count(e => e is GoalPiece);
+            var remainMissionCount = originMissionCount - activeGoalCount;
 
-                UndoHandler.Do(new MissionCommand(this, mission, 1, true));
+            if (mission.count > remainMissionCount) {
+                var earnCount = mission.count - remainMissionCount;
+                UndoHandler.Do(new MissionCommand(this, mission, earnCount, true));
             }
         }
     }

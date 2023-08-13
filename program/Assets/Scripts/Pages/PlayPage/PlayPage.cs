@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.ScreenLock;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace Pages {
         [SerializeField] private PlayBoosterUI[] playBoosters;
         [SerializeField] private Transform coinAnimationTarget;
         [SerializeField] private Animator clearRibbonAnimator;
+        [SerializeField] private CharacterUI characterUi;
 
         public override SoundName BgmName => SoundName.bgm_play;
         public override Page GetPageType() => Page.PlayPage;
@@ -76,7 +78,6 @@ namespace Pages {
             WaitAndEndGameAsync().Forget();
         }
 
-
         private void ShowViewImmediately() {
             (CurrentView.transform as RectTransform)!.anchoredPosition = Vector2.zero;
             (OtherView.transform as RectTransform)!.anchoredPosition = Vector2.left * (Screen.width + (76F * 4));
@@ -88,6 +89,7 @@ namespace Pages {
             currentViewRectTfm!.anchoredPosition = Vector2.right * moveDistance;
             
             // 페이지 트랜지션 애니메이션이 진행중이면 잠시 대기한다.
+            characterUi.WalkIn();
             await UniTask.WaitUntil(() => PageManager.OnTransitionAnimation == false);
             await UniTask.Delay(200);
 
@@ -97,6 +99,13 @@ namespace Pages {
             var otherViewRectTfm = OtherView.transform as RectTransform;
             if (otherViewRectTfm!.anchoredPosition.x < float.Epsilon) {
                 otherViewRectTfm.DOAnchorPos(Vector2.left * moveDistance, 0.4F).SetEase(Ease.OutBack);
+            }
+
+            StopWalkingAsync().Forget();
+
+            async UniTask StopWalkingAsync() {
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5F));
+                characterUi.StopWalking();
             }
         }
 
@@ -127,7 +136,9 @@ namespace Pages {
                     await UniTask.Delay(1500);
                 
                     // 먼저 클리어리본을 보여준다.
+                    characterUi.ClearPopup();
                     await ShowClearRibbonAsync();
+                    characterUi.ShowGoal();
                 
                     // 코인 생성 후 날아가는 연출을 대기한다. 그 후 클리어팝업을 띄운다.
                     await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews, coinAnimationTarget);

@@ -91,8 +91,7 @@ namespace OverlayStatusSystem {
 
         private float threshold = 1.5f;
         private float collectionDuration = 0.8f;
-        private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to,
-            List<GameObject> pool) {
+        private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to, List<GameObject> pool) {
             if (to != null) {
                 // var wayPoints = new Vector3[] {
                 //     to,
