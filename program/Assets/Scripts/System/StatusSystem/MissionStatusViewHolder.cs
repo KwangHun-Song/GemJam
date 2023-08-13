@@ -46,7 +46,7 @@ namespace OverlayStatusSystem {
                     collectionPool[statusView] = new List<GameObject>();
                 }
 
-                var cacheView = Instantiate(targetMold, statusView.collectionRoot);
+                var cacheView = Instantiate(targetMold, statusView.CollectionRoot);
                 cacheView.transform.position = targetMold.transform.position;
                 cacheView.SetActive(false);
                 collectionPool[statusView].Add(cacheView);
@@ -57,30 +57,30 @@ namespace OverlayStatusSystem {
             if (missionStatusViews.Count == 0) return;
             var targetView = missionStatusViews.SingleOrDefault(m => m.mission.Equals(targetMission));
             if (targetView == null) return;
-            await UniTask.WhenAny(
-                UniTask.WaitUntil(() => collectionPool.ContainsKey(targetView)),
-                UniTask.DelayFrame(20));
+
             await AnimateMissionPoolAsync(targetView);
             await targetView.GetMissionAsync(targetMission, changeCount);
         }
 
         private async UniTask AnimateMissionPoolAsync(MissionStatusView statusView) {
             if (statusView == null) return;
-            if (collectionPool.ContainsKey(statusView) == false) return;
+            while (collectionPool.ContainsKey(statusView) == false) {
+                await UniTask.Yield();
+            }
 
-            var task = new UniTask[collectionPool[statusView].Count];
-            for (var i = 0; i < collectionPool[statusView].Count; i++) {
-                var clone = collectionPool[statusView][i];
+            var targetPool = collectionPool[statusView];
+            var task = new UniTask[targetPool.Count];
+            for (var i = 0; i < targetPool.Count; i++) {
+                var clone = targetPool[i];
+                if (clone.gameObject.activeSelf) continue;
                 clone.SetActive(true);
                 clone.transform.localScale = Vector3.one;
-                task[i] = AnimateAsync(clone, clone.transform.position, statusView.collectionRoot.position);
+                task[i] = AnimateAsync(clone, clone.transform.position, statusView.CollectionRoot.position, targetPool);
             }
-            await UniTask.WhenAll(task);
-            if (collectionPool.ContainsKey(statusView) == false) return;
-            foreach (var clone in collectionPool[statusView]) {
-                DestroyImmediate(clone);
-            }
+            UniTask.WhenAll(task).Forget();
 
+            await UniTask.WaitUntil(() => targetPool.Count == 0);
+            if (collectionPool.ContainsKey(statusView) == false) return;
             collectionPool.Remove(statusView);
         }
 
@@ -90,19 +90,26 @@ namespace OverlayStatusSystem {
 
         private float threshold = 1.5f;
         private float collectionDuration = 1.1f;
-        public Transform curvePoint;
-        private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to) {
+        private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to,
+            List<GameObject> pool) {
             if (to != null) {
                 var wayPoints = new Vector3[] {
                     to,
                     from + Vector3.down * threshold + Vector3.left * threshold,
                     from,
                 };
-                collectingObject.transform.DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
-                    .SetEase(Ease.InOutQuad);
+                var hash = collectingObject.gameObject.GetHashCode();
+                var seq = DOTween.Sequence().SetId(hash);
+                seq.Insert(0, collectingObject.transform
+                    .DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
+                        .SetEase(Ease.InOutQuad));
+                seq.Play();
             }
 
             await UniTask.Delay(TimeSpan.FromSeconds(collectionDuration));
+
+            pool.Remove(collectingObject);
+            DestroyImmediate(collectingObject);
         }
     }
 }

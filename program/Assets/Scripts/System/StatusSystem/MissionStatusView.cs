@@ -11,16 +11,17 @@ namespace OverlayStatusSystem {
         [SerializeField] private TMP_Text txtCount;
         [SerializeField] private Image imgMission;
         [SerializeField] private Sprite[] sprites;
-        [SerializeField] private ParticleSystem crashParticle;
         [SerializeField] private GameObject normalPiecePrefab;
-        public Transform collectionRoot;
+        [SerializeField] private GameObject crashPrefab;
+
+        public Transform CollectionRoot;
 
         public Mission mission;
         private EntityModel targetEntityModel;
 
         public async UniTask GetMissionAsync(Mission targetMission, int changeCount) {
             if (IsMyModel(targetMission.entity) == false) return;
-            crashParticle.Play();
+            ShowCrashFXAsync().Forget();
             OverlayStatusHelper.Save(this);
             txtCount.text = $"{changeCount}";
         }
@@ -31,6 +32,12 @@ namespace OverlayStatusSystem {
             if (IsMyModel(entityModel) == false) return;
             this.mission.count -= reduceCount;
             txtCount.text = $"{this.mission.count}";
+        }
+
+        private async UniTaskVoid ShowCrashFXAsync() {
+            var crashFX = GameObject.Instantiate(crashPrefab, CollectionRoot);
+            await UniTask.Delay(TimeSpan.FromSeconds(2f));
+            GameObject.Destroy(crashFX.gameObject);
         }
 
         private bool IsMyModel(EntityModel entityModel) {
