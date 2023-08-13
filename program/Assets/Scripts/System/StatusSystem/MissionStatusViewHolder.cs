@@ -68,19 +68,19 @@ namespace OverlayStatusSystem {
                 await UniTask.Yield();
             }
 
-            var task = new UniTask[collectionPool[statusView].Count];
-            for (var i = 0; i < collectionPool[statusView].Count; i++) {
-                var clone = collectionPool[statusView][i];
+            var targetPool = collectionPool[statusView];
+            var task = new UniTask[targetPool.Count];
+            for (var i = 0; i < targetPool.Count; i++) {
+                var clone = targetPool[i];
+                if (clone.gameObject.activeSelf) continue;
                 clone.SetActive(true);
                 clone.transform.localScale = Vector3.one;
-                task[i] = AnimateAsync(clone, clone.transform.position, statusView.CollectionRoot.position);
+                task[i] = AnimateAsync(clone, clone.transform.position, statusView.CollectionRoot.position, targetPool);
             }
-            await UniTask.WhenAll(task);
-            if (collectionPool.ContainsKey(statusView) == false) return;
-            foreach (var clone in collectionPool[statusView]) {
-                DestroyImmediate(clone);
-            }
+            UniTask.WhenAll(task).Forget();
 
+            await UniTask.WaitUntil(() => targetPool.Count == 0);
+            if (collectionPool.ContainsKey(statusView) == false) return;
             collectionPool.Remove(statusView);
         }
 
@@ -90,14 +90,16 @@ namespace OverlayStatusSystem {
 
         private float threshold = 1.5f;
         private float collectionDuration = 1.1f;
-        private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to) {
+        private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to,
+            List<GameObject> pool) {
             if (to != null) {
                 var wayPoints = new Vector3[] {
                     to,
                     from + Vector3.down * threshold + Vector3.left * threshold,
                     from,
                 };
-                var seq = DOTween.Sequence().SetId(collectingObject.GetHashCode());
+                var hash = collectingObject.gameObject.GetHashCode();
+                var seq = DOTween.Sequence().SetId(hash);
                 seq.Insert(0, collectingObject.transform
                     .DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
                         .SetEase(Ease.InOutQuad));
@@ -105,6 +107,9 @@ namespace OverlayStatusSystem {
             }
 
             await UniTask.Delay(TimeSpan.FromSeconds(collectionDuration));
+
+            pool.Remove(collectingObject);
+            DestroyImmediate(collectingObject);
         }
     }
 }
