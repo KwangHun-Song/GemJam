@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ScreenLock;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -122,13 +123,16 @@ namespace Pages {
                 PlayerInfo.HighestClearedLevelIndex++;
 
                 // 마지막 미션이 들어갈 때까지 잠시 딜레이
-                await UniTask.Delay(1500);
+                using (new ScreenLock()) {
+                    await UniTask.Delay(1500);
                 
-                // 먼저 클리어리본을 보여준다.
-                await ShowClearRibbonAsync();
+                    // 먼저 클리어리본을 보여준다.
+                    await ShowClearRibbonAsync();
                 
-                // 코인 생성 후 날아가는 연출을 대기한다. 그 후 클리어팝업을 띄운다.
-                await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews, coinAnimationTarget);
+                    // 코인 생성 후 날아가는 연출을 대기한다. 그 후 클리어팝업을 띄운다.
+                    await new ClearCoinAnimator().ShowCoinAnimation(CurrentView.TileViews, coinAnimationTarget);
+                }
+                
                 var next = await PopupManager.ShowAsync<bool>(nameof(ClearPopup), Param.levelIndex + 1);
 
                 if (next) {

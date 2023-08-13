@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.ScreenLock;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -22,22 +23,25 @@ namespace GemMatch {
             shuffleTfm.localScale = Vector3.zero;
             shuffleTfm.DOScale(Vector3.one, 0.3F).SetEase(Ease.OutBack);
 
-            // 다섯 번정도 색깔을 랜덤으로 바꾸어준다.
-            const int ShuffleCount = 10;
-            for (int i = 0; i < ShuffleCount; i++) {
-                var randomColors = decidedColors.Shuffle().ToArray();
-                var updateTasks = new List<UniTask>();
-                for (int ci = 0; ci < normalPieceViews.Length; ci++) {
-                    normalPieceViews[ci].Entity.Color = randomColors[ci];
-                    updateTasks.Add(normalPieceViews[ci].OnUpdate());
-                }
+            using (new ScreenLock()) {
+                // 다섯 번정도 색깔을 랜덤으로 바꾸어준다.
+                const int ShuffleCount = 10;
+                
+                for (int i = 0; i < ShuffleCount; i++) {
+                    var randomColors = decidedColors.Shuffle().ToArray();
+                    var updateTasks = new List<UniTask>();
+                    for (int ci = 0; ci < normalPieceViews.Length; ci++) {
+                        normalPieceViews[ci].Entity.Color = randomColors[ci];
+                        updateTasks.Add(normalPieceViews[ci].OnUpdate());
+                    }
 
-                await UniTask.WhenAll(updateTasks);
-                await UniTask.Delay(1000 / ShuffleCount);
-            }
+                    await UniTask.WhenAll(updateTasks);
+                    await UniTask.Delay(1000 / ShuffleCount);
+                }
             
-            await shuffleTfm.DOScale(Vector3.zero, 0.2F).SetEase(Ease.InBack).ToUniTask();
-            shuffleTfm.gameObject.SetActive(false);
+                await shuffleTfm.DOScale(Vector3.zero, 0.2F).SetEase(Ease.InBack).ToUniTask();
+                shuffleTfm.gameObject.SetActive(false);
+            }
             
             // 마지막에는 원래 결정되었던 색깔로 교체해준다.
             for (int ci = 0; ci < normalPieceViews.Length; ci++) {

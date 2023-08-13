@@ -200,14 +200,13 @@ namespace GemMatch {
         public void OnDestroyEntity(Tile tile, Entity entity) {
             EnqueueAnimation(DestroyEntityAsync);
 
-            UniTask DestroyEntityAsync() {
+            async UniTask DestroyEntityAsync() {
                 var tileView = TileViews.Single(tv => ReferenceEquals(tv.Tile, tile));
                 var entityView = tileView.EntityViews.Values.Single(ev => ReferenceEquals(ev.Entity, entity));
 
                 tileView.RemoveEntityView(entityView);
-                DestroyImmediate(entityView.gameObject);
-                
-                return UniTask.CompletedTask;
+                await entityView.DestroyAsync(false);
+                // DestroyImmediate(entityView.gameObject);
             }
         }
 

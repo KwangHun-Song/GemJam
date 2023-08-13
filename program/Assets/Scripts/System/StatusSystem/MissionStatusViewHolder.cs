@@ -6,6 +6,7 @@ using DG.Tweening;
 using GemMatch;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utility;
 
 namespace OverlayStatusSystem {
     public class MissionStatusViewHolder : MonoBehaviour {
@@ -89,25 +90,27 @@ namespace OverlayStatusSystem {
 
 
         private float threshold = 1.5f;
-        private float collectionDuration = 1.1f;
+        private float collectionDuration = 0.8f;
         private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to,
             List<GameObject> pool) {
             if (to != null) {
-                var wayPoints = new Vector3[] {
-                    to,
-                    from + Vector3.down * threshold + Vector3.left * threshold,
-                    from,
-                };
+                // var wayPoints = new Vector3[] {
+                //     to,
+                //     from + Vector3.down * threshold + Vector3.left * threshold,
+                //     from,
+                // };
                 var hash = collectingObject.gameObject.GetHashCode();
                 var seq = DOTween.Sequence().SetId(hash);
                 seq.Insert(0, collectingObject.transform
-                    .DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
-                        .SetEase(Ease.InOutQuad));
+                    .DOMove(to, collectionDuration).SetEase(Ease.InBack, 2.5F));
+                    // .DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
+                    //     .SetEase(Ease.InOutQuad));
                 seq.Play();
             }
 
             await UniTask.Delay(TimeSpan.FromSeconds(collectionDuration));
 
+            SimpleSound.Play(SoundName.bbock);
             pool.Remove(collectingObject);
             DestroyImmediate(collectingObject);
         }
