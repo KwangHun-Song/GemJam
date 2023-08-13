@@ -90,7 +90,6 @@ namespace OverlayStatusSystem {
 
         private float threshold = 1.5f;
         private float collectionDuration = 1.1f;
-        public Transform curvePoint;
         private async UniTask AnimateAsync(GameObject collectingObject, Vector3 from, Vector3 to) {
             if (to != null) {
                 var wayPoints = new Vector3[] {
@@ -98,8 +97,11 @@ namespace OverlayStatusSystem {
                     from + Vector3.down * threshold + Vector3.left * threshold,
                     from,
                 };
-                collectingObject.transform.DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
-                    .SetEase(Ease.InOutQuad);
+                var seq = DOTween.Sequence().SetId(collectingObject.GetHashCode());
+                seq.Insert(0, collectingObject.transform
+                    .DOPath(wayPoints, collectionDuration, PathType.CubicBezier)
+                        .SetEase(Ease.InOutQuad));
+                seq.Play();
             }
 
             await UniTask.Delay(TimeSpan.FromSeconds(collectionDuration));
