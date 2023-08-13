@@ -27,6 +27,7 @@ public enum SoundName
     a_ha,
     huhu,
     uh_wow,
+    woodbox_crash,
     yeah_huh,
     yeah_long,
     yeah,
