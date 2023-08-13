@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace OverlayStatusSystem {
     public class CoinStatusView : OverlayStatusEvent<CoinOverlayStatus> {
+        private const string CoinCrashPath = "coinGain";
+
         [SerializeField] private TMP_Text coin;
         public Transform CoinRoot;
 
@@ -19,8 +21,17 @@ namespace OverlayStatusSystem {
             OverlayStatusHelper.Input(this, new OverlayStatusParam(amount));
         }
 
+        private bool isCrashing = false;
         public async UniTaskVoid GetCoin() {
             OverlayStatusHelper.Save(this);
+            if (isCrashing == false) {
+                isCrashing = true;
+                var crashObj = Resources.Load<GameObject>(CoinCrashPath);
+                var crashFX = GameObject.Instantiate(crashObj, CoinRoot);
+                await UniTask.Delay(5000);
+                DestroyImmediate(crashFX.gameObject);
+                isCrashing = false;
+            }
         }
 
         private void OnCoin(int value) {

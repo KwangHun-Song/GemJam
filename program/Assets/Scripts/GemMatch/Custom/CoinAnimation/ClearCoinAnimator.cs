@@ -28,11 +28,11 @@ namespace GemMatch {
 
             // 순서를 한 번 섞어주고, Crash 이펙트 후 타겟으로 이동시킨다.
             coins = coins.Shuffle().ToList();
-            var crashFX = Resources.Load<GameObject>("coinGain");
-            await UniTask.WhenAll(coins.Select(coinView => ShowCrashAndMoveAsync(coinView, crashFX)));
+
+            await UniTask.WhenAll(coins.Select(coinView => ShowCrashAndMoveAsync(coinView)));
         }
 
-        private async UniTask ShowCrashAndMoveAsync(CoinBonus coinView, GameObject crashObj) {
+        private async UniTask ShowCrashAndMoveAsync(CoinBonus coinView) {
             // 출발을 랜덤으로 하도록 랜덤 딜레이를 추가
             await UniTask.Delay(Random.Range(400, 1200));
             // 크래시 이펙트
@@ -47,10 +47,6 @@ namespace GemMatch {
             OverlayStatusHelper.UpdateCoinStatus();
             SimpleSound.Play(SoundName.coin_get);
             Object.DestroyImmediate(coinView.gameObject);
-
-            var crashFX = GameObject.Instantiate(crashObj, OverlayStatusHelper.GetCoinStatusRoot());
-            await UniTask.Delay(2000);
-            Object.DestroyImmediate(crashFX.gameObject);
         }
     }
 }
