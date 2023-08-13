@@ -73,6 +73,7 @@ namespace Pages {
         }
 
         public void ReplayGame() {
+            SimpleSound.PlayBGM(SoundName.bgm_play);
             Controller.ReplayGame();
             WaitAndEndGameAsync().Forget();
         }
