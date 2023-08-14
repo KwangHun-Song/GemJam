@@ -4167,7 +4167,7 @@ MonoBehaviour:
         commonIntParam: 0
         commonStringParam: 
     - index: 74
-      isOpened: 1
+      isOpened: 0
       entityModels: []
     - index: 75
       isOpened: 1
@@ -4181,7 +4181,7 @@ MonoBehaviour:
         commonIntParam: 0
         commonStringParam: 
     - index: 76
-      isOpened: 1
+      isOpened: 0
       entityModels: []
     - index: 77
       isOpened: 1
@@ -15106,7 +15106,7 @@ MonoBehaviour:
         layer: 10000
         displayType: 0
         durability: 0
-        color: 0
+        color: 3
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
@@ -28084,7 +28084,7 @@ MonoBehaviour:
         commonBoolParam: 0
         commonIntParam: 0
         commonStringParam: 
-      count: 6
+      count: 9
     colorCount: 6
     colorCandidates: 0000000002000000030000000400000005000000
   - tiles:
