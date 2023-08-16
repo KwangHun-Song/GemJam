@@ -5,13 +5,18 @@ using Record;
 using ToastMessageSystem;
 using UnityEngine;
 using Utility.CustomMouse;
-using UnityEngine.SceneManagement;
 using Utility;
 
 namespace Pages {
     public class MainPage : PageHandler {
+        [SerializeField] private SettingView settingView;
+        
         public override SoundName BgmName => SoundName.bgm_main;
         public override Page GetPageType() => Page.MainPage;
+
+        public override void OnWillEnter(object param) {
+            settingView.HideImmediately();
+        }
 
         #region EVENT
 
@@ -22,8 +27,15 @@ namespace Pages {
 
         public void OnClickSetting() {
             SimpleSound.Play(SoundName.button_click);
-            SimpleSound.Play(SoundName.a_ha);
-            ToastMessage.Show("It will be implemented soon.");
+            ClickSettingAsync().Forget();
+
+            async UniTask ClickSettingAsync() {
+                SimpleSound.Play(SoundName.button_click);
+                var result = await settingView.ShowAsync();
+                if (result == SettingViewResult.QuitGame) {
+                    Application.Quit();
+                }
+            }
         }
         
         public void OnClickPlay() {
@@ -64,7 +76,7 @@ namespace Pages {
 
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.E)) {
-                SceneManager.LoadScene("EditScene");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("EditScene");
             }
 #endif
         }

@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +9,8 @@ namespace Utility {
     [RequireComponent(typeof(Toggle))]
     public class ToggleAlphaActivator : MonoBehaviour {
         [SerializeField] private CanvasGroup canvasGroup;
+        [Header("isOn 상태가 alpha가 1인 경우 체크해주세요.")]
+        [SerializeField] private bool reversed;
         
         private Toggle toggle;
         private Toggle Toggle => toggle ??= GetComponent<Toggle>();
@@ -18,11 +19,19 @@ namespace Utility {
             Toggle.onValueChanged.AddListener(ShowEffect);
         }
 
+        public void ShowEffectWithoutAnim(bool isOn) {
+            if (isOn) {
+                canvasGroup.alpha = reversed ? 1 : 0;
+            } else {
+                canvasGroup.alpha = reversed ? 0 : 1;
+            }
+        }
+
         private void ShowEffect(bool isOn) {
             if (isOn) {
-                canvasGroup.DOFade(1, 0.2F);
+                canvasGroup.DOFade(reversed ? 1 : 0, 0.2F);
             } else {
-                canvasGroup.DOFade(0, 0.1F);
+                canvasGroup.DOFade(reversed ? 0 : 1, 0.1F);
             }
         }
     }

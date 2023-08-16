@@ -26,6 +26,7 @@ namespace Pages {
         [SerializeField] private PlayBoosterUI[] playBoosters;
         [SerializeField] private Animator clearRibbonAnimator;
         [SerializeField] private CharacterUI characterUi;
+        [SerializeField] private SettingView settingView;
 
         public override SoundName BgmName => SoundName.bgm_play;
         public override Page GetPageType() => Page.PlayPage;
@@ -54,6 +55,7 @@ namespace Pages {
             ApplyReadyBoosters(Param.selectedBoosters);
             
             clearRibbonAnimator.gameObject.SetActive(false);
+            settingView.HideImmediately();
         }
 
         public void StartGame(int levelIndex, bool ignoreAnimation = false) {
@@ -211,8 +213,15 @@ namespace Pages {
         }
 
         public void OnClickSetting() {
-            SimpleSound.Play(SoundName.button_click);
-            ChangeTo(Page.MainPage);
+            ClickSettingAsync().Forget();
+
+            async UniTask ClickSettingAsync() {
+                SimpleSound.Play(SoundName.button_click);
+                var result = await settingView.ShowAsync();
+                if (result == SettingViewResult.QuitGame) {
+                    ChangeTo(Page.MainPage);
+                }
+            }
         }
 
         #endregion // PlayBooster
