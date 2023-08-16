@@ -306,3 +306,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 8857342997324999908}
+  reversed: 1
